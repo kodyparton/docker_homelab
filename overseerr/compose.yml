@@ -1,0 +1,14 @@
+services:
+########## OVERSEERR CONFIGURATION ##########
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/overseerr/config:/config
+    ports:
+      - 30023:5055
+    restart: always

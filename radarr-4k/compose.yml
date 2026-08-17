@@ -1,0 +1,16 @@
+services:
+########## RADARR-4K CONFIGURATION ##########
+  radarr-4k:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr-4k
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/radarr-4k/config:/config
+      - /Volumes/media/movies-4k:/mnt/movies-4k #optional
+      - /Volumes/downloads:/mnt/downloads
+    ports:
+      - 30031:7878
+    restart: always

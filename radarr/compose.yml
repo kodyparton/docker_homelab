@@ -1,0 +1,16 @@
+services:
+########## RADARR CONFIGURATION ########## 
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/radarr/config:/config
+      - /Volumes/media/movies:/mnt/movies
+      - /Volumes/downloads:/mnt/downloads
+    ports:
+      - 30025:7878
+    restart: always

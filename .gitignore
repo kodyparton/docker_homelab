@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# local logs
+*.log
+*.log.*
+update.log
+launchd-err.log
+launchd-out.log
+
+# secrets
+.env
+!*.env.example
+
+# runtime data / configs / credentials / media state for every service
+*/config/
+*/data/
+*/downloading/
+*/MediaCover/
+*/audiobooks/
+*/podcasts/
+*/metadata/
+*/local-files/
+*/letsencrypt/
+
+# re-include compose files that happen to live under a config/ dir
+# (git won't look inside an ignored dir, so unignore the dir, then
+# re-ignore everything in it except the compose file)
+!heimdall/config/
+heimdall/config/*
+!heimdall/config/compose.yml
+
+!lazylibrarian/config/
+lazylibrarian/config/*
+!lazylibrarian/config/compose.yml

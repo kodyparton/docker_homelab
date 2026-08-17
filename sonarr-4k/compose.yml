@@ -1,0 +1,16 @@
+services:
+########## SONARR-4K CONFIGURATION ##########
+  sonarr-4k:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr-4k
+    environment:        
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/sonarr-4k/config:/config
+      - /Volumes/media/tv-4k:/mnt/tv-4k #optional
+      - /Volumes/downloads:/mnt/downloads
+    ports:
+      - 30030:8989
+    restart: always

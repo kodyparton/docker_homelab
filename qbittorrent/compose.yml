@@ -1,0 +1,26 @@
+services:
+########## QBITTORRENT CONFIGURATION ##########
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - WEBUI_PORT=30024
+      - TORRENTING_PORT=50415
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/qbittorrent/config:/config
+      - /Volumes/downloads:/mnt/downloads
+      #- /Users/kp-srv-01/Documents/docker/qbittorrent/downloading:/mnt/downloading
+    #ports:
+    #  - 30024:30024
+    #  - 50415:50415
+    #  - 50415:50415/udp
+    restart: always
+
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    network_mode: host
+    # remove the ports: section entirely, it's meaningless under host networking
+    # qBittorrent's listening port is now directly the host's port

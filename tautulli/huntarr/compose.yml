@@ -1,0 +1,11 @@
+services:
+  huntarr:
+    image: huntarr/huntarr:latest
+    container_name: huntarr
+    restart: always
+    ports:
+      - "30036:9705"
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/huntarr/config:/config
+    environment:
+      - TZ=America/Chicago

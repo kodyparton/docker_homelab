@@ -13,5 +13,5 @@ services:
       - /Volumes/downloads/:/downloads
       - /Volumes/media/books:/books #optional
     ports:
-      - 30032:30032
+      - 30032:5299
     restart: unless-stopped

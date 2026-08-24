@@ -19,6 +19,7 @@ All workflows live in the `n8n` container (`https://n8n.kodyparton.com`). Every 
 | `Second Brain Discord Bot` | `httpHeaderAuth` (`Authorization: Bot ...`) | 19, 20 (placeholder, needs the brain-bot's real token) |
 | `Strava API` | `oAuth2Api` | 20 (placeholder, needs a real Strava app + OAuth connect) |
 | `Trilium ETAPI` | `httpHeaderAuth` | 20 (placeholder, needs a real ETAPI token — optional) |
+| `Vikunja API Token` | `httpHeaderAuth` | 18 (placeholder, needs a real Vikunja personal access token — optional) |
 
 Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have no authentication (both are LAN-only, deliberately never exposed publicly), so its HTTP Request nodes just call `http://192.168.178.69:11434` and `http://192.168.178.69:6333` directly.
 
@@ -41,11 +42,14 @@ Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have
 | 15 | Release Radar Digest | weekly Mon 08:00 | Sonarr×2, Radarr×2 calendars | Posts "this week's lineup" to Discord |
 | 16 | Earned It (Strava-Gated Media Unlock) | webhook (Strava) | Strava, Overseerr | **Auto-approves** oldest pending request on a new weekly activity |
 | 17 | Discord Ops Console | every 30s (poll) | Discord REST, SSH `docker ps` | Replies to `!status` in Discord with live container health |
-| 18 | Second Brain - Chat | webhook (`brain-bot`) | Ollama, Qdrant | Conversational RAG: an LLM classification pass routes every message to store/forget/question/chat — no required keywords. Photos logged separately. Every route writes a Qdrant entry, which feeds both same-day conversational memory and the daily journal. See `docs/architecture/second-brain.md`. |
+| 18 | Second Brain - Chat | webhook (`brain-bot`) | Ollama, Qdrant, Vikunja | Conversational RAG: an LLM classification pass routes every message to store/forget/question/chat/task — no required keywords. Photos logged separately, voice messages transcribed by `whisper` before they ever reach this workflow. Every route writes a Qdrant entry, which feeds same-day conversational memory and the daily journal. See `docs/architecture/second-brain.md`. |
 | 19 | Daily Journal Prompt | daily 21:00 | Discord (bot API) | Posts 3 rotating reflective prompts to Discord |
 | 20 | Daily Journal Summary | daily 23:45 | Qdrant, Strava API, Ollama, Trilium (optional), Discord | Generates and posts a first-person journal entry from the day's logged conversations/photos/Strava/Apple Health data. See `docs/architecture/journaling.md`. |
 | 21 | Apple Health Import | webhook (Health Auto Export app) | Qdrant | Receives daily workout export from iOS, logs each workout for the journal to use |
 | 22 | Refresh Homelab Knowledge | daily 06:00 | SSH, `scripts/seed_second_brain.py` | Re-seeds `docs/` into Qdrant (delete-by-source then re-insert) so the brain's homelab knowledge doesn't go stale |
+| 23 | Weekly Memory Consolidation | weekly Sun 04:00 | Qdrant, Ollama | Summarizes conversation entries older than 30 days into one point, deletes the originals |
+| 24 | Proactive Reminders | daily 08:00 | Qdrant, Ollama, Discord | Scans stored facts for anything date-relevant to today/next 3 days, alerts if found |
+| 25 | Weekly Brain Digest | weekly Sun 18:00 | Qdrant, Ollama, Discord | "What I learned about you this week" — new facts + conversation summary |
 
 ## Workflows That Take Automated Write Actions
 
@@ -59,6 +63,8 @@ Worth knowing which workflows *do things* versus which only alert, since these d
 - **18** writes new facts into Qdrant whenever the classifier detects a "store" intent, logs every message it sees (conversation/photo entries), and **deletes** facts on a confidently-matched "forget" intent (score ≥ 0.6, only within `type: fact` points — never deletes conversation logs, photos, or journal entries). The delete is the one genuinely destructive automated action in this whole stack; it's confidence-gated and always tells you exactly what it removed.
 - **20** writes a new Trilium note daily, if that credential is configured.
 - **22** deletes-then-reinserts Qdrant points tagged with each refreshed doc's file path — scoped to `source` matching, never touches Discord-originated content (facts/conversations/photos/journal entries don't have file-path `source` values).
+- **18** also creates real Vikunja tasks on a "task" intent, if that credential is configured.
+- **23** deletes conversation-log points older than 30 days — but only after successfully storing a summary of them first, so a failure mid-run can't lose data.
 
 Everything else (01, 02, 03, 11, 14, 15) only reads and alerts.
 

@@ -1,0 +1,14 @@
+services:
+########## WHISPER CONFIGURATION (voice message transcription for the second brain) ##########
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: whisper
+    environment:
+      - ASR_MODEL=base
+      - ASR_ENGINE=faster_whisper
+      - TZ=America/Chicago
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/whisper/config:/root/.cache
+    ports:
+      - 9000:9000
+    restart: unless-stopped

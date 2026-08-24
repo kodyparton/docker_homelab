@@ -115,6 +115,12 @@ Everything above is built and running except the one piece that fundamentally re
 5. **Activate workflow 18** in n8n (`https://n8n.kodyparton.com` → find "18 - Second Brain - Chat" → toggle Active). n8n's API can create workflows but can't activate them — this one manual toggle is unavoidable, same as every other workflow in this stack.
 6. Send it a message. If nothing happens, check `docker logs brain-bot` first (usually a bad token or the channel ID doesn't match), then n8n's execution log for workflow 18.
 
+Voice messages work with no extra setup — `whisper` is already running and `brain-bot` already points at it.
+
+For the Vikunja bridge (optional): complete Vikunja's first-run signup (`http://192.168.178.69:30037`), then User Settings → API Tokens → create one → paste it into n8n's **"Vikunja API Token"** credential as `Bearer YOUR_TOKEN`. Then edit the **"Create Vikunja Task"** node in workflow 18, replacing `YOUR_VIKUNJA_PROJECT_ID` in the URL with the ID of whichever Vikunja project you want tasks to land in (visible in Vikunja's UI URL when you open a project).
+
+For workflows 19, 20, 24, and 25 (anything that posts to Discord *without* being triggered by a message — prompts, journal, reminders, digests): each needs its own "EDIT ME: Discord Channel ID" node filled in with your real channel ID, and all four share the **"Second Brain Discord Bot"** credential, which needs the same bot token as `brain-bot/.env`, formatted as `Bot YOUR_TOKEN` (that's Discord's required bot-auth header format — the literal word "Bot", a space, then the token).
+
 ## What's already been built out (formerly "extending it later")
 
 All four originally-deferred ideas from v1 are done as of 2026-08-24:
@@ -133,12 +139,20 @@ Ideas not yet built:
 - **Explicit fact correction** — right now updating a fact means forgetting the old one and stating the new one as two separate messages. A natural "actually it's X, not Y" in one message would need the classifier to support a fifth intent (`correct`) that does a search-and-replace in one step.
 - **Feeding it the Obsidian vault** — still an explicit opt-in the user runs themselves (see above), not automated, by design.
 
-## Brainstorm: further ideas (2026-08-24, not yet built)
+## Brainstormed ideas — now built (2026-08-24)
 
-- **Vikunja bridge** — the classifier already distinguishes intents; a fifth (`task`) could create a real Vikunja task via its API instead of just a Qdrant fact when you say something like "remind me to renew the car registration." Natural fit since both systems already exist in this repo.
-- **Memory consolidation** — as conversation logs accumulate indefinitely, retrieval quality could degrade under volume. A periodic (weekly?) job that has the LLM review a day's or week's raw conversation entries and collapse them into a shorter summary point, keeping raw entries for a rolling window (e.g. 30 days) and summaries beyond that.
-- **Proactive date-aware reminders** — scan stored facts for dates (appointments, deadlines) and have a daily job cross-reference against "today" or "this week," posting a heads-up rather than waiting to be asked.
-- **Voice messages** — Discord supports voice messages; a local Whisper model (`whisper.cpp`, runs fine on CPU) could transcribe them into the same chat pipeline, so "talking" to the brain doesn't require typing.
-- **Weekly "what I learned about you" digest** — same digest pattern already used elsewhere in this repo (see workflow 14), summarizing the week's stored facts and most-asked questions.
-- **Full memory export** — a script that dumps every Qdrant point to a readable markdown file, the reverse of `seed_second_brain.py` — for backup, portability, or just browsing everything it knows outside of chat.
-- **Correlating homelab state with journal mood** — it already knows both the known-issues log and daily journal entries; a query like "was I stressed the week the mount kept breaking" becomes answerable for free once both are in the same memory.
+All 6 buildable ideas from the 2026-08-24 brainstorm are done (the 7th, correlating homelab state with journal mood, needed no build — it already works today, since both live in the same memory: just ask it something like "was I stressed the week the mount kept breaking"):
+
+- ✅ **Vikunja bridge** — a 5th classifier intent, `task`. Say something like "remind me to renew the car registration" and it creates a real Vikunja task instead of just a fact. Setup below.
+- ✅ **Memory consolidation** — workflow 23, weekly. Conversation log entries older than 30 days get summarized by the LLM into one dense point and the originals deleted, so retrieval quality doesn't degrade as history piles up. The summary is stored *before* the originals are deleted, so a mid-run failure can't lose data.
+- ✅ **Proactive date-aware reminders** — workflow 24, daily 08:00. Scans every stored fact, asks the LLM which ones reference something happening today or in the next 3 days, posts a heads-up if anything matches.
+- ✅ **Voice messages** — deployed [`whisper`](../containers/whisper.md) (faster-whisper, local, CPU). Any Discord voice message or audio attachment gets transcribed and fed into the normal pipeline exactly like a typed message. Verified live with a synthesized test clip.
+- ✅ **Weekly digest** — workflow 25, Sunday 18:00. "What I learned about you this week" from the week's new facts and conversations.
+- ✅ **Full memory export** — `scripts/export_second_brain.py`, dumps every point to a readable markdown file grouped by type. Run it yourself whenever (`python3 scripts/export_second_brain.py [output-path]`) — not scheduled, since it's for on-demand browsing/backup, not something that needs to run unattended.
+
+## Ideas not yet built
+
+- **Vision-capable photo understanding** — currently photos are logged by filename/caption only, the LLM never looks at pixel content. Would need a vision model (e.g. `llava`, `qwen2.5vl`) — untested whether this hardware (M1, 16GB, already running Ollama's 7B model *and* Whisper) can comfortably run a third model; worth a memory-usage test before committing to it.
+- **Cross-channel/cross-user conversation isolation** — recent-history lookups currently filter by date only, not by Discord channel or author. Fine for a single-user bot in one channel (the deployed setup), but if `brain-bot` ever listens in multiple channels or multiple people talk to it, conversations would blend together. Would need `channel_id`/`author_id` added to the conversation log payload (they're already sent by the bot, just not stored yet) and filtered on.
+- **Explicit fact correction** — right now updating a fact means forgetting the old one and stating the new one as two separate messages. A natural "actually it's X, not Y" in one message would need a 6th classifier intent (`correct`) that does a search-and-replace in one step.
+- **Feeding it the Obsidian vault** — still an explicit opt-in the user runs themselves (see above), not automated, by design.

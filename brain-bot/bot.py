@@ -21,6 +21,27 @@ for _c in _raw_channel_ids:
 if not ALLOWED_CHANNEL_IDS:
     log.warning("No valid DISCORD_CHANNEL_IDS configured — bot will only respond to DMs.")
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("REQUEST_TIMEOUT_SECONDS", "120"))
+WHISPER_URL = os.environ.get("WHISPER_URL", "http://192.168.178.69:9000/asr?output=text")
+
+
+async def transcribe(session: aiohttp.ClientSession, audio_url: str, filename: str) -> str | None:
+    try:
+        async with session.get(audio_url) as audio_resp:
+            if audio_resp.status != 200:
+                log.error("Failed to download audio attachment: %s", audio_resp.status)
+                return None
+            audio_bytes = await audio_resp.read()
+
+        form = aiohttp.FormData()
+        form.add_field("audio_file", audio_bytes, filename=filename, content_type="audio/ogg")
+        async with session.post(WHISPER_URL, data=form) as resp:
+            if resp.status != 200:
+                log.error("Whisper returned %s", resp.status)
+                return None
+            return (await resp.text()).strip()
+    except Exception:
+        log.exception("Transcription failed")
+        return None
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -48,10 +69,28 @@ async def on_message(message: discord.Message):
         for a in message.attachments
         if (a.content_type or "").startswith("image/")
     ]
-    if not content and not images:
+    voice_attachments = [
+        a for a in message.attachments if (a.content_type or "").startswith("audio/")
+    ]
+    if not content and not images and not voice_attachments:
         return
 
     async with message.channel.typing():
+        if voice_attachments:
+            timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT_SECONDS)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                for a in voice_attachments:
+                    transcript = await transcribe(session, a.url, a.filename)
+                    if transcript:
+                        content = (content + " " + transcript).strip() if content else transcript
+                    else:
+                        await message.reply(
+                            "Got a voice message but couldn't transcribe it — check "
+                            "`docker logs whisper` and `docker logs brain-bot`."
+                        )
+            if not content:
+                return
+
         payload = {
             "content": content,
             "images": images,

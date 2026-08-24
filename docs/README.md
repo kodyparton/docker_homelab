@@ -1,12 +1,13 @@
 # Homelab Documentation
 
-Documentation for the `docker_homelab` stack — a Mac Mini running ~22 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
+Documentation for the `docker_homelab` stack — a Mac Mini running ~23 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
 
 ## Start here
 
+- **[Second Brain User Guide](second-brain-guide.md)** — start here if you just want to know how to use it day to day.
 - **[Architecture Overview](architecture/overview.md)** — service dependency map, port map, domain/reverse-proxy map, data flow.
 - **[Automation Map](architecture/automation.md)** — every n8n workflow, what it touches, what it's allowed to change automatically.
-- **[Second Brain](architecture/second-brain.md)** — the Discord-native local-LLM knowledge assistant: how it works, how to teach it things, setup steps.
+- **[Second Brain (technical)](architecture/second-brain.md)** — how the second brain is built: architecture, internals, setup steps.
 - **[Daily Journaling](architecture/journaling.md)** — evening prompts, automatic daily journal generation from conversations/photos/Strava/Apple Health, setup steps.
 - **[Known Issues](architecture/known-issues.md)** — open problems and their status, resolved-issue changelog.
 
@@ -37,6 +38,7 @@ One file per running container in [`containers/`](containers/), each following t
 | Ollama | [containers/ollama.md](containers/ollama.md) |
 | Qdrant | [containers/qdrant.md](containers/qdrant.md) |
 | Brain Bot | [containers/brain-bot.md](containers/brain-bot.md) |
+| Whisper | [containers/whisper.md](containers/whisper.md) |
 
 ## Keeping this updated
 

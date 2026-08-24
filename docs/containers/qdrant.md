@@ -22,6 +22,7 @@ Vector database — the second brain's actual long-term memory. Every fact it kn
 | Host path | Container path | Purpose | Notes |
 |---|---|---|---|
 | `qdrant/storage` | `/qdrant/storage` | all vector/point data | gitignored — this is the actual memory content, real and potentially personal |
+| `qdrant/snapshots` | `/qdrant/snapshots` | backup snapshots (separate from `storage` — Qdrant writes snapshots to a different internal path, needed its own mount) | gitignored |
 
 ## Collections
 
@@ -44,11 +45,13 @@ Not exposed via NPM — LAN-only, intentionally.
 
 ## Backups
 
-**Not yet covered by `scripts/backup_check.sh` — this is the highest-priority gap in backup coverage in the whole stack**, since `qdrant/storage` is the only copy of everything the second brain has been taught. Worth adding a scheduled `docker exec qdrant` snapshot (Qdrant has a built-in snapshot API: `POST /collections/second_brain/snapshots`) to the backup verification workflow.
+**Covered as of 2026-08-24.** Workflow 03 (Backup Verification) triggers a fresh snapshot (`POST /collections/second_brain/snapshots`) before its daily check, landing in `qdrant/snapshots/second_brain/` (retains the last 3, older ones pruned automatically). `scripts/backup_check.sh` verifies one exists and is under 2 days old — no content-integrity test beyond non-empty, since there's no generic tool to validate Qdrant's own snapshot format the way `unzip -t`/`tar -tzf` validate the *arr apps' backups.
 
 ## Automation
 
-- **18 - Second Brain - Chat** — upserts new facts, searches on every question.
+- **18 - Second Brain - Chat** — upserts new facts, searches on every question, logs every exchange, deletes on a confident `forget`.
+- **03 - Backup Verification** — triggers and verifies the daily snapshot.
+- **22 - Refresh Homelab Knowledge** — daily re-seed of `docs/` (delete-by-source then re-insert, so edited docs don't leave stale duplicate chunks behind).
 
 ## Known Issues / Gotchas
 

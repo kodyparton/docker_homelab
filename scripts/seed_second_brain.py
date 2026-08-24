@@ -10,11 +10,12 @@ Accepts .md or .txt files. Each file is split into chunks on blank lines
 rather than whole documents. Each chunk gets embedded via Ollama
 (nomic-embed-text) and upserted into Qdrant's `second_brain` collection.
 
-Safe to re-run: it's additive (each chunk gets a fresh point ID derived
-from a hash of its content + source path, so re-running on unchanged
-files won't duplicate entries, but re-running on edited files will add
-the new version alongside the old one — Qdrant doesn't dedupe by content
-similarity, only by exact ID match).
+Safe to re-run, including on edited files: before (re-)inserting a file's
+chunks, every existing point tagged with that exact file path as its
+`source` is deleted first, so stale/removed content never lingers. Only
+touches points from that source path — Discord-originated memory (facts,
+conversations, photos, journal entries) is untouched, since those use a
+different payload shape entirely.
 """
 import hashlib
 import json
@@ -68,9 +69,23 @@ def point_id_for(source: str, text: str) -> int:
     return int(h[:15], 16)  # fits comfortably in a 64-bit int, Qdrant accepts ints
 
 
+def delete_by_source(source: str):
+    req = urllib.request.Request(
+        f"{QDRANT_URL}/delete",
+        method="POST",
+        data=json.dumps(
+            {"filter": {"must": [{"key": "source", "match": {"value": source}}]}}
+        ).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        json.load(resp)
+
+
 def process_file(path: Path) -> int:
     text = path.read_text(errors="ignore")
     chunks = chunk_text(text)
+    delete_by_source(str(path))
     for chunk in chunks:
         vector = embed(chunk)
         upsert(point_id_for(str(path), chunk), vector, chunk, str(path))

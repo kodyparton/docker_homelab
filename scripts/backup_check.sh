@@ -17,6 +17,7 @@ CHECKS=(
   "huntarr|$REPO_ROOT/huntarr/config/backups/scheduled_backup_*|dir|5"
   "lazylibrarian|$REPO_ROOT/lazylibrarian/config/*.tgz|tgz|14"
   "audiobookshelf|$REPO_ROOT/audiobookshelf/metadata/backups/*|dir|14"
+  "qdrant|$REPO_ROOT/qdrant/snapshots/second_brain/*.snapshot|raw|2"
 )
 
 first=true
@@ -65,6 +66,10 @@ print(json.dumps({
     size_bytes=$(stat -f "%z" "$latest" 2>/dev/null || echo 0)
     if [ "$type" = "zip" ]; then
       if unzip -t "$latest" >/dev/null 2>&1; then integrity="true"; else integrity="false"; fi
+    elif [ "$type" = "raw" ]; then
+      # No generic tool to validate this format (e.g. Qdrant's own
+      # snapshot format) — non-empty is the only check available.
+      if [ "${size_bytes:-0}" -gt 0 ]; then integrity="true"; else integrity="false"; fi
     else
       if tar -tzf "$latest" >/dev/null 2>&1; then integrity="true"; else integrity="false"; fi
     fi

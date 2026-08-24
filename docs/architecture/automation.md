@@ -17,6 +17,8 @@ All workflows live in the `n8n` container (`https://n8n.kodyparton.com`). Every 
 | `Job Pipeline Notion` | `notionApi` | 05 |
 | `Earned It Discord Webhook` | `discordWebhookApi` | 16 (placeholder, not yet real) |
 
+Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have no authentication (both are LAN-only, deliberately never exposed publicly), so its HTTP Request nodes just call `http://192.168.178.69:11434` and `http://192.168.178.69:6333` directly.
+
 ## Workflow Registry
 
 | # | Name | Trigger | Touches | Purpose |
@@ -36,6 +38,7 @@ All workflows live in the `n8n` container (`https://n8n.kodyparton.com`). Every 
 | 15 | Release Radar Digest | weekly Mon 08:00 | Sonarr×2, Radarr×2 calendars | Posts "this week's lineup" to Discord |
 | 16 | Earned It (Strava-Gated Media Unlock) | webhook (Strava) | Strava, Overseerr | **Auto-approves** oldest pending request on a new weekly activity |
 | 17 | Discord Ops Console | every 30s (poll) | Discord REST, SSH `docker ps` | Replies to `!status` in Discord with live container health |
+| 18 | Second Brain - Chat | webhook (`brain-bot`) | Ollama, Qdrant | RAG chat: embeds + stores facts on `remember:`, otherwise retrieves + answers grounded in stored memory. See `docs/architecture/second-brain.md`. |
 
 ## Workflows That Take Automated Write Actions
 
@@ -46,6 +49,7 @@ Worth knowing which workflows *do things* versus which only alert, since these d
 - **13** approves or declines Overseerr requests automatically.
 - **16** approves an Overseerr request automatically (at most once/week).
 - **10** commits to git automatically (but does not push — that step was deliberately left manual).
+- **18** writes new facts into Qdrant on `remember:`/`note:`/`save:` messages — low-risk (additive, easily reviewed/deleted via Qdrant's API) but worth knowing it's a write path.
 
 Everything else (01, 02, 03, 11, 14, 15) only reads and alerts.
 

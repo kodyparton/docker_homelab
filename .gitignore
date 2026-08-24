@@ -23,6 +23,7 @@ launchd-out.log
 */local-files/
 */letsencrypt/
 vikunja/files/
+qdrant/storage/
 
 # re-include compose files that happen to live under a config/ dir
 # (git won't look inside an ignored dir, so unignore the dir, then

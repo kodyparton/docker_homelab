@@ -1,0 +1,10 @@
+services:
+########## BRAIN-BOT CONFIGURATION (Discord relay for the second brain) ##########
+  brain-bot:
+    build: .
+    container_name: brain-bot
+    env_file:
+      - .env
+    environment:
+      - TZ=America/Chicago
+    restart: unless-stopped

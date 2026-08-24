@@ -41,6 +41,11 @@ flowchart LR
         LazyLibrarian
         Audiobookshelf
     end
+    subgraph "Second Brain"
+        BrainBot["Brain Bot"]
+        Ollama
+        Qdrant
+    end
 
     Prowlarr --> Sonarr
     Prowlarr --> SonarrHD
@@ -71,6 +76,9 @@ flowchart LR
     Watchtower -.-> Sonarr
     Watchtower -.-> Radarr
     Watchtower -.-> Prowlarr
+    BrainBot --> n8n
+    n8n --> Ollama
+    n8n --> Qdrant
 ```
 
 Solid arrows are functional dependencies (data/API calls the app needs to work). Dotted arrows are n8n/Watchtower/NPM reaching in from outside — monitoring, automation, or routing rather than core function.
@@ -98,6 +106,10 @@ Solid arrows are functional dependencies (data/API calls the app needs to work).
 | Vikunja | 30037 | 3456 | |
 | Tautulli | 30035 | 8181 | |
 | Huntarr | 30036 | 9705 | |
+| Ollama | 11434 | 11434 | LAN only, no auth — do not expose publicly |
+| Qdrant | 6333 | 6333 | LAN only, no auth — do not expose publicly |
+
+`brain-bot` has no listening port — outbound only (Discord Gateway + calls to n8n).
 
 Convention: LAN-only services generally live in the `300xx` range. `30034` is currently unused (gap, not a mistake).
 

@@ -1,0 +1,12 @@
+services:
+########## QDRANT CONFIGURATION (vector memory store for the second brain) ##########
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/qdrant/storage:/qdrant/storage
+    ports:
+      - 6333:6333
+    environment:
+      - TZ=America/Chicago
+    restart: unless-stopped

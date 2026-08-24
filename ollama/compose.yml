@@ -1,0 +1,12 @@
+services:
+########## OLLAMA CONFIGURATION (local LLM runtime for the second brain) ##########
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/ollama/config:/root/.ollama
+    ports:
+      - 11434:11434
+    environment:
+      - TZ=America/Chicago
+    restart: unless-stopped

@@ -1,11 +1,12 @@
 # Homelab Documentation
 
-Documentation for the `docker_homelab` stack — a Mac Mini running ~18 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
+Documentation for the `docker_homelab` stack — a Mac Mini running ~22 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
 
 ## Start here
 
 - **[Architecture Overview](architecture/overview.md)** — service dependency map, port map, domain/reverse-proxy map, data flow.
 - **[Automation Map](architecture/automation.md)** — every n8n workflow, what it touches, what it's allowed to change automatically.
+- **[Second Brain](architecture/second-brain.md)** — the Discord-native local-LLM knowledge assistant: how it works, how to teach it things, setup steps.
 - **[Known Issues](architecture/known-issues.md)** — open problems and their status, resolved-issue changelog.
 
 ## Per-service docs
@@ -32,6 +33,9 @@ One file per running container in [`containers/`](containers/), each following t
 | Nginx Proxy Manager | [containers/nginx-proxy-manager.md](containers/nginx-proxy-manager.md) |
 | Homepage | [containers/homepage.md](containers/homepage.md) |
 | Vikunja | [containers/vikunja.md](containers/vikunja.md) |
+| Ollama | [containers/ollama.md](containers/ollama.md) |
+| Qdrant | [containers/qdrant.md](containers/qdrant.md) |
+| Brain Bot | [containers/brain-bot.md](containers/brain-bot.md) |
 
 ## Keeping this updated
 

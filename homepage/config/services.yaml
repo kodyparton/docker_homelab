@@ -1,0 +1,153 @@
+---
+- Media Management:
+    - Sonarr:
+        icon: sonarr.png
+        href: http://192.168.178.69:30027
+        description: TV shows
+        server: my-docker
+        container: sonarr
+        widget:
+          type: sonarr
+          url: http://192.168.178.69:30027
+          key: "{{HOMEPAGE_VAR_SONARR_API_KEY}}"
+
+    - Sonarr 4K:
+        icon: sonarr.png
+        href: http://192.168.178.69:30030
+        description: TV shows (4K)
+        server: my-docker
+        container: sonarr-4k
+        widget:
+          type: sonarr
+          url: http://192.168.178.69:30030
+          key: "{{HOMEPAGE_VAR_SONARR_4K_API_KEY}}"
+
+    - Radarr:
+        icon: radarr.png
+        href: http://192.168.178.69:30025
+        description: Movies
+        server: my-docker
+        container: radarr
+        widget:
+          type: radarr
+          url: http://192.168.178.69:30025
+          key: "{{HOMEPAGE_VAR_RADARR_API_KEY}}"
+
+    - Radarr 4K:
+        icon: radarr.png
+        href: http://192.168.178.69:30031
+        description: Movies (4K)
+        server: my-docker
+        container: radarr-4k
+        widget:
+          type: radarr
+          url: http://192.168.178.69:30031
+          key: "{{HOMEPAGE_VAR_RADARR_4K_API_KEY}}"
+
+    - Prowlarr:
+        icon: prowlarr.png
+        href: http://192.168.178.69:9696
+        description: Indexer manager
+        server: my-docker
+        container: prowlarr
+        widget:
+          type: prowlarr
+          url: http://192.168.178.69:9696
+          key: "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
+
+    - Overseerr:
+        icon: overseerr.png
+        href: https://request.kodyparton.com
+        description: Media requests
+        server: my-docker
+        container: overseerr
+        widget:
+          type: overseerr
+          url: http://192.168.178.69:30023
+          key: "{{HOMEPAGE_VAR_OVERSEERR_API_KEY}}"
+
+    - Tautulli:
+        icon: tautulli.png
+        href: http://192.168.178.69:30035
+        description: Plex stats
+        server: my-docker
+        container: tautulli
+        widget:
+          type: tautulli
+          url: http://192.168.178.69:30035
+          key: "{{HOMEPAGE_VAR_TAUTULLI_API_KEY}}"
+
+- Downloads & Books:
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: https://downloads.kodyparton.com
+        description: Torrent client
+        server: my-docker
+        container: qbittorrent
+        widget:
+          type: qbittorrent
+          url: http://192.168.178.69:30024
+          username: "{{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}"
+
+    - Unpackerr:
+        icon: unpackerr.png
+        description: Auto-extracts finished downloads (no web UI)
+        server: my-docker
+        container: unpackerr
+
+    - Huntarr:
+        icon: mdi-target
+        href: http://192.168.178.69:30036
+        description: Missing/upgrade search automation
+        server: my-docker
+        container: huntarr
+
+    - Audiobookshelf:
+        icon: audiobookshelf.png
+        href: http://192.168.178.69:30033
+        description: Audiobooks & podcasts
+        server: my-docker
+        container: audiobookshelf
+
+    - LazyLibrarian:
+        icon: lazylibrarian.png
+        href: http://192.168.178.69:30032
+        description: Ebook management
+        server: my-docker
+        container: lazylibrarian
+
+- Infrastructure:
+    - Nginx Proxy Manager:
+        icon: nginx-proxy-manager.png
+        href: http://192.168.178.69:81
+        description: Reverse proxy admin
+        server: my-docker
+        container: nginx-app-1
+
+    - n8n:
+        icon: n8n.png
+        href: https://n8n.kodyparton.com
+        description: Workflow automation
+        server: my-docker
+        container: n8n-n8n-1
+
+    - Trilium:
+        icon: trilium.png
+        href: http://192.168.178.69:8080
+        description: Notes
+        server: my-docker
+        container: trilium-trilium-1
+
+    - Vikunja:
+        icon: vikunja.png
+        href: http://192.168.178.69:30037
+        description: Task & project management
+        server: my-docker
+        container: vikunja
+
+    - Watchtower:
+        icon: watchtower.png
+        description: Auto-updates container images (no web UI)
+        server: my-docker
+        container: watchtower

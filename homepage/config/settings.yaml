@@ -1,0 +1,15 @@
+title: Kody's Homelab
+favicon: https://gethomepage.dev/img/favicon.ico
+theme: dark
+color: slate
+headerStyle: clean
+layout:
+  Media Management:
+    style: row
+    columns: 4
+  Downloads & Books:
+    style: row
+    columns: 4
+  Infrastructure:
+    style: row
+    columns: 4

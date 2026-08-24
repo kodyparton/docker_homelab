@@ -22,14 +22,18 @@ launchd-out.log
 */metadata/
 */local-files/
 */letsencrypt/
+vikunja/files/
 
 # re-include compose files that happen to live under a config/ dir
 # (git won't look inside an ignored dir, so unignore the dir, then
 # re-ignore everything in it except the compose file)
-!heimdall/config/
-heimdall/config/*
-!heimdall/config/compose.yml
-
 !lazylibrarian/config/
 lazylibrarian/config/*
 !lazylibrarian/config/compose.yml
+
+# homepage dashboard: config/ is desired-state YAML (like compose.yml),
+# not runtime data, so track the YAML but still ignore anything else
+# homepage might write in there (logs, cache, etc.)
+!homepage/config/
+homepage/config/*
+!homepage/config/*.yaml

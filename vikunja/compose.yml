@@ -1,0 +1,17 @@
+services:
+########## VIKUNJA CONFIGURATION ##########
+  vikunja:
+    image: vikunja/vikunja
+    container_name: vikunja
+    environment:
+      - VIKUNJA_SERVICE_PUBLICURL=http://192.168.178.69:30037/
+      - VIKUNJA_SERVICE_SECRET=${VIKUNJA_JWT_SECRET}
+      - VIKUNJA_DATABASE_TYPE=sqlite
+      - VIKUNJA_DATABASE_PATH=/db/vikunja.db
+      - TZ=America/Chicago
+    ports:
+      - 30037:3456
+    volumes:
+      - ./config:/db
+      - ./files:/app/vikunja/files
+    restart: unless-stopped

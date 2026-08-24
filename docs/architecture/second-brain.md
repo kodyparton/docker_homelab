@@ -132,3 +132,13 @@ Ideas not yet built:
 - **Cross-channel/cross-user conversation isolation** — recent-history lookups currently filter by date only, not by Discord channel or author. Fine for a single-user bot in one channel (the deployed setup), but if `brain-bot` ever listens in multiple channels or multiple people talk to it, conversations would blend together. Would need `channel_id`/`author_id` added to the conversation log payload (they're already sent by the bot, just not stored yet) and filtered on.
 - **Explicit fact correction** — right now updating a fact means forgetting the old one and stating the new one as two separate messages. A natural "actually it's X, not Y" in one message would need the classifier to support a fifth intent (`correct`) that does a search-and-replace in one step.
 - **Feeding it the Obsidian vault** — still an explicit opt-in the user runs themselves (see above), not automated, by design.
+
+## Brainstorm: further ideas (2026-08-24, not yet built)
+
+- **Vikunja bridge** — the classifier already distinguishes intents; a fifth (`task`) could create a real Vikunja task via its API instead of just a Qdrant fact when you say something like "remind me to renew the car registration." Natural fit since both systems already exist in this repo.
+- **Memory consolidation** — as conversation logs accumulate indefinitely, retrieval quality could degrade under volume. A periodic (weekly?) job that has the LLM review a day's or week's raw conversation entries and collapse them into a shorter summary point, keeping raw entries for a rolling window (e.g. 30 days) and summaries beyond that.
+- **Proactive date-aware reminders** — scan stored facts for dates (appointments, deadlines) and have a daily job cross-reference against "today" or "this week," posting a heads-up rather than waiting to be asked.
+- **Voice messages** — Discord supports voice messages; a local Whisper model (`whisper.cpp`, runs fine on CPU) could transcribe them into the same chat pipeline, so "talking" to the brain doesn't require typing.
+- **Weekly "what I learned about you" digest** — same digest pattern already used elsewhere in this repo (see workflow 14), summarizing the week's stored facts and most-asked questions.
+- **Full memory export** — a script that dumps every Qdrant point to a readable markdown file, the reverse of `seed_second_brain.py` — for backup, portability, or just browsing everything it knows outside of chat.
+- **Correlating homelab state with journal mood** — it already knows both the known-issues log and daily journal entries; a query like "was I stressed the week the mount kept breaking" becomes answerable for free once both are in the same memory.

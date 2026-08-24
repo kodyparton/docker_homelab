@@ -7,6 +7,7 @@ Documentation for the `docker_homelab` stack — a Mac Mini running ~22 self-hos
 - **[Architecture Overview](architecture/overview.md)** — service dependency map, port map, domain/reverse-proxy map, data flow.
 - **[Automation Map](architecture/automation.md)** — every n8n workflow, what it touches, what it's allowed to change automatically.
 - **[Second Brain](architecture/second-brain.md)** — the Discord-native local-LLM knowledge assistant: how it works, how to teach it things, setup steps.
+- **[Daily Journaling](architecture/journaling.md)** — evening prompts, automatic daily journal generation from conversations/photos/Strava/Apple Health, setup steps.
 - **[Known Issues](architecture/known-issues.md)** — open problems and their status, resolved-issue changelog.
 
 ## Per-service docs

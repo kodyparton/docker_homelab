@@ -43,12 +43,18 @@ async def on_message(message: discord.Message):
         return
 
     content = message.content.strip()
-    if not content:
+    images = [
+        {"url": a.url, "filename": a.filename, "content_type": a.content_type}
+        for a in message.attachments
+        if (a.content_type or "").startswith("image/")
+    ]
+    if not content and not images:
         return
 
     async with message.channel.typing():
         payload = {
             "content": content,
+            "images": images,
             "author_id": str(message.author.id),
             "author_name": str(message.author),
             "channel_id": str(message.channel.id),

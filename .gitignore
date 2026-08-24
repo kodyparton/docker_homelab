@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# local editor state
+.obsidian/
+
 # local logs
 *.log
 *.log.*

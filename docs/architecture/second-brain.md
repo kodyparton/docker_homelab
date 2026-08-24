@@ -59,6 +59,12 @@ Just ask normally:
 
 It embeds the question, retrieves the 5 most semantically similar stored facts (only ones scoring above a relevance threshold — see `qdrant.md`), and asks the local LLM to answer using *only* that retrieved context. If nothing relevant was stored, it says so rather than guessing — this was deliberately tested (see workflow 18's build notes) to confirm it doesn't hallucinate an answer when the context is empty.
 
+## Sending it a photo
+
+Any image attachment (with or without a caption) gets logged rather than answered — the bot confirms with a short "📷 saved" reply. It doesn't analyze the image itself (no vision model in the loop), just the filename and whatever caption you included. This exists primarily to feed the daily journal — see `docs/architecture/journaling.md`.
+
+Every exchange through this bot — facts, questions, photos — also gets logged with today's date, which is what makes the [daily journaling system](journaling.md) possible.
+
 ## Setting the foundation of knowledge
 
 An empty brain isn't useful. Two ways to seed it:

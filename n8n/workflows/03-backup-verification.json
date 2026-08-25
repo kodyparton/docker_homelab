@@ -141,7 +141,7 @@
       "id": "qdrant_snapshot",
       "name": "Snapshot Qdrant",
       "parameters": {
-        "command": "curl -s -X POST http://localhost:6333/collections/second_brain/snapshots > /dev/null && ls -t /Users/kp-srv-01/Documents/docker/qdrant/snapshots/second_brain/*.snapshot 2>/dev/null | tail -n +4 | while read -r f; do rm -f \"$f\" \"$f.checksum\"; done"
+        "command": "curl -s -X POST http://localhost:6333/collections/second_brain/snapshots > /dev/null && ls -t /Users/kp-srv-01/Documents/docker/qdrant/snapshots/second_brain/*.snapshot 2>/dev/null | tail -n +4 | while read -r f; do rm -f \"$f\" \"$f.checksum\"; done && curl -s -X POST http://localhost:6333/collections/shadow_log/snapshots > /dev/null && ls -t /Users/kp-srv-01/Documents/docker/qdrant/snapshots/shadow_log/*.snapshot 2>/dev/null | tail -n +4 | while read -r f; do rm -f \"$f\" \"$f.checksum\"; done"
       },
       "position": [
         220,

@@ -1,0 +1,254 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Any Duplicates Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Digest",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Collect Duplicate Pairs": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Any Duplicates Found?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Digest": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Scroll All Facts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split Facts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Search Neighbors": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Collect Duplicate Pairs",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Split Facts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Search Neighbors",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Weekly Sat 05:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Scroll All Facts",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "bboyN6TbxnhBthtY",
+  "isArchived": false,
+  "meta": null,
+  "name": "29 - Weekly Duplicate Fact Scan",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Weekly Sat 05:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "expression": "0 5 * * 6",
+              "field": "cronExpression"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "scroll_facts",
+      "name": "Scroll All Facts",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'fact' } } ] }, limit: 1000, with_payload: true, with_vector: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "split_facts",
+      "name": "Split Facts",
+      "parameters": {
+        "jsCode": "const points = ($json.result && $json.result.points) || [];\nreturn points.map(p => ({ json: p }));\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "search_neighbors",
+      "name": "Search Neighbors",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ vector: $json.vector, limit: 5, with_payload: true, score_threshold: 0.92, filter: { must: [ { key: 'type', match: { value: 'fact' } } ] } }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/search"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "collect_pairs",
+      "name": "Collect Duplicate Pairs",
+      "parameters": {
+        "jsCode": "const originals = $('Split Facts').all().map(i => i.json);\nconst results = $input.all().map(i => i.json);\nconst seen = new Set();\nconst pairs = [];\nfor (let idx = 0; idx < originals.length; idx++) {\n  const orig = originals[idx];\n  const matches = (results[idx] && results[idx].result) || [];\n  for (const m of matches) {\n    if (!orig || !m || m.id === orig.id) continue;\n    if (typeof m.score !== 'number' || m.score < 0.92) continue;\n    const aId = orig.id < m.id ? orig.id : m.id;\n    const bId = orig.id < m.id ? m.id : orig.id;\n    const key = `${aId}:${bId}`;\n    if (seen.has(key)) continue;\n    seen.add(key);\n    const aText = aId === orig.id ? (orig.payload && orig.payload.text) : (m.payload && m.payload.text);\n    const bText = bId === orig.id ? (orig.payload && orig.payload.text) : (m.payload && m.payload.text);\n    pairs.push({ aId, aText: aText || '(no text)', bId, bText: bText || '(no text)', score: m.score });\n  }\n}\nreturn [{ json: { pairs, count: pairs.length } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "has_pairs",
+      "name": "Any Duplicates Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.count}}",
+              "operator": {
+                "operation": "gt",
+                "type": "number"
+              },
+              "rightValue": 0
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "format_digest",
+      "name": "Format Digest",
+      "parameters": {
+        "jsCode": "const pairs = $json.pairs || [];\nconst lines = pairs.slice(0, 15).map(p => `- (${Math.round(p.score*100)}% similar) \"${p.aText}\"  <->  \"${p.bText}\"`).join('\\n');\nconst more = pairs.length > 15 ? `\\n...and ${pairs.length - 15} more.` : '';\nreturn [{ json: { message: `**\ud83e\udde0 Possible duplicate facts found (${pairs.length})**\\nThese look similar enough they might be saying the same thing twice, or one might be stale. Nothing was changed automatically \u2014 review and \\`forget\\` whichever one is outdated if needed.\\n${lines}${more}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1320,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "post_digest",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "28d38034-84f4-4b62-9516-1f542816952c"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

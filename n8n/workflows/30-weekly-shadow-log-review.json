@@ -1,0 +1,223 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Any Activity This Week?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Message",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Build Digest": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Any Activity This Week?",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Prune Old Shadow Entries",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Scroll Shadow Log": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Digest",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Weekly Sun 19:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Scroll Shadow Log",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "p3vkCQgeGK30ONkU",
+  "isArchived": false,
+  "meta": null,
+  "name": "30 - Weekly Shadow Log Review",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Weekly Sun 19:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "expression": "0 19 * * 0",
+              "field": "cronExpression"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "scroll_shadow",
+      "name": "Scroll Shadow Log",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ limit: 1000, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/shadow_log/points/scroll"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "build_digest",
+      "name": "Build Digest",
+      "parameters": {
+        "jsCode": "const points = ($json.result && $json.result.points) || [];\nconst now = Date.now();\nconst weekMs = 7 * 24 * 60 * 60 * 1000;\nconst dayMs = 24 * 60 * 60 * 1000;\nconst recent = points.filter(p => {\n  const ts = p.payload && (p.payload.deleted_at || p.payload.completed_at);\n  if (!ts) return false;\n  return (now - new Date(ts).getTime()) <= weekMs;\n});\nconst stale = points.filter(p => {\n  const ts = p.payload && (p.payload.deleted_at || p.payload.completed_at);\n  if (!ts) return true;\n  return (now - new Date(ts).getTime()) > 90 * dayMs;\n});\nconst lines = recent.map(p => {\n  if (p.payload.action === 'forget') return `- \\uD83D\\uDDD1\\uFE0F forgot: \"${p.payload.text}\"`;\n  if (p.payload.action === 'complete_task') {\n    const t = p.payload.original_task || {};\n    return `- \\u2705 completed task: \"${t.title || '(untitled)'}\"`;\n  }\n  return `- ${p.payload.action}: ${JSON.stringify(p.payload).slice(0,100)}`;\n}).join('\\n');\nreturn [{ json: { recent_count: recent.length, digest_lines: lines, prune_ids: stale.map(p => p.id) } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "has_activity",
+      "name": "Any Activity This Week?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.recent_count}}",
+              "operator": {
+                "operation": "gt",
+                "type": "number"
+              },
+              "rightValue": 0
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        }
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "format_message",
+      "name": "Format Message",
+      "parameters": {
+        "jsCode": "return [{ json: { message: `**\\uD83D\\uDCDC Second Brain: this week's forgets & completions (${$json.recent_count})**\\n${$json.digest_lines}\\n\\nAnything here shouldn't have happened? Ping me and I can restore it from the shadow log \\u2014 nothing here is gone for real yet.` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        -60
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "post_digest",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        1100,
+        -60
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "7be3f98c-2d96-484a-84ab-2a945eee2371"
+    },
+    {
+      "continueOnFail": true,
+      "id": "prune_shadow",
+      "name": "Prune Old Shadow Entries",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: $json.prune_ids }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/shadow_log/points/delete"
+      },
+      "position": [
+        880,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

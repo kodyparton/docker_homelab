@@ -43,7 +43,15 @@ It also remembers what you were just talking about *today*, so follow-ups work n
 >
 > actually never mind about my sister's birthday thing
 
-It searches for the closest match to what you described and deletes it — but only if it's confident it found the right thing. If it's not sure, it tells you nothing matched rather than guessing and deleting the wrong memory. It always tells you exactly what got removed.
+It searches for the closest match to what you described and deletes it — but only if it's confident it found the right thing. If it's not sure, it tells you nothing matched rather than guessing and deleting the wrong memory. It always tells you exactly what got removed. If something ever gets removed by mistake, nothing is really gone — every delete is recoverable, and you'll see a weekly recap of everything that happened this way.
+
+### Correcting something in one message
+
+> actually the meeting is at 3pm, not 2pm
+>
+> correction: the wifi password is now hunter3
+
+No need to forget-then-remember as two separate messages — it finds what you're replacing and swaps it in one step, telling you exactly what changed.
 
 ### 4. Give it a task
 
@@ -77,9 +85,13 @@ You don't do anything for these — they just happen. Reply to the evening promp
 ## Things worth knowing
 
 - **It only knows what you've told it, plus this entire homelab's documentation and your Obsidian vault** — every service/port/known issue, and everything in `~/Obsidian/KodyBrain` (your other second brain's `SOUL.md`/`USER.md`/`MEMORY.md`/`HABITS.md`/daily notes), both refreshed automatically every morning. Ask it "why does the mount keep breaking on sonarr" or "what are my habit pillars" and it answers from the real source either way. This is read-only — nothing this bot does ever writes back into your Obsidian vault.
-- **Replies take a few seconds to ~30 seconds.** It's running entirely on this Mac, not a cloud API — there's real thinking happening, not instant lookup. It shows "typing..." the whole time.
+- **Unambiguous phrasing gets an instant reply.** Starting a message with "remember...", "forget...", or "remind me to..." skips the slow thinking step entirely — those land in 1-4 seconds instead of minutes. Anything more conversational still goes through the full pipeline.
+- **Replies take anywhere from ~30 seconds to a few minutes.** It's running entirely on this Mac's CPU, not a cloud API or GPU — most messages need two separate LLM passes (figure out what you meant, then generate the reply), and under any load that can genuinely take 2-3 minutes. It shows "typing..." the whole time. If it's ever silent for much longer than that, see `architecture/troubleshooting-second-brain.md`.
 - **Nothing leaves this machine.** No external AI API, no cloud service sees what you tell it.
 - **Old conversations get quietly tidied up.** Once a chat exchange is over a month old, it gets summarized into one condensed memory instead of kept verbatim forever — keeps things fast and relevant without losing the substance.
+- **Ask it the exact same question twice and the second time is fast.** Repeated questions get answered from a short-term cache instead of running the full thinking pipeline again — that cache is wiped automatically the moment you tell it something new or forget something, so it never hands back a stale answer.
+- **Nothing it deletes or completes is really gone right away.** `forget` and marking a task done both save a snapshot of what changed before doing it, and you get a weekly Discord recap of everything that happened that way. If something got matched wrong, that's recoverable — just ask.
+- **It watches its own health.** Every 15 minutes it checks that Ollama/Qdrant/Whisper/brain-bot are all actually up and posts to Discord if not; `!status` also reports on it specifically. A daily self-test fires a handful of safe test messages through it and flags anything that comes back wrong or too slow.
 - **Want to see everything it knows, all at once?** Run `python3 scripts/export_second_brain.py` in the repo — dumps everything to a markdown file you can read top to bottom.
 - **Want to feed it something else big at once** (old notes, a braindump, another folder) instead of typing facts one at a time? `python3 scripts/seed_second_brain.py <file-or-folder>`. Your Obsidian vault is already covered automatically, no need to run this for that.
 
@@ -92,7 +104,7 @@ If any of this isn't done yet, that feature just won't work until it is — ever
 | Talking to it at all | A dedicated Discord bot (token + channel ID) in `brain-bot/.env`, then `docker compose up -d --build` in `brain-bot/`, then activate workflow 18 in n8n |
 | Evening prompts, journal, reminders, weekly digest | The same bot token pasted into n8n's "Second Brain Discord Bot" credential (as `Bot YOUR_TOKEN`), channel ID filled into workflows 19/20/24/25, all four activated |
 | Voice messages | Nothing — already running |
-| Task creation | Vikunja account + API token → n8n's "Vikunja API Token" credential, project ID → workflow 18's "Create Vikunja Task" node |
+| ~~Task creation~~ | **Done (2026-08-25)** — Vikunja token connected, tasks land in the "Inbox" project |
 | Strava in the journal | Strava API app → n8n's "Strava API" credential → click Connect |
 | Apple Health in the journal | "Health Auto Export" iOS app → automation posting to `https://n8n.kodyparton.com/webhook/apple-health-import` |
 | Journal saved to Trilium | Trilium ETAPI token → n8n credential, parent note ID → workflow 20 |

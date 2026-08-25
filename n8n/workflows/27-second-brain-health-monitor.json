@@ -1,0 +1,330 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "All Healthy?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Alert",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Check Containers": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate Health",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Ollama": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate Health",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate Health",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Vikunja": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate Health",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Whisper": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate Health",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Evaluate Health": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "All Healthy?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Check Ollama",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Qdrant",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Whisper",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Containers",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Vikunja",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Alert": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "l4J7f0fMHxhIANgk",
+  "isArchived": false,
+  "meta": null,
+  "name": "27 - Second Brain Health Monitor",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Every 15 Minutes",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_ollama",
+      "name": "Check Ollama",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:11434/api/tags"
+      },
+      "position": [
+        260,
+        -180
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_qdrant",
+      "name": "Check Qdrant",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:6333/collections"
+      },
+      "position": [
+        260,
+        -60
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_whisper",
+      "name": "Check Whisper",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:9000/docs"
+      },
+      "position": [
+        260,
+        60
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "check_containers",
+      "name": "Check Containers",
+      "parameters": {
+        "command": "docker ps --format '{{.Names}}: {{.Status}}'"
+      },
+      "position": [
+        260,
+        180
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "combine",
+      "name": "Evaluate Health",
+      "parameters": {
+        "jsCode": "function up(nodeName) {\n  try {\n    const j = $(nodeName).first().json;\n    return !j.error && !j.errorMessage;\n  } catch (e) {\n    return false;\n  }\n}\n\nconst ollamaOk = up('Check Ollama');\nconst qdrantOk = up('Check Qdrant');\nconst whisperOk = up('Check Whisper');\nconst vikunjaOk = up('Check Vikunja');\n\nlet dockerRaw = '';\ntry {\n  dockerRaw = $('Check Containers').first().json.stdout ?? $('Check Containers').first().json.data ?? '';\n} catch (e) {\n  dockerRaw = '';\n}\nconst brainBotOk = /brain-bot:\\s*Up/i.test(dockerRaw);\nconst ollamaContainerOk = /(^|\\n)ollama:\\s*Up/i.test(dockerRaw);\nconst qdrantContainerOk = /(^|\\n)qdrant:\\s*Up/i.test(dockerRaw);\nconst whisperContainerOk = /(^|\\n)whisper:\\s*Up/i.test(dockerRaw);\n\nconst issues = [];\nif (!ollamaOk) issues.push('Ollama API unreachable (http://192.168.178.69:11434)');\nif (!qdrantOk) issues.push('Qdrant API unreachable (http://192.168.178.69:6333)');\nif (!whisperOk) issues.push('Whisper API unreachable (http://192.168.178.69:9000)');\nif (!vikunjaOk) issues.push('Vikunja API unreachable (http://192.168.178.69:30037)');\nif (!brainBotOk) issues.push('brain-bot container not reporting Up');\nif (!ollamaContainerOk) issues.push('ollama container not reporting Up');\nif (!qdrantContainerOk) issues.push('qdrant container not reporting Up');\nif (!whisperContainerOk) issues.push('whisper container not reporting Up');\n\nreturn [{\n  json: {\n    all_healthy: issues.length === 0,\n    issues,\n  },\n}];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        520,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "check_healthy",
+      "name": "All Healthy?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.all_healthy}}",
+              "operator": {
+                "operation": "false",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        },
+        "looseTypeValidation": true
+      },
+      "position": [
+        780,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "format_alert",
+      "name": "Format Alert",
+      "parameters": {
+        "jsCode": "const issues = $json.issues || [];\nconst lines = issues.map(i => `- ${i}`).join('\\n');\nreturn [{\n  json: {\n    message: `**\u26a0\ufe0f Second Brain Health Check Failed**\\n${lines}\\n\\nCheck \\`docker logs ollama\\` / \\`docker logs qdrant\\` / \\`docker logs whisper\\` / \\`docker logs brain-bot\\` on the Mac Mini. This alert repeats every 15 minutes until resolved.`,\n  },\n}];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1040,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        1300,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "55aaa8da-e702-48c7-8200-18b9ab0e59ce"
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_vikunja",
+      "name": "Check Vikunja",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:30037/api/v1/info"
+      },
+      "position": [
+        260,
+        200
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

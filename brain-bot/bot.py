@@ -20,7 +20,7 @@ for _c in _raw_channel_ids:
         log.warning("Ignoring non-numeric DISCORD_CHANNEL_IDS entry: %r", _c)
 if not ALLOWED_CHANNEL_IDS:
     log.warning("No valid DISCORD_CHANNEL_IDS configured — bot will only respond to DMs.")
-REQUEST_TIMEOUT_SECONDS = int(os.environ.get("REQUEST_TIMEOUT_SECONDS", "120"))
+REQUEST_TIMEOUT_SECONDS = int(os.environ.get("REQUEST_TIMEOUT_SECONDS", "300"))
 WHISPER_URL = os.environ.get("WHISPER_URL", "http://192.168.178.69:9000/asr?output=text")
 
 
@@ -74,6 +74,14 @@ async def on_message(message: discord.Message):
     ]
     if not content and not images and not voice_attachments:
         return
+
+    # This can genuinely take a few minutes (CPU-only local inference) —
+    # give immediate, persistent feedback beyond Discord's typing indicator
+    # (which can blip) so it's clear the message was received.
+    try:
+        await message.add_reaction("🧠")
+    except discord.HTTPException:
+        log.warning("Couldn't react to message (missing permission?)")
 
     async with message.channel.typing():
         if voice_attachments:

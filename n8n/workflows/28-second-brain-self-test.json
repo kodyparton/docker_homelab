@@ -1,0 +1,904 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Any Failed?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post Alert",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Marker": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (chat)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Daily 05:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Marker",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (chat)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (question)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (correct)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (correct_cleanup)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (correct_cleanup)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (list_tasks)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (correct_setup)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (correct)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (forget)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (correct_setup)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (list_tasks)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (media_query)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (media_query)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Summarize Results",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (question)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (store)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Eval Test (store)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set Test (forget)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (chat)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (chat)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (correct)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (correct)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (correct_cleanup)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (correct_cleanup)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (correct_setup)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (correct_setup)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (forget)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (forget)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (list_tasks)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (list_tasks)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (media_query)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (media_query)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (question)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (question)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run Test (store)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Eval Test (store)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (chat)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (chat)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (correct)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (correct)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (correct_cleanup)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (correct_cleanup)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (correct_setup)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (correct_setup)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (forget)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (forget)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (list_tasks)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (list_tasks)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (media_query)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (media_query)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (question)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (question)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set Test (store)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run Test (store)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Summarize Results": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Any Failed?",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "U9CFuScimlRqWzEb",
+  "isArchived": false,
+  "meta": null,
+  "name": "28 - Second Brain Self-Test",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Daily 05:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "expression": "0 5 * * *",
+              "field": "cronExpression"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "build_marker",
+      "name": "Build Marker",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nstaticData.results = [];\nconst marker = `SELF-TEST MARKER ${new Date().toISOString()} - safe to ignore`;\nreturn [{ json: { marker } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_chat",
+      "name": "Set Test (chat)",
+      "parameters": {
+        "jsCode": "const content = \"hey, how's it going?\";\nreturn [{ json: { label: \"chat\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        460,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_chat",
+      "name": "Run Test (chat)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        640,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_chat",
+      "name": "Eval Test (chat)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (chat)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        820,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_question",
+      "name": "Set Test (question)",
+      "parameters": {
+        "jsCode": "const content = \"what services run on this homelab?\";\nreturn [{ json: { label: \"question\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1000,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_question",
+      "name": "Run Test (question)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        1180,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_question",
+      "name": "Eval Test (question)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (question)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1360,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_store",
+      "name": "Set Test (store)",
+      "parameters": {
+        "jsCode": "const content = $('Build Marker').first().json.marker;\nreturn [{ json: { label: \"store\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_store",
+      "name": "Run Test (store)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        1720,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_store",
+      "name": "Eval Test (store)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (store)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1900,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_forget",
+      "name": "Set Test (forget)",
+      "parameters": {
+        "jsCode": "const content = 'forget ' + $('Build Marker').first().json.marker;\nreturn [{ json: { label: \"forget\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2080,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_forget",
+      "name": "Run Test (forget)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        2260,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_forget",
+      "name": "Eval Test (forget)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (forget)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_list_tasks",
+      "name": "Set Test (list_tasks)",
+      "parameters": {
+        "jsCode": "const content = \"what tasks do I have?\";\nreturn [{ json: { label: \"list_tasks\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2620,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_list_tasks",
+      "name": "Run Test (list_tasks)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        2800,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_list_tasks",
+      "name": "Eval Test (list_tasks)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (list_tasks)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2980,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_media_query",
+      "name": "Set Test (media_query)",
+      "parameters": {
+        "jsCode": "const content = \"do I have any episodes of the office downloaded\";\nreturn [{ json: { label: \"media_query\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        3160,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_media_query",
+      "name": "Run Test (media_query)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        3340,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_media_query",
+      "name": "Eval Test (media_query)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (media_query)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        3520,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "summarize",
+      "name": "Summarize Results",
+      "parameters": {
+        "jsCode": "const results = $json.results || [];\nconst failed = results.filter(r => !r.pass);\nconst lines = results.map(r => `${r.pass ? '\u2705' : '\u274c'} ${r.label} (${Math.round(r.elapsed_ms/1000)}s)${r.error ? ' - ' + r.error : ''}`).join('\\n');\nreturn [{ json: { any_failed: failed.length > 0, summary: `**Second Brain Self-Test**\\n${lines}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        3700,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "check_failed",
+      "name": "Any Failed?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.any_failed}}",
+              "operator": {
+                "operation": "true",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        },
+        "looseTypeValidation": true
+      },
+      "position": [
+        3880,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post Alert",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.summary}}"
+      },
+      "position": [
+        4060,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "6b0e1c9a-2a11-4f2e-9d3a-9a2c0f6b7e11"
+    },
+    {
+      "id": "set_correct_setup",
+      "name": "Set Test (correct_setup)",
+      "parameters": {
+        "jsCode": "const content = $('Build Marker').first().json.marker + ' v2';\nreturn [{ json: { label: \"correct_setup\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1660,
+        -220
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_correct_setup",
+      "name": "Run Test (correct_setup)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        1840,
+        -220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_correct_setup",
+      "name": "Eval Test (correct_setup)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (correct_setup)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2020,
+        -220
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_correct",
+      "name": "Set Test (correct)",
+      "parameters": {
+        "jsCode": "const content = 'actually it\\'s SELF-TEST MARKER CORRECTED ' + Date.now() + ' - safe to ignore, not ' + $('Build Marker').first().json.marker + ' v2';\nreturn [{ json: { label: \"correct\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2200,
+        -220
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_correct",
+      "name": "Run Test (correct)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        2380,
+        -220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_correct",
+      "name": "Eval Test (correct)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (correct)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2560,
+        -220
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "set_correct_cleanup",
+      "name": "Set Test (correct_cleanup)",
+      "parameters": {
+        "jsCode": "const content = 'forget SELF-TEST MARKER CORRECTED';\nreturn [{ json: { label: \"correct_cleanup\", content, _start: Date.now() } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2740,
+        -220
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "continueOnFail": true,
+      "id": "http_correct_cleanup",
+      "name": "Run Test (correct_cleanup)",
+      "parameters": {
+        "jsonBody": "={{ { \"content\": $json.content, \"images\": [], \"author_id\": \"self-test\", \"author_name\": \"Self-Test\", \"channel_id\": \"self-test\", \"is_dm\": false } }}",
+        "method": "POST",
+        "options": {
+          "timeout": 240000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://localhost:5678/webhook/second-brain-chat"
+      },
+      "position": [
+        2920,
+        -220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "eval_correct_cleanup",
+      "name": "Eval Test (correct_cleanup)",
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (correct_cleanup)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        3100,
+        -220
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

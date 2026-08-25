@@ -14,6 +14,50 @@
         ]
       ]
     },
+    "Check Ollama": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Status Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Status Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Vikunja": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Status Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Whisper": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Status Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
     "Every 30 Seconds": {
       "main": [
         [
@@ -64,6 +108,26 @@
           {
             "index": 0,
             "node": "docker ps",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Ollama",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Qdrant",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Whisper",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Check Vikunja",
             "type": "main"
           }
         ],
@@ -213,7 +277,7 @@
       "id": "format_status",
       "name": "Format Status Reply",
       "parameters": {
-        "jsCode": "const raw = $input.first().json.stdout ?? $input.first().json.data ?? '';\nconst fence = String.fromCharCode(96,96,96);\nreturn [{ json: { content: `**Homelab Status**\\n${fence}\\n${raw}\\n${fence}` } }];\n",
+        "jsCode": "const dockerRaw = $('docker ps').first().json.stdout ?? $('docker ps').first().json.data ?? '';\nconst fence = String.fromCharCode(96,96,96);\n\nfunction up(nodeName) {\n  try {\n    const j = $(nodeName).first().json;\n    return !j.error && !j.errorMessage;\n  } catch (e) {\n    return false;\n  }\n}\n\nconst ollamaOk = up('Check Ollama');\nconst qdrantOk = up('Check Qdrant');\nconst whisperOk = up('Check Whisper');\nconst vikunjaOk = up('Check Vikunja');\nconst brainBotOk = /brain-bot:\\s*Up/i.test(dockerRaw);\n\nconst allOk = ollamaOk && qdrantOk && whisperOk && brainBotOk && vikunjaOk;\nconst brainLine = allOk\n  ? '**Second Brain:** \u2705 all systems normal (Ollama, Qdrant, Whisper, Vikunja, brain-bot)'\n  : `**Second Brain:** \u26a0\ufe0f ${[\n      !ollamaOk && 'Ollama unreachable',\n      !qdrantOk && 'Qdrant unreachable',\n      !whisperOk && 'Whisper unreachable',\n      !vikunjaOk && 'Vikunja unreachable',\n      !brainBotOk && 'brain-bot container not Up',\n    ].filter(Boolean).join(', ')}`;\n\nreturn [{ json: { content: `**Homelab Status**\\n${brainLine}\\n${fence}\\n${dockerRaw}\\n${fence}` } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -250,6 +314,74 @@
       "position": [
         1540,
         0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_ollama",
+      "name": "Check Ollama",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:11434/api/tags"
+      },
+      "position": [
+        1100,
+        150
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_qdrant",
+      "name": "Check Qdrant",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:6333/collections"
+      },
+      "position": [
+        1100,
+        260
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_whisper",
+      "name": "Check Whisper",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:9000/docs"
+      },
+      "position": [
+        1100,
+        370
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "id": "check_vikunja",
+      "name": "Check Vikunja",
+      "parameters": {
+        "options": {
+          "timeout": 5000
+        },
+        "url": "http://192.168.178.69:30037/api/v1/info"
+      },
+      "position": [
+        1100,
+        480
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2

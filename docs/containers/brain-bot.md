@@ -47,10 +47,11 @@ Is itself the trigger for **18 - Second Brain - Chat** — every non-bot message
 ## Known Issues / Gotchas
 
 - **Requires the "Message Content Intent"** enabled on the Discord bot application (Developer Portal → Bot tab) — without it, `message.content` arrives empty and the bot can't see what anyone actually typed.
-- Response latency is bounded by Ollama inference time on this hardware (M1, 16GB) — expect several seconds to ~30s per reply depending on question complexity, longer for voice messages (transcription happens first). The bot shows a "typing..." indicator the whole time so it doesn't look hung.
+- Response latency is bounded by Ollama inference time on this hardware (M1, 16GB, CPU-only inference) — measured real round trips of 2:37-2:43 for a chat/question reply under light load (two sequential LLM calls: classify, then generate), longer for voice messages (transcription happens first). The bot reacts with 🧠 the instant a message is received (so it's clear the message was seen even if Discord's "typing..." indicator blips) and shows "typing..." for the duration. `REQUEST_TIMEOUT_SECONDS` (default 300s as of 2026-08-25, was 120s — too tight for the latencies actually observed) needs enough headroom for this; the deployed `.env` already sets it to 300.
 - Voice messages: any attachment with an `audio/*` content type gets transcribed and treated as if it were typed. If transcription fails, the bot says so explicitly rather than silently ignoring the message.
 - If n8n's `second-brain-chat` workflow isn't active, or Ollama/Qdrant aren't running, the bot replies with an explicit error message rather than staying silent — check `docker logs brain-bot` first if Discord ever really does go quiet.
 
 ## Change Log
 
 - `2026-08-24` — Built.
+- `2026-08-25` — Added an immediate 🧠 reaction on message receipt (real round trips can run several minutes; a persistent reaction is a clearer "got it" signal than the typing indicator alone). Raised the code's own `REQUEST_TIMEOUT_SECONDS` fallback default from 120s to 300s to match reality and the deployed `.env` (real measured latency exceeds 120s under normal conditions, not just edge cases).

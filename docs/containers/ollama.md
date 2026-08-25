@@ -57,9 +57,10 @@ Not covered by `scripts/backup_check.sh`. Models are re-downloadable (not unique
 ## Known Issues / Gotchas
 
 - **Disk space is tight on this host.** Pulling `qwen2.5:7b-instruct` (4.7GB) failed once with "no space left on device" until 22GB of unused Docker images were pruned. Check `df -h` before pulling additional/larger models.
-- Cold-start inference (first request after container start, or first request for a model not yet loaded into memory) is noticeably slower than subsequent requests — Ollama keeps recently-used models warm in memory for a few minutes by default.
-- No conversation memory between messages — each Discord message is a fresh, independent RAG query against Qdrant. There's no multi-turn context window today; see `docs/architecture/second-brain.md` for what that would take to add.
+- **No GPU passthrough to Docker containers on macOS.** Confirmed via Ollama's own startup log (`msg="inference compute" id=cpu library=cpu`) — inference is CPU-only regardless of the M1's GPU cores. This makes it genuinely slow: ~35-40s for even a short classify call, ~60-100s for a full generated answer. `OLLAMA_KEEP_ALIVE=60m` is set specifically to avoid paying an additional ~25s model-reload penalty on top of that whenever the model's been idle. Every workflow that calls Ollama needs a generous timeout (90-180s) to account for this — a too-short timeout here was the direct cause of a real "second brain isn't working" bug on 2026-08-25 (see `known-issues.md`).
+- Cold-start inference (first request after container start, or first request for a model not yet loaded into memory) is noticeably slower than subsequent requests, on top of the above.
 
 ## Change Log
 
 - `2026-08-24` — Deployed with `qwen2.5:7b-instruct` and `nomic-embed-text`.
+- `2026-08-25` — Set `OLLAMA_KEEP_ALIVE=60m` and increased calling workflows' timeouts after root-causing a real failure to CPU-only inference speed.

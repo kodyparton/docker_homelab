@@ -9,4 +9,10 @@ services:
       - 11434:11434
     environment:
       - TZ=America/Chicago
+      # No GPU passthrough is available to Docker containers on macOS, so
+      # inference here is CPU-only and slow (~40s for a short classify
+      # call, warm). Keeping the model resident avoids paying an
+      # additional ~25s reload penalty every time it's been idle for
+      # more than the 5m default.
+      - OLLAMA_KEEP_ALIVE=60m
     restart: unless-stopped

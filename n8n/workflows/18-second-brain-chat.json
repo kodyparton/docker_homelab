@@ -1,0 +1,5003 @@
+{
+  "active": true,
+  "activeVersion": {
+    "authors": "Kody Parton",
+    "autosaved": false,
+    "connections": {
+      "Build Chat Prompt": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Generate Chat Reply",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Complete Confirmation": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Complete Log",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Forget Confirmation": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Forget)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Match Prompt": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Match Task via LLM",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Media Prompt": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Media Match Found?",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build No-Match Confirmation": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed No-Match Log",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Note Confirmation": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Note Log",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Note Content": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Save Trilium Note",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Photo Confirmation": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Photo)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Prompt": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Generate Answer",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Store Confirmation": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (Store)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Build Task Confirmation": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Task Log",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Classify Intent": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Parse Intent",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Collect Radarr Results": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Get Tautulli History",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Collect Sonarr Results": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Get Radarr Library",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Create Vikunja Task": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Task Confirmation",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Delete Matched Fact(s)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Forget Confirmation",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Discord Message In": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Has Images?",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Chat Exchange": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (Chat)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Complete Log": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (Complete)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Exchange": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (Question)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Fact": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Store in Qdrant",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Forget Target": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Search for Match",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed ListTasks Log": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (ListTasks)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Media Log": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (Media)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed No-Match Log": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (No Match)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Note Log": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (Note)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Photo Description": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Store Photo in Qdrant",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Question": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Search Qdrant",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Embed Task Log": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Log Conversation (Task)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Format Task List": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed ListTasks Log",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Generate Answer": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Exchange",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Generate Chat Reply": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Chat Exchange",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Generate Media Answer": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Media Log",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Open Tasks": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Match Prompt",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Radarr Library": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Collect Radarr Results",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Recent History": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Prompt",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Recent History (Chat)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Chat Prompt",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Sonarr Library": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Collect Sonarr Results",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Task By ID": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Mark Done Locally",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Tautulli History": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Media Prompt",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Get Vikunja Tasks": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Format Task List",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Has Images?": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Prepare Photo Items",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Classify Intent",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (Chat)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Chat)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (Complete)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Complete Yes)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (ListTasks)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (ListTasks)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (Media)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Media)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (No Match)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Complete No)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (Note)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Note)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (Question)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Question)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (Store)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Store)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Log Conversation (Task)": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Task)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Mark Done Locally": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Update Vikunja Task",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Match Task via LLM": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Parse Task Match",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Media Match Found?": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Respond (Media No Match)",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Generate Media Answer",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Parse Intent": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Route by Intent",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Parse Task Match": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Task Matched?",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Prepare Photo Items": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Photo Description",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Route by Intent": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Embed Fact",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Embed Forget Target",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Get Recent History (Chat)",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Create Vikunja Task",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Embed Question",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Get Vikunja Tasks",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Get Open Tasks",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Build Note Content",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Get Sonarr Library",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Get Recent History (Chat)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Save Trilium Note": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Note Confirmation",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Search Qdrant": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Get Recent History",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Search for Match": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Delete Matched Fact(s)",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Store Photo in Qdrant": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Photo Confirmation",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Store in Qdrant": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Store Confirmation",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Task Matched?": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Get Task By ID",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "Build No-Match Confirmation",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "Update Vikunja Task": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Build Complete Confirmation",
+              "type": "main"
+            }
+          ]
+        ]
+      }
+    },
+    "createdAt": "2026-08-25T08:02:00.068Z",
+    "description": null,
+    "name": null,
+    "nodeGroups": [],
+    "nodes": [
+      {
+        "id": "webhook",
+        "name": "Discord Message In",
+        "parameters": {
+          "httpMethod": "POST",
+          "options": {},
+          "path": "second-brain-chat",
+          "responseMode": "responseNode"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "webhookId": "f6e10e62-9a18-4645-b305-70a4faa6116d"
+      },
+      {
+        "id": "photo_check",
+        "name": "Has Images?",
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "p1",
+                "leftValue": "={{ ($json.body.images || []).length }}",
+                "operator": {
+                  "operation": "gt",
+                  "type": "number"
+                },
+                "rightValue": 0
+              }
+            ],
+            "options": {
+              "caseSensitive": false,
+              "leftValue": "",
+              "typeValidation": "loose"
+            }
+          },
+          "options": {}
+        },
+        "position": [
+          220,
+          0
+        ],
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2
+      },
+      {
+        "id": "prep_photos",
+        "name": "Prepare Photo Items",
+        "parameters": {
+          "jsCode": "const body = $input.first().json.body;\nconst caption = (body.content || '').trim();\nreturn (body.images || []).map(img => ({ json: {\n  url: img.url,\n  filename: img.filename,\n  caption,\n  author_name: body.author_name,\n  logText: `Photo shared by ${body.author_name}${caption ? ': ' + caption : ''} (${img.filename})`\n} }));\n",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          440,
+          -280
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "embed_photo",
+        "name": "Embed Photo Description",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          660,
+          -280
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "store_photo",
+        "name": "Store Photo in Qdrant",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Prepare Photo Items').item.json.logText, type: 'photo', date: new Date().toISOString().slice(0,10), image_url: $('Prepare Photo Items').item.json.url, filename: $('Prepare Photo Items').item.json.filename, author_name: $('Prepare Photo Items').item.json.author_name, added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          880,
+          -280
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "confirm_photo",
+        "name": "Build Photo Confirmation",
+        "parameters": {
+          "jsCode": "const n = $input.all().length;\nreturn [{ json: { reply: `\ud83d\udcf7 Saved ${n} photo${n === 1 ? '' : 's'} to today's log.` } }];\n",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          1100,
+          -280
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "respond_photo",
+        "name": "Respond (Photo)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $json.reply }) }}"
+        },
+        "position": [
+          1320,
+          -280
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "id": "classify",
+        "name": "Classify Intent",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", format: \"json\", stream: false, prompt: `You classify Discord messages sent to a personal memory assistant. Respond with ONLY a JSON object, no other text: {\"intent\": \"store\"|\"forget\"|\"question\"|\"chat\"|\"task\"|\"list_tasks\"|\"complete_task\"|\"note\"|\"media_query\", \"content\": \"...\"}\\n\\nRules:\\n- \"store\": user is telling you something to remember (a fact, preference, event, reminder) even without saying \"remember\". content = the fact, cleaned up.\\n- \"forget\": user wants something previously stored removed. content = short description of what to forget.\\n- \"question\": user is asking something that needs recalled information. content = the question.\\n- \"task\": user wants a to-do/reminder created (e.g. \"remind me to...\", \"add a task to...\", \"I need to...\"). content = a short task title.\\n- \"list_tasks\": user wants to see their current to-do list/tasks (e.g. \"what tasks do I have\", \"what's on my to-do list\", \"what's due\"). content = the request as sent.\\n- \"complete_task\": user is saying a task is done (e.g. \"mark X as done\", \"I finished calling the vet\", \"done with the oil change\"). content = a short description of the task that was completed.\\n- \"note\": user explicitly wants something saved as a proper note for later reading, not a quick fact (e.g. \"save this as a note\", \"write this down\", \"jot this down\", \"make a note of this\"). content = the note title and body combined.\\n- \"media_query\": user is asking about their media library or watch history (e.g. \"do I have X show\", \"is X movie in my library\", \"what have I been watching\", \"what's my watch history\"). content = the question as asked.\\n- \"chat\": greetings, small talk, reactions, anything else. content = the message as sent.\\n\\nExamples:\\n\\\"hey what's up\\\" -> {\\\"intent\\\":\\\"chat\\\",\\\"content\\\":\\\"hey what's up\\\"}\\n\\\"my wifi password is hunter2\\\" -> {\\\"intent\\\":\\\"store\\\",\\\"content\\\":\\\"wifi password is hunter2\\\"}\\n\\\"what's my wifi password\\\" -> {\\\"intent\\\":\\\"question\\\",\\\"content\\\":\\\"what's my wifi password\\\"}\\n\\\"actually forget about the wifi thing\\\" -> {\\\"intent\\\":\\\"forget\\\",\\\"content\\\":\\\"wifi password\\\"}\\n\\nMessage: \"${$json.body.content.replace(/\"/g, '\\\\\\\\\"')}\"\\nJSON:` }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 180000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/generate"
+        },
+        "position": [
+          440,
+          40
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "parse_intent",
+        "name": "Parse Intent",
+        "parameters": {
+          "jsCode": "const raw = $input.first().json.response || '';\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n  if (!['store','forget','question','chat','task','list_tasks','complete_task','note','media_query'].includes(parsed.intent)) throw new Error('bad intent');\n  if (!parsed.content) throw new Error('no content');\n} catch (e) {\n  // Safe fallback: treat as a question so it at least tries to help\n  // rather than silently doing nothing.\n  parsed = { intent: 'question', content: $('Discord Message In').first().json.body.content };\n}\nreturn [{ json: parsed }];\n",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          660,
+          40
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "route_intent",
+        "name": "Route by Intent",
+        "parameters": {
+          "fallbackOutput": "extra",
+          "options": {},
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "s1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "store"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "store"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "f1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "forget"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "forget"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "c1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "chat"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "chat"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "t1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "task"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "task"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "q1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "question"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "question"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "lt1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "list_tasks"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "list_tasks"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "ct1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "complete_task"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "complete_task"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "nt1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "note"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "note"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "mq1",
+                      "leftValue": "={{$json.intent}}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "media_query"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  }
+                },
+                "outputKey": "media_query"
+              }
+            ]
+          }
+        },
+        "position": [
+          880,
+          40
+        ],
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3
+      },
+      {
+        "id": "embed_fact",
+        "name": "Embed Fact",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.content }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          1100,
+          -100
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "upsert_fact",
+        "name": "Store in Qdrant",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Parse Intent').first().json.content, type: 'fact', date: new Date().toISOString().slice(0,10), source: 'discord', added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          1320,
+          -100
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "confirm_ingest",
+        "name": "Build Store Confirmation",
+        "parameters": {
+          "jsCode": "const fact = $('Parse Intent').first().json.content;\nreturn [{ json: { reply: `Got it \u2014 I'll remember: \"${fact}\"`, logText: `Told the brain to remember: \"${fact}\"` } }];\n",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          1540,
+          -100
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "log_ingest",
+        "name": "Log Conversation (Store)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $('Embed Fact').first().json.embedding, payload: { text: $json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          1760,
+          -100
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "respond_ingest",
+        "name": "Respond (Store)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Build Store Confirmation').first().json.reply }) }}"
+        },
+        "position": [
+          1980,
+          -100
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "id": "embed_forget",
+        "name": "Embed Forget Target",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.content }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          1100,
+          40
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "search_forget",
+        "name": "Search for Match",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ vector: $json.embedding, limit: 3, with_payload: true, score_threshold: 0.6, filter: { must: [ { key: 'type', match: { value: 'fact' } } ] } }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points/search"
+        },
+        "position": [
+          1320,
+          40
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "delete_forget",
+        "name": "Delete Matched Fact(s)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: ($json.result || []).map(r => r.id) }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points/delete"
+        },
+        "position": [
+          1540,
+          40
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "confirm_forget",
+        "name": "Build Forget Confirmation",
+        "parameters": {
+          "jsCode": "const matches = $('Search for Match').first().json.result || [];\nlet reply;\nif (matches.length === 0) {\n  reply = `I couldn't find anything stored that matches \"${$('Parse Intent').first().json.content}\" \u2014 nothing was deleted.`;\n} else {\n  const list = matches.map(m => `\"${m.payload.text}\"`).join(', ');\n  reply = `Forgot it. Removed: ${list}`;\n}\nreturn [{ json: { reply, logText: reply } }];\n",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          1760,
+          40
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "respond_forget",
+        "name": "Respond (Forget)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $json.reply }) }}"
+        },
+        "position": [
+          1980,
+          40
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "id": "embed_question",
+        "name": "Embed Question",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.content }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          1100,
+          220
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "search_qdrant",
+        "name": "Search Qdrant",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ vector: $json.embedding, limit: 5, with_payload: true, score_threshold: 0.5 }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points/search"
+        },
+        "position": [
+          1320,
+          220
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "recent_history_q",
+        "name": "Get Recent History",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 6, with_payload: true }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+        },
+        "position": [
+          1540,
+          220
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "build_prompt",
+        "name": "Build Prompt",
+        "parameters": {
+          "jsCode": "const question = $('Parse Intent').first().json.content;\nconst results = $('Search Qdrant').first().json.result || [];\nconst context = results.length\n  ? results.map((r, i) => `[${i + 1}] ${r.payload.text}`).join('\\n')\n  : '(no relevant memories found)';\nconst history = ($json.result?.points || []).sort((a,b) => (a.payload.added_at||'').localeCompare(b.payload.added_at||'')).slice(-4);\nconst historyText = history.length ? history.map(h => h.payload.text).join('\\n') : '(no earlier conversation today)';\nconst prompt = `You are Kody's second brain, a personal knowledge assistant with a warm, natural conversational style \\u2014 not a search engine. Answer the question using the facts in Context below, and use Recent Conversation for continuity if the question refers back to it (e.g. \"what about tomorrow\", \"and the other one\"). If Context doesn't contain the answer, say so honestly and conversationally rather than guessing.\\n\\nContext:\\n${context}\\n\\nRecent conversation today:\\n${historyText}\\n\\nQuestion: ${question}\\n\\nAnswer:`;\nreturn [{ json: { prompt, question } }];\n",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          1760,
+          220
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "generate_answer",
+        "name": "Generate Answer",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 180000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/generate"
+        },
+        "position": [
+          1980,
+          220
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "embed_exchange",
+        "name": "Embed Exchange",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: 'Q: ' + $('Build Prompt').first().json.question + ' A: ' + $json.response }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          2200,
+          220
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "log_query",
+        "name": "Log Conversation (Question)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: 'Q: ' + $('Build Prompt').first().json.question + ' A: ' + $('Generate Answer').first().json.response, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          2420,
+          220
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "respond_query",
+        "name": "Respond (Question)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Generate Answer').first().json.response }) }}"
+        },
+        "position": [
+          2640,
+          220
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "id": "recent_history_chat",
+        "name": "Get Recent History (Chat)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 6, with_payload: true }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+        },
+        "position": [
+          1100,
+          400
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "build_chat_prompt",
+        "name": "Build Chat Prompt",
+        "parameters": {
+          "jsCode": "const message = $('Parse Intent').first().json.content;\nconst history = ($json.result?.points || []).sort((a,b) => (a.payload.added_at||'').localeCompare(b.payload.added_at||'')).slice(-4);\nconst historyText = history.length ? history.map(h => h.payload.text).join('\\n') : '(this is the start of the conversation today)';\nconst prompt = `You are Kody's second brain \u2014 a warm, casual, genuinely present conversational partner, not a formal assistant. This message is small talk / chat, not a request to look anything up. Reply naturally and briefly, like a text from a friend who happens to remember everything about Kody's life. Use the recent conversation for continuity if relevant.\\n\\nRecent conversation today:\\n${historyText}\\n\\nMessage: ${message}\\n\\nReply:`;\nreturn [{ json: { prompt, message } }];\n",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          1320,
+          400
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "generate_chat",
+        "name": "Generate Chat Reply",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 180000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/generate"
+        },
+        "position": [
+          1540,
+          400
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "embed_chat_exchange",
+        "name": "Embed Chat Exchange",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: 'Chat: ' + $('Build Chat Prompt').first().json.message + ' / Reply: ' + $json.response }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          1760,
+          400
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "log_chat",
+        "name": "Log Conversation (Chat)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: 'Chat: ' + $('Build Chat Prompt').first().json.message + ' / Reply: ' + $('Generate Chat Reply').first().json.response, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          1980,
+          400
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "respond_chat",
+        "name": "Respond (Chat)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Generate Chat Reply').first().json.response }) }}"
+        },
+        "position": [
+          2200,
+          400
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "3UMsXKaA1j1Q03zw",
+            "name": "Vikunja API Token"
+          }
+        },
+        "id": "create_vikunja_task",
+        "name": "Create Vikunja Task",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ title: $json.content }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 20000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:30037/api/v1/projects/YOUR_VIKUNJA_PROJECT_ID/tasks"
+        },
+        "position": [
+          1100,
+          580
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "confirm_task",
+        "name": "Build Task Confirmation",
+        "parameters": {
+          "jsCode": "const title = $('Parse Intent').first().json.content;\nconst ok = $json.id !== undefined;\nconst reply = ok ? `\\u2705 Added to Vikunja: \"${title}\"` : `Tried to create a Vikunja task but something went wrong (check the Vikunja credential/project ID). I didn't lose the request though: \"${title}\"`;\nreturn [{ json: { reply, logText: `Created Vikunja task: \"${title}\"` } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          1320,
+          580
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "embed_task_log",
+        "name": "Embed Task Log",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          1540,
+          580
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "log_task",
+        "name": "Log Conversation (Task)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build Task Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          1760,
+          580
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "respond_task",
+        "name": "Respond (Task)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Build Task Confirmation').first().json.reply }) }}"
+        },
+        "position": [
+          1980,
+          580
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "3UMsXKaA1j1Q03zw",
+            "name": "Vikunja API Token"
+          }
+        },
+        "id": "lt_get",
+        "name": "Get Vikunja Tasks",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "GET",
+          "options": {
+            "timeout": 30000
+          },
+          "url": "http://192.168.178.69:30037/api/v1/tasks/all"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "lt_fmt",
+        "name": "Format Task List",
+        "parameters": {
+          "jsCode": "let tasks = $input.all().map(i => i.json);\nif (tasks.length === 1 && Array.isArray(tasks[0])) tasks = tasks[0]; // in case it wasn't split\nconst open = tasks.filter(t => !t.done).sort((a,b) => {\n  if (!a.due_date || a.due_date.startsWith('0001')) return 1;\n  if (!b.due_date || b.due_date.startsWith('0001')) return -1;\n  return a.due_date.localeCompare(b.due_date);\n});\nlet reply;\nif (open.length === 0) {\n  reply = \"You don't have any open tasks in Vikunja right now.\";\n} else {\n  const lines = open.slice(0, 15).map(t => {\n    const due = (t.due_date && !t.due_date.startsWith('0001')) ? ` (due ${t.due_date.slice(0,10)})` : '';\n    return `- ${t.title}${due}`;\n  });\n  reply = `You have ${open.length} open task${open.length===1?'':'s'}:\\n${lines.join('\\n')}`;\n}\nreturn [{ json: { reply, logText: 'Asked for task list' } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "lt_embed",
+        "name": "Embed ListTasks Log",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "lt_store",
+        "name": "Log Conversation (ListTasks)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Format Task List').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "lt_respond",
+        "name": "Respond (ListTasks)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Format Task List').first().json.reply }) }}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "3UMsXKaA1j1Q03zw",
+            "name": "Vikunja API Token"
+          }
+        },
+        "id": "ct_get",
+        "name": "Get Open Tasks",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "GET",
+          "options": {
+            "timeout": 30000
+          },
+          "url": "http://192.168.178.69:30037/api/v1/tasks/all"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_buildmatch",
+        "name": "Build Match Prompt",
+        "parameters": {
+          "jsCode": "let tasks = $input.all().map(i => i.json);\nif (tasks.length === 1 && Array.isArray(tasks[0])) tasks = tasks[0];\nconst open = tasks.filter(t => !t.done);\nconst described = $('Parse Intent').first().json.content;\nconst list = open.map(t => `${t.id}: ${t.title}`).join('\\n');\nconst prompt = `Below is a numbered list of open tasks (id: title). The user says they completed something described as: \"${described}\". Respond with ONLY JSON: {\"taskId\": <id>} if you're confident which task they mean, or {\"taskId\": null} if none match well or the list is empty.\\n\\nOpen tasks:\\n${list || '(none)'}\\n\\nJSON:`;\nreturn [{ json: { prompt, described } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "ct_match",
+        "name": "Match Task via LLM",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", format: \"json\", stream: false, prompt: $json.prompt }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 180000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/generate"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_parse",
+        "name": "Parse Task Match",
+        "parameters": {
+          "jsCode": "let taskId = null;\ntry { const p = JSON.parse($json.response); taskId = p.taskId ?? null; } catch (e) {}\nreturn [{ json: { taskId, described: $('Build Match Prompt').first().json.described } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "ct_if",
+        "name": "Task Matched?",
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "c1",
+                "leftValue": "={{ $json.taskId !== null && $json.taskId !== undefined }}",
+                "operator": {
+                  "operation": "equals",
+                  "type": "boolean"
+                },
+                "rightValue": true
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            }
+          },
+          "options": {}
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "3UMsXKaA1j1Q03zw",
+            "name": "Vikunja API Token"
+          }
+        },
+        "id": "ct_getone",
+        "name": "Get Task By ID",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "GET",
+          "options": {
+            "timeout": 30000
+          },
+          "url": "=http://192.168.178.69:30037/api/v1/tasks/{{$json.taskId}}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_setdone",
+        "name": "Mark Done Locally",
+        "parameters": {
+          "jsCode": "const t = $json; t.done = true; return [{ json: t }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "3UMsXKaA1j1Q03zw",
+            "name": "Vikunja API Token"
+          }
+        },
+        "id": "ct_update",
+        "name": "Update Vikunja Task",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "jsonBody": "={{ JSON.stringify($json) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "=http://192.168.178.69:30037/api/v1/tasks/{{$json.id}}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_confirm_yes",
+        "name": "Build Complete Confirmation",
+        "parameters": {
+          "jsCode": "const title = $json.title;\nreturn [{ json: { reply: `\\u2705 Marked done: \"${title}\"`, logText: `Marked Vikunja task done: \"${title}\"` } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "ct_confirm_no",
+        "name": "Build No-Match Confirmation",
+        "parameters": {
+          "jsCode": "const described = $json.described;\nreturn [{ json: { reply: `I couldn't find an open task matching \"${described}\" \\u2014 nothing was changed.`, logText: `Tried to complete a task but nothing matched: \"${described}\"` } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "ct_embed_yes",
+        "name": "Embed Complete Log",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_store_yes",
+        "name": "Log Conversation (Complete)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build Complete Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_respond_yes",
+        "name": "Respond (Complete Yes)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Build Complete Confirmation').first().json.reply }) }}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "id": "ct_embed_no",
+        "name": "Embed No-Match Log",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_store_no",
+        "name": "Log Conversation (No Match)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build No-Match Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "ct_respond_no",
+        "name": "Respond (Complete No)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Build No-Match Confirmation').first().json.reply }) }}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "id": "nt_build",
+        "name": "Build Note Content",
+        "parameters": {
+          "jsCode": "const content = $json.content;\nconst firstLine = content.split(/[.\\n]/)[0].trim();\nconst title = firstLine.length > 60 ? firstLine.slice(0,57) + '...' : (firstLine || 'Note');\nreturn [{ json: { title, body: content } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "GFJf4mAYeajicPbJ",
+            "name": "Trilium ETAPI"
+          }
+        },
+        "id": "nt_save",
+        "name": "Save Trilium Note",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "jsonBody": "={{ JSON.stringify({ parentNoteId: 'YOUR_TRILIUM_NOTES_PARENT_NOTE_ID', title: $json.title, type: 'text', content: $json.body }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 15000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:8080/etapi/create-note"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "nt_confirm",
+        "name": "Build Note Confirmation",
+        "parameters": {
+          "jsCode": "const ok = $json.noteId !== undefined;\nconst title = $('Build Note Content').first().json.title;\nconst reply = ok ? `\\ud83d\\udcdd Saved to Trilium: \"${title}\"` : `Tried to save that as a Trilium note but something went wrong (check the Trilium credential/parent note ID). Here's what I would've saved: \"${title}\"`;\nreturn [{ json: { reply, logText: `Saved a Trilium note: \"${title}\"` } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "nt_embed",
+        "name": "Embed Note Log",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "nt_store",
+        "name": "Log Conversation (Note)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build Note Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "nt_respond",
+        "name": "Respond (Note)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Build Note Confirmation').first().json.reply }) }}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "qGzQ5lDTmLavLkZz",
+            "name": "Sonarr API Key"
+          }
+        },
+        "id": "mq_sonarr",
+        "name": "Get Sonarr Library",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "GET",
+          "options": {
+            "timeout": 30000
+          },
+          "url": "http://192.168.178.69:30027/api/v3/series"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "AIjIagd8xorNqd51",
+            "name": "Radarr API Key"
+          }
+        },
+        "id": "mq_radarr",
+        "name": "Get Radarr Library",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "GET",
+          "options": {
+            "timeout": 30000
+          },
+          "url": "http://192.168.178.69:30025/api/v3/movie"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "credentials": {
+          "httpQueryAuth": {
+            "id": "AThhlfKmd2BJvAKR",
+            "name": "Tautulli API Key"
+          }
+        },
+        "id": "mq_tautulli",
+        "name": "Get Tautulli History",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpQueryAuth",
+          "method": "GET",
+          "options": {
+            "timeout": 30000
+          },
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "cmd",
+                "value": "get_history"
+              },
+              {
+                "name": "length",
+                "value": "10"
+              }
+            ]
+          },
+          "sendQuery": true,
+          "url": "http://192.168.178.69:30035/api/v2"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "mq_prompt",
+        "name": "Build Media Prompt",
+        "parameters": {
+          "jsCode": "const question = $('Parse Intent').first().json.content;\nlet series = [];\ntry { series = $('Collect Sonarr Results').first().json.seriesList || []; } catch(e) {}\nlet movies = [];\ntry { movies = $('Collect Radarr Results').first().json.movieList || []; } catch(e) {}\nlet history = [];\ntry {\n  const h = $('Get Tautulli History').first().json;\n  const rows = h?.response?.data?.data || [];\n  history = rows.slice(0, 10).map(r => `${r.full_title || r.title} watched by ${r.friendly_name || r.user}`);\n} catch(e) {}\n\n// Fuzzy-filter the library to likely-relevant titles instead of dumping the\n// whole thing into the prompt (was taking 3+ minutes and timing out on this\n// CPU-only hardware with a full library in context).\nconst stop = new Set(['do','i','have','is','in','my','the','a','an','of','on','for','to','and','are','was','been','it','that','this','show','movie','library','watching','watched']);\nconst qWords = question.toLowerCase().replace(/[^a-z0-9 ]/g,'').split(/\\s+/).filter(w => w.length > 2 && !stop.has(w));\nfunction score(title) {\n  const titleWords = title.toLowerCase().replace(/[^a-z0-9 ]/g,'').split(/\\s+/);\n  return qWords.reduce((s,w) => s + (titleWords.includes(w) ? 1 : 0), 0);\n}\nconst seriesMatches = series.map(s => ({ s, sc: score(s.title) })).filter(x => x.sc > 0).sort((a,b)=>b.sc-a.sc).slice(0,5)\n  .map(x => `${x.s.title} (TV, ${x.s.status}, ${x.s.statistics?.episodeFileCount || 0}/${x.s.statistics?.episodeCount || 0} episodes downloaded)`);\nconst movieMatches = movies.map(m => ({ m, sc: score(m.title) })).filter(x => x.sc > 0).sort((a,b)=>b.sc-a.sc).slice(0,5)\n  .map(x => `${x.m.title} (Movie, ${x.m.hasFile ? 'downloaded' : 'not downloaded'})`);\nconst historyMatches = history.filter(h => qWords.some(w => h.toLowerCase().includes(w)));\n\nconst matched = [...seriesMatches, ...movieMatches];\nif (matched.length === 0 && historyMatches.length === 0 && qWords.length > 0) {\n  // Confident no-match - skip the LLM call entirely, answer directly and fast.\n  return [{ json: { skipLLM: true, question, directAnswer: `I don't see anything matching that in your Sonarr/Radarr library or recent Tautulli history.` } }];\n}\nconst context = `Matching library entries:\\n${matched.join('\\n') || '(none found)'}\\n\\nMatching recent watch history:\\n${historyMatches.join('\\n') || '(none found)'}`;\nconst prompt = `You are Kody's second brain. Answer the question below using ONLY the live library/watch-history data provided as Context \\u2014 this is a filtered, relevant subset of a larger library, not the whole thing, so don't comment on what's missing from Context beyond what's asked. Be concise and conversational.\\n\\nContext:\\n${context}\\n\\nQuestion: ${question}\\n\\nAnswer:`;\nreturn [{ json: { skipLLM: false, prompt, question } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "mq_generate",
+        "name": "Generate Media Answer",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 180000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/generate"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "mq_embed",
+        "name": "Embed Media Log",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: 'Media Q: ' + $('Build Media Prompt').first().json.question + ' A: ' + $json.response }) }}",
+          "method": "POST",
+          "options": {
+            "timeout": 90000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:11434/api/embeddings"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "mq_store",
+        "name": "Log Conversation (Media)",
+        "parameters": {
+          "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: 'Media Q: ' + $('Build Media Prompt').first().json.question + ' A: ' + $('Generate Media Answer').first().json.response, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+          "method": "PUT",
+          "options": {
+            "timeout": 30000
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "http://192.168.178.69:6333/collections/second_brain/points"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "mq_respond",
+        "name": "Respond (Media)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $('Generate Media Answer').first().json.response }) }}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      },
+      {
+        "id": "mq_collect_sonarr",
+        "name": "Collect Sonarr Results",
+        "parameters": {
+          "jsCode": "return [{ json: { seriesList: $input.all().map(i => i.json) } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "mq_collect_radarr",
+        "name": "Collect Radarr Results",
+        "parameters": {
+          "jsCode": "return [{ json: { movieList: $input.all().map(i => i.json) } }];",
+          "mode": "runOnceForAllItems"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2
+      },
+      {
+        "id": "mq_skip_check",
+        "name": "Media Match Found?",
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "m1",
+                "leftValue": "={{$json.skipLLM}}",
+                "operator": {
+                  "operation": "equals",
+                  "type": "boolean"
+                },
+                "rightValue": true
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            }
+          },
+          "options": {}
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2
+      },
+      {
+        "id": "mq_respond_direct",
+        "name": "Respond (Media No Match)",
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ reply: $json.directAnswer }) }}"
+        },
+        "position": [
+          0,
+          0
+        ],
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4
+      }
+    ],
+    "updatedAt": "2026-08-25T08:02:00.068Z",
+    "versionId": "a6f72746-7eca-4fd0-ae57-73df95d98097",
+    "workflowId": "IshWB5GwTPfGxy9d",
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-08-25T08:02:00.290Z",
+        "event": "activated",
+        "id": 51,
+        "userId": "241d1004-3b77-4404-a0ec-9d305196097d",
+        "versionId": "a6f72746-7eca-4fd0-ae57-73df95d98097",
+        "workflowId": "IshWB5GwTPfGxy9d"
+      }
+    ]
+  },
+  "activeVersionId": "a6f72746-7eca-4fd0-ae57-73df95d98097",
+  "connections": {
+    "Build Chat Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Generate Chat Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Complete Confirmation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Complete Log",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Forget Confirmation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Forget)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Match Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Match Task via LLM",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Media Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Media Match Found?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build No-Match Confirmation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed No-Match Log",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Note Confirmation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Note Log",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Note Content": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Save Trilium Note",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Photo Confirmation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Photo)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Generate Answer",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Store Confirmation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (Store)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Task Confirmation": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Task Log",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Classify Intent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Parse Intent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Collect Radarr Results": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Tautulli History",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Collect Sonarr Results": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Radarr Library",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create Vikunja Task": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Task Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Delete Matched Fact(s)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Forget Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Discord Message In": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Has Images?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Chat Exchange": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (Chat)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Complete Log": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (Complete)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Exchange": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (Question)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Fact": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Store in Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Forget Target": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Search for Match",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed ListTasks Log": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (ListTasks)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Media Log": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (Media)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed No-Match Log": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (No Match)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Note Log": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (Note)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Photo Description": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Store Photo in Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Question": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Search Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Task Log": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Log Conversation (Task)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Task List": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed ListTasks Log",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Generate Answer": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Exchange",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Generate Chat Reply": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Chat Exchange",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Generate Media Answer": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Media Log",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Open Tasks": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Match Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Radarr Library": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Collect Radarr Results",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Recent History": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Recent History (Chat)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Chat Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Sonarr Library": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Collect Sonarr Results",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Task By ID": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark Done Locally",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Tautulli History": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Media Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Vikunja Tasks": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Task List",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Has Images?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Prepare Photo Items",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Classify Intent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (Chat)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Chat)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (Complete)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Complete Yes)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (ListTasks)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (ListTasks)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (Media)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Media)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (No Match)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Complete No)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (Note)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Note)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (Question)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Question)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (Store)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Store)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Log Conversation (Task)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Task)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Mark Done Locally": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update Vikunja Task",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Match Task via LLM": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Parse Task Match",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Media Match Found?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond (Media No Match)",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Generate Media Answer",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Parse Intent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Route by Intent",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Parse Task Match": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Task Matched?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Prepare Photo Items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Photo Description",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Route by Intent": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Fact",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Embed Forget Target",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Get Recent History (Chat)",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Create Vikunja Task",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Embed Question",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Get Vikunja Tasks",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Get Open Tasks",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Build Note Content",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Get Sonarr Library",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Get Recent History (Chat)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Save Trilium Note": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Note Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Search Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Recent History",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Search for Match": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Delete Matched Fact(s)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Store Photo in Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Photo Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Store in Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Store Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Task Matched?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Task By ID",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Build No-Match Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Update Vikunja Task": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Complete Confirmation",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "IshWB5GwTPfGxy9d",
+  "isArchived": false,
+  "meta": null,
+  "name": "18 - Second Brain - Chat",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "webhook",
+      "name": "Discord Message In",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "second-brain-chat",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "f6e10e62-9a18-4645-b305-70a4faa6116d"
+    },
+    {
+      "id": "photo_check",
+      "name": "Has Images?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "p1",
+              "leftValue": "={{ ($json.body.images || []).length }}",
+              "operator": {
+                "operation": "gt",
+                "type": "number"
+              },
+              "rightValue": 0
+            }
+          ],
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "id": "prep_photos",
+      "name": "Prepare Photo Items",
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst caption = (body.content || '').trim();\nreturn (body.images || []).map(img => ({ json: {\n  url: img.url,\n  filename: img.filename,\n  caption,\n  author_name: body.author_name,\n  logText: `Photo shared by ${body.author_name}${caption ? ': ' + caption : ''} (${img.filename})`\n} }));\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        -280
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "embed_photo",
+      "name": "Embed Photo Description",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        660,
+        -280
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "store_photo",
+      "name": "Store Photo in Qdrant",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Prepare Photo Items').item.json.logText, type: 'photo', date: new Date().toISOString().slice(0,10), image_url: $('Prepare Photo Items').item.json.url, filename: $('Prepare Photo Items').item.json.filename, author_name: $('Prepare Photo Items').item.json.author_name, added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        880,
+        -280
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "confirm_photo",
+      "name": "Build Photo Confirmation",
+      "parameters": {
+        "jsCode": "const n = $input.all().length;\nreturn [{ json: { reply: `\ud83d\udcf7 Saved ${n} photo${n === 1 ? '' : 's'} to today's log.` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1100,
+        -280
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "respond_photo",
+      "name": "Respond (Photo)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $json.reply }) }}"
+      },
+      "position": [
+        1320,
+        -280
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "classify",
+      "name": "Classify Intent",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", format: \"json\", stream: false, prompt: `You classify Discord messages sent to a personal memory assistant. Respond with ONLY a JSON object, no other text: {\"intent\": \"store\"|\"forget\"|\"question\"|\"chat\"|\"task\"|\"list_tasks\"|\"complete_task\"|\"note\"|\"media_query\", \"content\": \"...\"}\\n\\nRules:\\n- \"store\": user is telling you something to remember (a fact, preference, event, reminder) even without saying \"remember\". content = the fact, cleaned up.\\n- \"forget\": user wants something previously stored removed. content = short description of what to forget.\\n- \"question\": user is asking something that needs recalled information. content = the question.\\n- \"task\": user wants a to-do/reminder created (e.g. \"remind me to...\", \"add a task to...\", \"I need to...\"). content = a short task title.\\n- \"list_tasks\": user wants to see their current to-do list/tasks (e.g. \"what tasks do I have\", \"what's on my to-do list\", \"what's due\"). content = the request as sent.\\n- \"complete_task\": user is saying a task is done (e.g. \"mark X as done\", \"I finished calling the vet\", \"done with the oil change\"). content = a short description of the task that was completed.\\n- \"note\": user explicitly wants something saved as a proper note for later reading, not a quick fact (e.g. \"save this as a note\", \"write this down\", \"jot this down\", \"make a note of this\"). content = the note title and body combined.\\n- \"media_query\": user is asking about their media library or watch history (e.g. \"do I have X show\", \"is X movie in my library\", \"what have I been watching\", \"what's my watch history\"). content = the question as asked.\\n- \"chat\": greetings, small talk, reactions, anything else. content = the message as sent.\\n\\nExamples:\\n\\\"hey what's up\\\" -> {\\\"intent\\\":\\\"chat\\\",\\\"content\\\":\\\"hey what's up\\\"}\\n\\\"my wifi password is hunter2\\\" -> {\\\"intent\\\":\\\"store\\\",\\\"content\\\":\\\"wifi password is hunter2\\\"}\\n\\\"what's my wifi password\\\" -> {\\\"intent\\\":\\\"question\\\",\\\"content\\\":\\\"what's my wifi password\\\"}\\n\\\"actually forget about the wifi thing\\\" -> {\\\"intent\\\":\\\"forget\\\",\\\"content\\\":\\\"wifi password\\\"}\\n\\nMessage: \"${$json.body.content.replace(/\"/g, '\\\\\\\\\"')}\"\\nJSON:` }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 180000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        440,
+        40
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "parse_intent",
+      "name": "Parse Intent",
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.response || '';\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n  if (!['store','forget','question','chat','task','list_tasks','complete_task','note','media_query'].includes(parsed.intent)) throw new Error('bad intent');\n  if (!parsed.content) throw new Error('no content');\n} catch (e) {\n  // Safe fallback: treat as a question so it at least tries to help\n  // rather than silently doing nothing.\n  parsed = { intent: 'question', content: $('Discord Message In').first().json.body.content };\n}\nreturn [{ json: parsed }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        40
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "route_intent",
+      "name": "Route by Intent",
+      "parameters": {
+        "fallbackOutput": "extra",
+        "options": {},
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "s1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "store"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "store"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "forget"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "forget"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "c1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "chat"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "chat"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "t1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "task"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "task"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "q1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "question"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "question"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "lt1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "list_tasks"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "list_tasks"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "ct1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "complete_task"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "complete_task"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "nt1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "note"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "note"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "mq1",
+                    "leftValue": "={{$json.intent}}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "media_query"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                }
+              },
+              "outputKey": "media_query"
+            }
+          ]
+        }
+      },
+      "position": [
+        880,
+        40
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3
+    },
+    {
+      "id": "embed_fact",
+      "name": "Embed Fact",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.content }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        1100,
+        -100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "upsert_fact",
+      "name": "Store in Qdrant",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Parse Intent').first().json.content, type: 'fact', date: new Date().toISOString().slice(0,10), source: 'discord', added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        1320,
+        -100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "confirm_ingest",
+      "name": "Build Store Confirmation",
+      "parameters": {
+        "jsCode": "const fact = $('Parse Intent').first().json.content;\nreturn [{ json: { reply: `Got it \u2014 I'll remember: \"${fact}\"`, logText: `Told the brain to remember: \"${fact}\"` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1540,
+        -100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "log_ingest",
+      "name": "Log Conversation (Store)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $('Embed Fact').first().json.embedding, payload: { text: $json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        1760,
+        -100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "respond_ingest",
+      "name": "Respond (Store)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Build Store Confirmation').first().json.reply }) }}"
+      },
+      "position": [
+        1980,
+        -100
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "embed_forget",
+      "name": "Embed Forget Target",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.content }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        1100,
+        40
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "search_forget",
+      "name": "Search for Match",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ vector: $json.embedding, limit: 3, with_payload: true, score_threshold: 0.6, filter: { must: [ { key: 'type', match: { value: 'fact' } } ] } }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/search"
+      },
+      "position": [
+        1320,
+        40
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "delete_forget",
+      "name": "Delete Matched Fact(s)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: ($json.result || []).map(r => r.id) }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/delete"
+      },
+      "position": [
+        1540,
+        40
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "confirm_forget",
+      "name": "Build Forget Confirmation",
+      "parameters": {
+        "jsCode": "const matches = $('Search for Match').first().json.result || [];\nlet reply;\nif (matches.length === 0) {\n  reply = `I couldn't find anything stored that matches \"${$('Parse Intent').first().json.content}\" \u2014 nothing was deleted.`;\n} else {\n  const list = matches.map(m => `\"${m.payload.text}\"`).join(', ');\n  reply = `Forgot it. Removed: ${list}`;\n}\nreturn [{ json: { reply, logText: reply } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1760,
+        40
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "respond_forget",
+      "name": "Respond (Forget)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $json.reply }) }}"
+      },
+      "position": [
+        1980,
+        40
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "embed_question",
+      "name": "Embed Question",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.content }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        1100,
+        220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "search_qdrant",
+      "name": "Search Qdrant",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ vector: $json.embedding, limit: 5, with_payload: true, score_threshold: 0.5 }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/search"
+      },
+      "position": [
+        1320,
+        220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "recent_history_q",
+      "name": "Get Recent History",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 6, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        1540,
+        220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "build_prompt",
+      "name": "Build Prompt",
+      "parameters": {
+        "jsCode": "const question = $('Parse Intent').first().json.content;\nconst results = $('Search Qdrant').first().json.result || [];\nconst context = results.length\n  ? results.map((r, i) => `[${i + 1}] ${r.payload.text}`).join('\\n')\n  : '(no relevant memories found)';\nconst history = ($json.result?.points || []).sort((a,b) => (a.payload.added_at||'').localeCompare(b.payload.added_at||'')).slice(-4);\nconst historyText = history.length ? history.map(h => h.payload.text).join('\\n') : '(no earlier conversation today)';\nconst prompt = `You are Kody's second brain, a personal knowledge assistant with a warm, natural conversational style \\u2014 not a search engine. Answer the question using the facts in Context below, and use Recent Conversation for continuity if the question refers back to it (e.g. \"what about tomorrow\", \"and the other one\"). If Context doesn't contain the answer, say so honestly and conversationally rather than guessing.\\n\\nContext:\\n${context}\\n\\nRecent conversation today:\\n${historyText}\\n\\nQuestion: ${question}\\n\\nAnswer:`;\nreturn [{ json: { prompt, question } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1760,
+        220
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "generate_answer",
+      "name": "Generate Answer",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 180000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        1980,
+        220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "embed_exchange",
+      "name": "Embed Exchange",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: 'Q: ' + $('Build Prompt').first().json.question + ' A: ' + $json.response }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        2200,
+        220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "log_query",
+      "name": "Log Conversation (Question)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: 'Q: ' + $('Build Prompt').first().json.question + ' A: ' + $('Generate Answer').first().json.response, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        2420,
+        220
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "respond_query",
+      "name": "Respond (Question)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Generate Answer').first().json.response }) }}"
+      },
+      "position": [
+        2640,
+        220
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "recent_history_chat",
+      "name": "Get Recent History (Chat)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 6, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        1100,
+        400
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "build_chat_prompt",
+      "name": "Build Chat Prompt",
+      "parameters": {
+        "jsCode": "const message = $('Parse Intent').first().json.content;\nconst history = ($json.result?.points || []).sort((a,b) => (a.payload.added_at||'').localeCompare(b.payload.added_at||'')).slice(-4);\nconst historyText = history.length ? history.map(h => h.payload.text).join('\\n') : '(this is the start of the conversation today)';\nconst prompt = `You are Kody's second brain \u2014 a warm, casual, genuinely present conversational partner, not a formal assistant. This message is small talk / chat, not a request to look anything up. Reply naturally and briefly, like a text from a friend who happens to remember everything about Kody's life. Use the recent conversation for continuity if relevant.\\n\\nRecent conversation today:\\n${historyText}\\n\\nMessage: ${message}\\n\\nReply:`;\nreturn [{ json: { prompt, message } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1320,
+        400
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "generate_chat",
+      "name": "Generate Chat Reply",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 180000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        1540,
+        400
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "embed_chat_exchange",
+      "name": "Embed Chat Exchange",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: 'Chat: ' + $('Build Chat Prompt').first().json.message + ' / Reply: ' + $json.response }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        1760,
+        400
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "log_chat",
+      "name": "Log Conversation (Chat)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: 'Chat: ' + $('Build Chat Prompt').first().json.message + ' / Reply: ' + $('Generate Chat Reply').first().json.response, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        1980,
+        400
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "respond_chat",
+      "name": "Respond (Chat)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Generate Chat Reply').first().json.response }) }}"
+      },
+      "position": [
+        2200,
+        400
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3UMsXKaA1j1Q03zw",
+          "name": "Vikunja API Token"
+        }
+      },
+      "id": "create_vikunja_task",
+      "name": "Create Vikunja Task",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ title: $json.content }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 20000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:30037/api/v1/projects/YOUR_VIKUNJA_PROJECT_ID/tasks"
+      },
+      "position": [
+        1100,
+        580
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "confirm_task",
+      "name": "Build Task Confirmation",
+      "parameters": {
+        "jsCode": "const title = $('Parse Intent').first().json.content;\nconst ok = $json.id !== undefined;\nconst reply = ok ? `\\u2705 Added to Vikunja: \"${title}\"` : `Tried to create a Vikunja task but something went wrong (check the Vikunja credential/project ID). I didn't lose the request though: \"${title}\"`;\nreturn [{ json: { reply, logText: `Created Vikunja task: \"${title}\"` } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1320,
+        580
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "embed_task_log",
+      "name": "Embed Task Log",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        1540,
+        580
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "log_task",
+      "name": "Log Conversation (Task)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build Task Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        1760,
+        580
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "respond_task",
+      "name": "Respond (Task)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Build Task Confirmation').first().json.reply }) }}"
+      },
+      "position": [
+        1980,
+        580
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3UMsXKaA1j1Q03zw",
+          "name": "Vikunja API Token"
+        }
+      },
+      "id": "lt_get",
+      "name": "Get Vikunja Tasks",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "GET",
+        "options": {
+          "timeout": 30000
+        },
+        "url": "http://192.168.178.69:30037/api/v1/tasks/all"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "lt_fmt",
+      "name": "Format Task List",
+      "parameters": {
+        "jsCode": "let tasks = $input.all().map(i => i.json);\nif (tasks.length === 1 && Array.isArray(tasks[0])) tasks = tasks[0]; // in case it wasn't split\nconst open = tasks.filter(t => !t.done).sort((a,b) => {\n  if (!a.due_date || a.due_date.startsWith('0001')) return 1;\n  if (!b.due_date || b.due_date.startsWith('0001')) return -1;\n  return a.due_date.localeCompare(b.due_date);\n});\nlet reply;\nif (open.length === 0) {\n  reply = \"You don't have any open tasks in Vikunja right now.\";\n} else {\n  const lines = open.slice(0, 15).map(t => {\n    const due = (t.due_date && !t.due_date.startsWith('0001')) ? ` (due ${t.due_date.slice(0,10)})` : '';\n    return `- ${t.title}${due}`;\n  });\n  reply = `You have ${open.length} open task${open.length===1?'':'s'}:\\n${lines.join('\\n')}`;\n}\nreturn [{ json: { reply, logText: 'Asked for task list' } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "lt_embed",
+      "name": "Embed ListTasks Log",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "lt_store",
+      "name": "Log Conversation (ListTasks)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Format Task List').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "lt_respond",
+      "name": "Respond (ListTasks)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Format Task List').first().json.reply }) }}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3UMsXKaA1j1Q03zw",
+          "name": "Vikunja API Token"
+        }
+      },
+      "id": "ct_get",
+      "name": "Get Open Tasks",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "GET",
+        "options": {
+          "timeout": 30000
+        },
+        "url": "http://192.168.178.69:30037/api/v1/tasks/all"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_buildmatch",
+      "name": "Build Match Prompt",
+      "parameters": {
+        "jsCode": "let tasks = $input.all().map(i => i.json);\nif (tasks.length === 1 && Array.isArray(tasks[0])) tasks = tasks[0];\nconst open = tasks.filter(t => !t.done);\nconst described = $('Parse Intent').first().json.content;\nconst list = open.map(t => `${t.id}: ${t.title}`).join('\\n');\nconst prompt = `Below is a numbered list of open tasks (id: title). The user says they completed something described as: \"${described}\". Respond with ONLY JSON: {\"taskId\": <id>} if you're confident which task they mean, or {\"taskId\": null} if none match well or the list is empty.\\n\\nOpen tasks:\\n${list || '(none)'}\\n\\nJSON:`;\nreturn [{ json: { prompt, described } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "ct_match",
+      "name": "Match Task via LLM",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", format: \"json\", stream: false, prompt: $json.prompt }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 180000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_parse",
+      "name": "Parse Task Match",
+      "parameters": {
+        "jsCode": "let taskId = null;\ntry { const p = JSON.parse($json.response); taskId = p.taskId ?? null; } catch (e) {}\nreturn [{ json: { taskId, described: $('Build Match Prompt').first().json.described } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "ct_if",
+      "name": "Task Matched?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.taskId !== null && $json.taskId !== undefined }}",
+              "operator": {
+                "operation": "equals",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3UMsXKaA1j1Q03zw",
+          "name": "Vikunja API Token"
+        }
+      },
+      "id": "ct_getone",
+      "name": "Get Task By ID",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "GET",
+        "options": {
+          "timeout": 30000
+        },
+        "url": "=http://192.168.178.69:30037/api/v1/tasks/{{$json.taskId}}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_setdone",
+      "name": "Mark Done Locally",
+      "parameters": {
+        "jsCode": "const t = $json; t.done = true; return [{ json: t }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3UMsXKaA1j1Q03zw",
+          "name": "Vikunja API Token"
+        }
+      },
+      "id": "ct_update",
+      "name": "Update Vikunja Task",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "=http://192.168.178.69:30037/api/v1/tasks/{{$json.id}}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_confirm_yes",
+      "name": "Build Complete Confirmation",
+      "parameters": {
+        "jsCode": "const title = $json.title;\nreturn [{ json: { reply: `\\u2705 Marked done: \"${title}\"`, logText: `Marked Vikunja task done: \"${title}\"` } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "ct_confirm_no",
+      "name": "Build No-Match Confirmation",
+      "parameters": {
+        "jsCode": "const described = $json.described;\nreturn [{ json: { reply: `I couldn't find an open task matching \"${described}\" \\u2014 nothing was changed.`, logText: `Tried to complete a task but nothing matched: \"${described}\"` } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "ct_embed_yes",
+      "name": "Embed Complete Log",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_store_yes",
+      "name": "Log Conversation (Complete)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build Complete Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_respond_yes",
+      "name": "Respond (Complete Yes)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Build Complete Confirmation').first().json.reply }) }}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "ct_embed_no",
+      "name": "Embed No-Match Log",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_store_no",
+      "name": "Log Conversation (No Match)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build No-Match Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ct_respond_no",
+      "name": "Respond (Complete No)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Build No-Match Confirmation').first().json.reply }) }}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "nt_build",
+      "name": "Build Note Content",
+      "parameters": {
+        "jsCode": "const content = $json.content;\nconst firstLine = content.split(/[.\\n]/)[0].trim();\nconst title = firstLine.length > 60 ? firstLine.slice(0,57) + '...' : (firstLine || 'Note');\nreturn [{ json: { title, body: content } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GFJf4mAYeajicPbJ",
+          "name": "Trilium ETAPI"
+        }
+      },
+      "id": "nt_save",
+      "name": "Save Trilium Note",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ JSON.stringify({ parentNoteId: 'YOUR_TRILIUM_NOTES_PARENT_NOTE_ID', title: $json.title, type: 'text', content: $json.body }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:8080/etapi/create-note"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "nt_confirm",
+      "name": "Build Note Confirmation",
+      "parameters": {
+        "jsCode": "const ok = $json.noteId !== undefined;\nconst title = $('Build Note Content').first().json.title;\nconst reply = ok ? `\\ud83d\\udcdd Saved to Trilium: \"${title}\"` : `Tried to save that as a Trilium note but something went wrong (check the Trilium credential/parent note ID). Here's what I would've saved: \"${title}\"`;\nreturn [{ json: { reply, logText: `Saved a Trilium note: \"${title}\"` } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "nt_embed",
+      "name": "Embed Note Log",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.logText }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "nt_store",
+      "name": "Log Conversation (Note)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Build Note Confirmation').first().json.logText, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "nt_respond",
+      "name": "Respond (Note)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Build Note Confirmation').first().json.reply }) }}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qGzQ5lDTmLavLkZz",
+          "name": "Sonarr API Key"
+        }
+      },
+      "id": "mq_sonarr",
+      "name": "Get Sonarr Library",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "GET",
+        "options": {
+          "timeout": 30000
+        },
+        "url": "http://192.168.178.69:30027/api/v3/series"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "AIjIagd8xorNqd51",
+          "name": "Radarr API Key"
+        }
+      },
+      "id": "mq_radarr",
+      "name": "Get Radarr Library",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "GET",
+        "options": {
+          "timeout": 30000
+        },
+        "url": "http://192.168.178.69:30025/api/v3/movie"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "AThhlfKmd2BJvAKR",
+          "name": "Tautulli API Key"
+        }
+      },
+      "id": "mq_tautulli",
+      "name": "Get Tautulli History",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "method": "GET",
+        "options": {
+          "timeout": 30000
+        },
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cmd",
+              "value": "get_history"
+            },
+            {
+              "name": "length",
+              "value": "10"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "url": "http://192.168.178.69:30035/api/v2"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "mq_prompt",
+      "name": "Build Media Prompt",
+      "parameters": {
+        "jsCode": "const question = $('Parse Intent').first().json.content;\nlet series = [];\ntry { series = $('Collect Sonarr Results').first().json.seriesList || []; } catch(e) {}\nlet movies = [];\ntry { movies = $('Collect Radarr Results').first().json.movieList || []; } catch(e) {}\nlet history = [];\ntry {\n  const h = $('Get Tautulli History').first().json;\n  const rows = h?.response?.data?.data || [];\n  history = rows.slice(0, 10).map(r => `${r.full_title || r.title} watched by ${r.friendly_name || r.user}`);\n} catch(e) {}\n\n// Fuzzy-filter the library to likely-relevant titles instead of dumping the\n// whole thing into the prompt (was taking 3+ minutes and timing out on this\n// CPU-only hardware with a full library in context).\nconst stop = new Set(['do','i','have','is','in','my','the','a','an','of','on','for','to','and','are','was','been','it','that','this','show','movie','library','watching','watched']);\nconst qWords = question.toLowerCase().replace(/[^a-z0-9 ]/g,'').split(/\\s+/).filter(w => w.length > 2 && !stop.has(w));\nfunction score(title) {\n  const titleWords = title.toLowerCase().replace(/[^a-z0-9 ]/g,'').split(/\\s+/);\n  return qWords.reduce((s,w) => s + (titleWords.includes(w) ? 1 : 0), 0);\n}\nconst seriesMatches = series.map(s => ({ s, sc: score(s.title) })).filter(x => x.sc > 0).sort((a,b)=>b.sc-a.sc).slice(0,5)\n  .map(x => `${x.s.title} (TV, ${x.s.status}, ${x.s.statistics?.episodeFileCount || 0}/${x.s.statistics?.episodeCount || 0} episodes downloaded)`);\nconst movieMatches = movies.map(m => ({ m, sc: score(m.title) })).filter(x => x.sc > 0).sort((a,b)=>b.sc-a.sc).slice(0,5)\n  .map(x => `${x.m.title} (Movie, ${x.m.hasFile ? 'downloaded' : 'not downloaded'})`);\nconst historyMatches = history.filter(h => qWords.some(w => h.toLowerCase().includes(w)));\n\nconst matched = [...seriesMatches, ...movieMatches];\nif (matched.length === 0 && historyMatches.length === 0 && qWords.length > 0) {\n  // Confident no-match - skip the LLM call entirely, answer directly and fast.\n  return [{ json: { skipLLM: true, question, directAnswer: `I don't see anything matching that in your Sonarr/Radarr library or recent Tautulli history.` } }];\n}\nconst context = `Matching library entries:\\n${matched.join('\\n') || '(none found)'}\\n\\nMatching recent watch history:\\n${historyMatches.join('\\n') || '(none found)'}`;\nconst prompt = `You are Kody's second brain. Answer the question below using ONLY the live library/watch-history data provided as Context \\u2014 this is a filtered, relevant subset of a larger library, not the whole thing, so don't comment on what's missing from Context beyond what's asked. Be concise and conversational.\\n\\nContext:\\n${context}\\n\\nQuestion: ${question}\\n\\nAnswer:`;\nreturn [{ json: { skipLLM: false, prompt, question } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "mq_generate",
+      "name": "Generate Media Answer",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 180000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "mq_embed",
+      "name": "Embed Media Log",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: 'Media Q: ' + $('Build Media Prompt').first().json.question + ' A: ' + $json.response }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 90000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "mq_store",
+      "name": "Log Conversation (Media)",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: 'Media Q: ' + $('Build Media Prompt').first().json.question + ' A: ' + $('Generate Media Answer').first().json.response, type: 'conversation', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "mq_respond",
+      "name": "Respond (Media)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $('Generate Media Answer').first().json.response }) }}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "mq_collect_sonarr",
+      "name": "Collect Sonarr Results",
+      "parameters": {
+        "jsCode": "return [{ json: { seriesList: $input.all().map(i => i.json) } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "mq_collect_radarr",
+      "name": "Collect Radarr Results",
+      "parameters": {
+        "jsCode": "return [{ json: { movieList: $input.all().map(i => i.json) } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "mq_skip_check",
+      "name": "Media Match Found?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "m1",
+              "leftValue": "={{$json.skipLLM}}",
+              "operator": {
+                "operation": "equals",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "id": "mq_respond_direct",
+      "name": "Respond (Media No Match)",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ reply: $json.directAnswer }) }}"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

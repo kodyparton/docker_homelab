@@ -1,0 +1,265 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Build Message Query": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Fetch Recent Messages",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Every 30 Seconds": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Message Query",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Fetch Recent Messages": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Filter !status Commands",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Filter !status Commands": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "IF Command Found",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Status Reply": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post Status Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "IF Command Found": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "docker ps",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "docker ps": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Status Reply",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "ISBYTbNflsGpeokq",
+  "isArchived": false,
+  "meta": null,
+  "name": "17 - Discord Ops Console",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "poll_trigger",
+      "name": "Every 30 Seconds",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 30
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "build_query",
+      "name": "Build Message Query",
+      "parameters": {
+        "jsCode": "const staticData = this.getWorkflowStaticData('node');\nconst base = 'https://discord.com/api/v10/channels/YOUR_DISCORD_CHANNEL_ID/messages?limit=10';\nconst url = staticData.lastMessageId ? `${base}&after=${staticData.lastMessageId}` : base;\nreturn [{ json: { url } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "fetch_messages",
+      "name": "Fetch Recent Messages",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bot YOUR_DISCORD_BOT_TOKEN"
+            }
+          ]
+        },
+        "options": {},
+        "sendHeaders": true,
+        "url": "={{$json.url}}"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "filter_status_cmd",
+      "name": "Filter !status Commands",
+      "parameters": {
+        "jsCode": "const staticData = this.getWorkflowStaticData('node');\nconst messages = $input.first().json || [];\nconst list = Array.isArray(messages) ? messages : [];\n\nlet maxId = staticData.lastMessageId ? BigInt(staticData.lastMessageId) : 0n;\nfor (const m of list) {\n  const idBig = BigInt(m.id);\n  if (idBig > maxId) maxId = idBig;\n}\nif (maxId > 0n) staticData.lastMessageId = maxId.toString();\n\nconst matches = list.filter(m => !m.author?.bot && typeof m.content === 'string' && m.content.trim().toLowerCase().startsWith('!status'));\nif (matches.length === 0) return [];\nreturn [{ json: { count: matches.length } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "if_has_command",
+      "name": "IF Command Found",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.count}}",
+              "operator": {
+                "operation": "gt",
+                "type": "number"
+              },
+              "rightValue": 0
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        }
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "ssh_status",
+      "name": "docker ps",
+      "parameters": {
+        "command": "docker ps --format '{{.Names}}: {{.Status}}'"
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "format_status",
+      "name": "Format Status Reply",
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.stdout ?? $input.first().json.data ?? '';\nconst fence = String.fromCharCode(96,96,96);\nreturn [{ json: { content: `**Homelab Status**\\n${fence}\\n${raw}\\n${fence}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1320,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "post_reply",
+      "name": "Post Status Reply",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bot YOUR_DISCORD_BOT_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "jsonBody": "={{ { \"content\": $json.content } }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "https://discord.com/api/v10/channels/YOUR_DISCORD_CHANNEL_ID/messages"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

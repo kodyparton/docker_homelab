@@ -1,0 +1,209 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Daily 07:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run disk_history.sh",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Discord Message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Project Runway": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Under 21 Days?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run disk_history.sh": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Project Runway",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Under 21 Days?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Discord Message",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "description": null,
+  "id": "29JBujdr0NdiXk8P",
+  "isArchived": false,
+  "meta": null,
+  "name": "11 - Storage Runway Forecast",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Daily 07:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 7,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "ssh_history",
+      "name": "Run disk_history.sh",
+      "parameters": {
+        "command": "cd /Users/kp-srv-01/Documents/docker && bash scripts/disk_history.sh"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "forecast",
+      "name": "Project Runway",
+      "parameters": {
+        "jsCode": "const first = $input.first().json;\nconst raw = (first.stdout ?? first.data ?? '').trim();\nconst points = raw.split('\\n').filter(Boolean).map(line => {\n  const [ts, bytes] = line.split(',').map(Number);\n  return { ts, bytes };\n});\nif (points.length < 5) {\n  return [{ json: { skip: true, reason: `Only ${points.length} data points so far, need at least 5.` } }];\n}\nconst n = points.length;\nconst sumX = points.reduce((s,p) => s + p.ts, 0);\nconst sumY = points.reduce((s,p) => s + p.bytes, 0);\nconst meanX = sumX / n, meanY = sumY / n;\nlet num = 0, den = 0;\nfor (const p of points) {\n  num += (p.ts - meanX) * (p.bytes - meanY);\n  den += (p.ts - meanX) ** 2;\n}\nconst slope = den === 0 ? 0 : num / den; // bytes per second\nconst intercept = meanY - slope * meanX;\nconst latest = points[points.length - 1];\nconst latestGB = (latest.bytes / (1024**3)).toFixed(1);\nif (slope >= 0) {\n  return [{ json: { skip: true, reason: `Free space isn't trending down (slope ${slope.toFixed(2)} B/s). Currently ${latestGB} GB free.` } }];\n}\n// time when bytes = 0: 0 = slope*t + intercept => t = -intercept/slope\nconst zeroT = -intercept / slope;\nconst secondsRemaining = zeroT - latest.ts;\nconst daysRemaining = secondsRemaining / 86400;\nreturn [{ json: { skip: false, daysRemaining: Math.round(daysRemaining * 10) / 10, latestGB } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "check_threshold",
+      "name": "Under 21 Days?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{$json.skip}}",
+              "operator": {
+                "operation": "equals",
+                "type": "boolean"
+              },
+              "rightValue": false
+            },
+            {
+              "id": "c2",
+              "leftValue": "={{$json.daysRemaining}}",
+              "operator": {
+                "operation": "lt",
+                "type": "number"
+              },
+              "rightValue": 21
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "id": "format_message",
+      "name": "Format Discord Message",
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nreturn [{ json: { message: `**\ud83d\udcbe Storage Runway Forecast**\\n${j.latestGB} GB free. At the current rate, this host runs out of space in approximately **${j.daysRemaining} days**.` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "abc241ae-93da-4e24-9d64-094173b45ef2"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

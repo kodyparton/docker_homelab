@@ -1,0 +1,337 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Approve Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Format Discord Message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Weekly Unlock State": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Pending Requests",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Filter Own Athlete Activity Create": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Check Weekly Unlock State",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Discord Message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Media Title": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Approve Request",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Pending Requests": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Pick Oldest Pending",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Pick Oldest Pending": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Media Title",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Strava GET Verify": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond Verify Challenge",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Strava POST Events": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond POST OK",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Filter Own Athlete Activity Create",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "mV845WddTUsEi8R0",
+  "isArchived": false,
+  "meta": null,
+  "name": "16 - Earned It (Strava-Gated Media Unlock)",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "strava_get_verify",
+      "name": "Strava GET Verify",
+      "parameters": {
+        "httpMethod": "GET",
+        "options": {},
+        "path": "strava-events",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "ab7e4603-b881-41bb-b72b-dd38c0821c2b"
+    },
+    {
+      "id": "respond_verify",
+      "name": "Respond Verify Challenge",
+      "parameters": {
+        "options": {},
+        "respondWith": "json",
+        "responseBody": "={{ $json.query['hub.verify_token'] === 'YOUR_STRAVA_VERIFY_TOKEN' ? { \"hub.challenge\": $json.query['hub.challenge'] } : { error: \"invalid verify_token\" } }}"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "strava_post_events",
+      "name": "Strava POST Events",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "strava-events",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        220
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "09256619-640f-47eb-921c-d8e1c61f8ce8"
+    },
+    {
+      "id": "respond_post_ok",
+      "name": "Respond POST OK",
+      "parameters": {
+        "options": {},
+        "respondWith": "text",
+        "responseBody": "EVENT_RECEIVED"
+      },
+      "position": [
+        220,
+        320
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    },
+    {
+      "id": "filter_activity",
+      "name": "Filter Own Athlete Activity Create",
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || {};\nif (body.object_type === 'activity' && body.aspect_type === 'create' && Number(body.owner_id) === 167788348) {\n  return [{ json: body }];\n}\nreturn [];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        460
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "check_weekly_unlock",
+      "name": "Check Weekly Unlock State",
+      "parameters": {
+        "jsCode": "const staticData = this.getWorkflowStaticData('node');\nfunction isoWeekKey(d) {\n  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));\n  const dayNum = (date.getUTCDay() + 6) % 7;\n  date.setUTCDate(date.getUTCDate() - dayNum + 3);\n  const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));\n  const week = 1 + Math.round(((date - firstThursday) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7);\n  return `${date.getUTCFullYear()}-W${week}`;\n}\nconst weekKey = isoWeekKey(new Date());\nif (staticData.lastUnlockedWeek === weekKey) {\n  return [];\n}\nstaticData.lastUnlockedWeek = weekKey;\nreturn [{ json: { weekKey } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        460
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "get_pending",
+      "name": "Get Pending Requests",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "MTcyNzc0OTA5Mjc4NmUzZTE1YjllLWViNGEtNGNjNi04MmEyLTk2OGQ5MDFmZWUyNA=="
+            }
+          ]
+        },
+        "options": {},
+        "sendHeaders": true,
+        "url": "http://192.168.178.69:30023/api/v1/request?take=50&filter=pending&sort=added"
+      },
+      "position": [
+        660,
+        460
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "pick_oldest",
+      "name": "Pick Oldest Pending",
+      "parameters": {
+        "jsCode": "const results = $input.first().json.results || [];\nif (results.length === 0) return [];\n// sort=added returns newest first, so the oldest pending request is the last element\nconst oldest = results[results.length - 1];\nreturn [{ json: {\n  id: oldest.id,\n  mediaType: oldest.media.mediaType,\n  tmdbId: oldest.media.tmdbId\n} }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        460
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "get_media_title",
+      "name": "Get Media Title",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "MTcyNzc0OTA5Mjc4NmUzZTE1YjllLWViNGEtNGNjNi04MmEyLTk2OGQ5MDFmZWUyNA=="
+            }
+          ]
+        },
+        "options": {},
+        "sendHeaders": true,
+        "url": "=http://192.168.178.69:30023/api/v1/{{$json.mediaType}}/{{$json.tmdbId}}"
+      },
+      "position": [
+        1100,
+        460
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "approve_request",
+      "name": "Approve Request",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "MTcyNzc0OTA5Mjc4NmUzZTE1YjllLWViNGEtNGNjNi04MmEyLTk2OGQ5MDFmZWUyNA=="
+            }
+          ]
+        },
+        "method": "POST",
+        "options": {},
+        "sendHeaders": true,
+        "url": "=http://192.168.178.69:30023/api/v1/request/{{$('Pick Oldest Pending').item.json.id}}/approve"
+      },
+      "position": [
+        1320,
+        460
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "format_discord",
+      "name": "Format Discord Message",
+      "parameters": {
+        "jsCode": "const media = $('Get Media Title').first().json;\nconst title = media.title || media.name || 'your next pick';\nreturn [{ json: { message: `\ud83c\udfc3 Nice work \u2014 this week's movement goal is met. Unlocked: **${title}**` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1540,
+        460
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "tDW2bTvNyCeoVH2o",
+          "name": "Earned It Discord Webhook"
+        }
+      },
+      "id": "post_discord",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        1760,
+        460
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "f1fe715b-07aa-4429-9848-7b5c35054efb"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

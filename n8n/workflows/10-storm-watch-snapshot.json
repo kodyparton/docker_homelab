@@ -1,0 +1,220 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "EDIT ME: Your Coordinates": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Active NWS Alerts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Every 20 Minutes": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "EDIT ME: Your Coordinates",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Filter New Severe Alerts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Git Snapshot (local commit)",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Format Discord Message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Discord Message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Active NWS Alerts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Filter New Severe Alerts",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "lHoB2LXL4x2ORXGM",
+  "isArchived": false,
+  "meta": null,
+  "name": "10 - Storm Watch Snapshot",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Every 20 Minutes",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 20
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "coords",
+      "name": "EDIT ME: Your Coordinates",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "LAT",
+              "type": "string",
+              "value": "0.0000"
+            },
+            {
+              "id": "2",
+              "name": "LON",
+              "type": "string",
+              "value": "0.0000"
+            }
+          ]
+        }
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "nws_alerts",
+      "name": "Get Active NWS Alerts",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "homelab-monitor (kody.m.parton@gmail.com)"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "url": "=https://api.weather.gov/alerts/active?point={{$json.LAT}},{{$json.LON}}"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "filter_new_severe",
+      "name": "Filter New Severe Alerts",
+      "parameters": {
+        "jsCode": "const staticData = this.getWorkflowStaticData('node');\nif (!staticData.seenAlertIds) staticData.seenAlertIds = [];\nconst body = $input.first().json;\nconst features = body.features || [];\nconst severe = features.filter(f => ['Severe','Extreme'].includes(f.properties.severity));\nconst fresh = severe.filter(f => !staticData.seenAlertIds.includes(f.properties.id));\nfor (const f of fresh) {\n  staticData.seenAlertIds.push(f.properties.id);\n}\nif (staticData.seenAlertIds.length > 200) {\n  staticData.seenAlertIds = staticData.seenAlertIds.slice(-200);\n}\nreturn fresh.map(f => ({ json: {\n  id: f.properties.id,\n  event: f.properties.event,\n  severity: f.properties.severity,\n  headline: f.properties.headline,\n  expires: f.properties.expires\n} }));\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "git_snapshot",
+      "name": "Git Snapshot (local commit)",
+      "parameters": {
+        "command": "=cd /Users/kp-srv-01/Documents/docker && git add -A && git commit --allow-empty -m \"storm snapshot: {{$json.event}}\""
+      },
+      "position": [
+        880,
+        -100
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "format_message",
+      "name": "Format Discord Message",
+      "parameters": {
+        "jsCode": "const lines = $input.all().map(i => `\u26c8\ufe0f **${i.json.event}** (${i.json.severity}) \u2014 ${i.json.headline}\\nExpires: ${i.json.expires}`);\nreturn [{ json: { message: `**Storm Watch Snapshot**\\nA local git commit of the homelab config was taken as a precaution (not pushed \u2014 push it yourself with \\`git push\\` if you want it off-box before the storm hits).\\n\\n${lines.join('\\n\\n')}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        1100,
+        100
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "dfaac763-296f-4f12-8ac3-827e6bf2ba9a"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

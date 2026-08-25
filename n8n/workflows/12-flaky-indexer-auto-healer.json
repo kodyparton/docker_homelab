@@ -1,0 +1,246 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Compute Deltas & Flag": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Full Indexer Config",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Format Discord Message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Indexer Stats",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Format Discord Message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Full Indexer Config": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Set enable=false",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Indexer Stats": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Compute Deltas & Flag",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Set enable=false": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Disable Indexer",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "FDhc81h0twSgYaU0",
+  "isArchived": false,
+  "meta": null,
+  "name": "12 - Flaky Indexer Auto-Healer",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Every 6 Hours",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "k0yCt1S31jaeFHIp",
+          "name": "Prowlarr API Key"
+        }
+      },
+      "id": "get_stats",
+      "name": "Get Indexer Stats",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": false,
+        "url": "http://192.168.178.69:9696/api/v1/indexerstats"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "compute_deltas",
+      "name": "Compute Deltas & Flag",
+      "parameters": {
+        "jsCode": "const staticData = this.getWorkflowStaticData('node');\nif (!staticData.previous) staticData.previous = {};\nconst body = $input.first().json;\nconst indexers = body.indexers || [];\nconst flagged = [];\nfor (const ix of indexers) {\n  const prev = staticData.previous[ix.indexerId];\n  staticData.previous[ix.indexerId] = { numberOfQueries: ix.numberOfQueries, numberOfFailedQueries: ix.numberOfFailedQueries };\n  if (!prev) continue; // first run for this indexer, nothing to compare yet\n  const deltaQueries = ix.numberOfQueries - prev.numberOfQueries;\n  const deltaFailed = ix.numberOfFailedQueries - prev.numberOfFailedQueries;\n  if (deltaQueries < 5) continue; // not enough activity this interval\n  const failureRate = deltaFailed / deltaQueries;\n  if (failureRate > 0.5) {\n    flagged.push({ indexerId: ix.indexerId, indexerName: ix.indexerName, deltaQueries, deltaFailed, failureRate: Math.round(failureRate * 100) });\n  }\n}\nreturn flagged.map(f => ({ json: f }));\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "k0yCt1S31jaeFHIp",
+          "name": "Prowlarr API Key"
+        }
+      },
+      "id": "get_full_config",
+      "name": "Get Full Indexer Config",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": false,
+        "url": "=http://192.168.178.69:9696/api/v1/indexer/{{$json.indexerId}}"
+      },
+      "position": [
+        660,
+        -100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "disable_flag",
+      "name": "Set enable=false",
+      "parameters": {
+        "jsCode": "const cfg = $input.item.json;\ncfg.enable = false;\nreturn { json: cfg };\n",
+        "mode": "runOnceForEachItem"
+      },
+      "position": [
+        880,
+        -100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "k0yCt1S31jaeFHIp",
+          "name": "Prowlarr API Key"
+        }
+      },
+      "id": "put_disable",
+      "name": "Disable Indexer",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "method": "PUT",
+        "sendBody": true,
+        "sendHeaders": false,
+        "specifyBody": "json",
+        "url": "=http://192.168.178.69:9696/api/v1/indexer/{{$json.id}}"
+      },
+      "position": [
+        1100,
+        -100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "format_message",
+      "name": "Format Discord Message",
+      "parameters": {
+        "jsCode": "const lines = $input.all().map(i => `\ud83d\udeab **${i.json.indexerName}** disabled \u2014 ${i.json.failureRate}% failure rate over the last ${i.json.deltaQueries} queries (${i.json.deltaFailed} failed). Re-enable manually in Prowlarr once you've confirmed it's healthy again.`);\nreturn [{ json: { message: `**Flaky Indexer Auto-Healer**\\n${lines.join('\\n')}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        880,
+        100
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "026114d5-376e-43b5-bb52-8818da55374d"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

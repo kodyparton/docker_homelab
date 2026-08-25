@@ -1,0 +1,151 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Embed Workout": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Store in Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Workouts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Workout",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Health Export In": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Workouts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Store in Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "QQ4gvKcWhgSJGcB6",
+  "isArchived": false,
+  "meta": null,
+  "name": "21 - Apple Health Import",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "webhook",
+      "name": "Health Export In",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "apple-health-import",
+        "responseMode": "responseNode"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "9277fb37-2ec1-4989-816f-2cdda0dd7393"
+    },
+    {
+      "id": "extract",
+      "name": "Extract Workouts",
+      "parameters": {
+        "jsCode": "// Health Auto Export (iOS app) posts JSON shaped roughly like\n// { data: { workouts: [ { name, start, end, duration, totalEnergyBurned: {qty,units}, totalDistance: {qty,units} } ] } }\n// Field names have varied across app versions \u2014 this is defensive and may\n// need adjusting once you see a real payload (check n8n's execution log\n// for this workflow after the first real export).\nconst body = $input.first().json.body || {};\nconst workouts = (body.data && body.data.workouts) || body.workouts || [];\n\nreturn workouts.map(w => {\n  const name = w.name || w.workoutActivityType || 'Workout';\n  const start = w.start || w.startDate || '';\n  const date = (start || new Date().toISOString()).slice(0, 10);\n  const durationMin = w.duration ? Math.round(w.duration / 60) : null;\n  const energy = w.totalEnergyBurned && (w.totalEnergyBurned.qty ?? w.totalEnergyBurned);\n  const distance = w.totalDistance && (w.totalDistance.qty ?? w.totalDistance);\n  const parts = [name];\n  if (durationMin) parts.push(`${durationMin} min`);\n  if (distance) parts.push(`${distance} ${w.totalDistance?.units || ''}`.trim());\n  if (energy) parts.push(`${energy} ${w.totalEnergyBurned?.units || 'kcal'}`.trim());\n  return { json: { text: `Apple Health workout: ${parts.join(', ')}`, date } };\n});\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "embed",
+      "name": "Embed Workout",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.text }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 60000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "store",
+      "name": "Store in Qdrant",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Extract Workouts').item.json.text, type: 'apple_health', date: $('Extract Workouts').item.json.date, added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "respond",
+      "name": "Respond",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"ok\", stored: $items().length }) }}"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

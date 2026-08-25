@@ -1,0 +1,267 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Count Groups Removed": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Disable Account",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Disable Account": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Summary",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Group IDs": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Remove From Group",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Group Memberships": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Group IDs",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Offboarding Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Revoke Sessions",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Remove From Group": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Count Groups Removed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Revoke Sessions": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Group Memberships",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "AcpyV30Q1n9LRghN",
+  "isArchived": false,
+  "meta": null,
+  "name": "04b - Entra Leaver",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "c6732e45-09b9-47ad-885e-c256b630bca1",
+      "name": "Offboarding Request",
+      "parameters": {
+        "formDescription": "Submit to deprovision an Entra ID account (leaver workflow).",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "User Principal Name or Object ID",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Reason",
+              "requiredField": false
+            }
+          ]
+        },
+        "formTitle": "Offboarding Request",
+        "options": {}
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "3ce101f6-385d-460c-8a6f-2829f1606077"
+    },
+    {
+      "credentials": {
+        "oAuth2Api": {
+          "id": "zOkAMuHCI3SdjSvr",
+          "name": "Entra Graph (App-Only)"
+        }
+      },
+      "id": "964c8b43-b9da-43dd-89e2-025bfcf58488",
+      "name": "Revoke Sessions",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "method": "POST",
+        "nodeCredentialType": "oAuth2Api",
+        "options": {},
+        "sendBody": false,
+        "url": "=https://graph.microsoft.com/v1.0/users/{{ encodeURIComponent($json['User Principal Name or Object ID']) }}/revokeSignInSessions"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "oAuth2Api": {
+          "id": "zOkAMuHCI3SdjSvr",
+          "name": "Entra Graph (App-Only)"
+        }
+      },
+      "id": "ad3fd69f-dbbe-464e-9e96-fa99c27be6c8",
+      "name": "Get Group Memberships",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "method": "GET",
+        "nodeCredentialType": "oAuth2Api",
+        "options": {},
+        "sendBody": false,
+        "url": "=https://graph.microsoft.com/v1.0/users/{{ encodeURIComponent($('Offboarding Request').item.json['User Principal Name or Object ID']) }}/memberOf?$select=id,@odata.type"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "61254d4e-9ab6-4599-9ec4-2d7d08445ab8",
+      "name": "Extract Group IDs",
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nconst groups = (resp.value || []).filter(g => g['@odata.type'] === '#microsoft.graph.group');\nreturn groups.map(g => ({ json: { groupId: g.id } }));",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "oAuth2Api": {
+          "id": "zOkAMuHCI3SdjSvr",
+          "name": "Entra Graph (App-Only)"
+        }
+      },
+      "id": "be0cb314-9dda-4eaf-b0b2-1491c45edea1",
+      "name": "Remove From Group",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "method": "DELETE",
+        "nodeCredentialType": "oAuth2Api",
+        "options": {},
+        "sendBody": false,
+        "url": "=https://graph.microsoft.com/v1.0/groups/{{ $json.groupId }}/members/{{ encodeURIComponent($('Offboarding Request').item.json['User Principal Name or Object ID']) }}/$ref"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ec83070d-4325-438e-bb1d-ba768ec3e104",
+      "name": "Count Groups Removed",
+      "parameters": {
+        "jsCode": "return [{ json: { groupsRemovedCount: $input.all().length } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "oAuth2Api": {
+          "id": "zOkAMuHCI3SdjSvr",
+          "name": "Entra Graph (App-Only)"
+        }
+      },
+      "id": "fc473a08-94e1-4b53-87c7-9ed4d21ab38a",
+      "name": "Disable Account",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "jsonBody": "={{ JSON.stringify({ accountEnabled: false }) }}",
+        "method": "PATCH",
+        "nodeCredentialType": "oAuth2Api",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "=https://graph.microsoft.com/v1.0/users/{{ encodeURIComponent($('Offboarding Request').item.json['User Principal Name or Object ID']) }}"
+      },
+      "position": [
+        1320,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "65e7d0dc-7486-4bb2-98be-9df0ef2feb1f",
+      "name": "Build Summary",
+      "parameters": {
+        "jsCode": "const trigger = $('Offboarding Request').first().json;\nconst groupsRemoved = $('Count Groups Removed').first().json.groupsRemovedCount;\nreturn [{\n  json: {\n    userIdOrUpn: trigger['User Principal Name or Object ID'],\n    reason: trigger['Reason'] || '',\n    sessionsRevoked: true,\n    groupsRemovedCount: groupsRemoved,\n    accountDisabled: true,\n    timestamp: new Date().toISOString(),\n  }\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

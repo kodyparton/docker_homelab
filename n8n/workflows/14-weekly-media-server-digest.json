@@ -1,0 +1,389 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Build Digest": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Session Cookie": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "qBittorrent Transfer Info",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Radarr 4K Movie Count": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "qBittorrent Login",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Radarr Movie Count": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Radarr 4K Movie Count",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Sonarr 4K Series Count": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Radarr Movie Count",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Sonarr Series Count": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Sonarr 4K Series Count",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Tautulli Home Stats": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Sonarr Series Count",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Weekly Monday 08:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Tautulli Home Stats",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "qBittorrent Login": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Session Cookie",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "qBittorrent Transfer Info": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Digest",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "x9Q6UWn0gEQzGMAf",
+  "isArchived": false,
+  "meta": null,
+  "name": "14 - Weekly Media Server Digest",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "e1b0ea47-75fd-41e2-a251-25767e5fbc1f",
+      "name": "Weekly Monday 08:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0,
+              "weeksInterval": 1
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "AThhlfKmd2BJvAKR",
+          "name": "Tautulli API Key"
+        }
+      },
+      "id": "9d87036d-2f76-4eae-a362-c4f82eb444e0",
+      "name": "Tautulli Home Stats",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {},
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cmd",
+              "value": "get_home_stats"
+            },
+            {
+              "name": "time_range",
+              "value": "7"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "url": "http://192.168.178.69:30035/api/v2"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qGzQ5lDTmLavLkZz",
+          "name": "Sonarr API Key"
+        }
+      },
+      "id": "3c3718a7-8bbd-4d5d-afa5-98c821e963ae",
+      "name": "Sonarr Series Count",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendHeaders": false,
+        "url": "http://192.168.178.69:30027/api/v3/series"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OW9giRVQHfY6wu7t",
+          "name": "Sonarr 4K API Key"
+        }
+      },
+      "id": "9f7bc5e4-f29e-4bf1-be87-1737c3cf163a",
+      "name": "Sonarr 4K Series Count",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendHeaders": false,
+        "url": "http://192.168.178.69:30030/api/v3/series"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "AIjIagd8xorNqd51",
+          "name": "Radarr API Key"
+        }
+      },
+      "id": "31e6e8d0-59bb-46e5-a285-f33ab8c11f7e",
+      "name": "Radarr Movie Count",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendHeaders": false,
+        "url": "http://192.168.178.69:30025/api/v3/movie"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mL1kq1s3DR2UX1uf",
+          "name": "Radarr 4K API Key"
+        }
+      },
+      "id": "aa242de2-6672-4ec3-9ce0-b7cf77b5db22",
+      "name": "Radarr 4K Movie Count",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendHeaders": false,
+        "url": "http://192.168.178.69:30031/api/v3/movie"
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "d637fac9-31ee-4b29-9c5a-edf81055c1a5",
+      "name": "qBittorrent Login",
+      "parameters": {
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "kparton"
+            },
+            {
+              "name": "password",
+              "value": "YOUR_QBIT_PASSWORD"
+            }
+          ]
+        },
+        "contentType": "form-urlencoded",
+        "method": "POST",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        },
+        "sendBody": true,
+        "url": "http://192.168.178.69:30024/api/v2/auth/login"
+      },
+      "position": [
+        1320,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "ec1784ca-076b-472a-b741-8ad28957b323",
+      "name": "Extract Session Cookie",
+      "parameters": {
+        "jsCode": "\nconst resp = $input.first().json;\nlet cookie = '';\ntry {\n  const raw = resp.headers['set-cookie'];\n  if (raw) {\n    const arr = Array.isArray(raw) ? raw : [raw];\n    const sid = arr.find(c => c.startsWith('SID='));\n    if (sid) cookie = sid.split(';')[0];\n  }\n} catch (e) {}\nreturn [{ json: { cookie, loginOk: !!cookie } }];\n"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "0fb6deb7-ee89-4826-b7c2-eab57833dcf1",
+      "name": "qBittorrent Transfer Info",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Cookie",
+              "value": "={{$json.cookie}}"
+            }
+          ]
+        },
+        "options": {},
+        "sendHeaders": true,
+        "url": "http://192.168.178.69:30024/api/v2/transfer/info"
+      },
+      "position": [
+        1760,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "b10bdbd1-7f72-4c75-9429-8e6b201851fa",
+      "name": "Build Digest",
+      "parameters": {
+        "jsCode": "\nfunction safeLen(nodeName) {\n  try {\n    const d = $(nodeName).first().json;\n    return Array.isArray(d) ? d.length : 'n/a';\n  } catch (e) { return 'n/a'; }\n}\n\nlet tautulliLines = [];\ntry {\n  const stats = $('Tautulli Home Stats').first().json.response.data;\n  const topMovies = stats.find(s => s.stat_id === 'top_movies');\n  const topTv = stats.find(s => s.stat_id === 'top_tv');\n  if (topMovies && topMovies.rows && topMovies.rows.length) {\n    tautulliLines.push('\ud83c\udfac Top movie: ' + topMovies.rows[0].title + ' (' + topMovies.rows[0].total_plays + ' plays)');\n  }\n  if (topTv && topTv.rows && topTv.rows.length) {\n    tautulliLines.push('\ud83d\udcfa Top show: ' + topTv.rows[0].title + ' (' + topTv.rows[0].total_plays + ' plays)');\n  }\n} catch (e) {\n  tautulliLines.push('(no Tautulli watch activity this week)');\n}\n\nlet qbitLine = 'qBittorrent: not authenticated (set the real password in the \"qBittorrent Login\" node)';\ntry {\n  const cookieInfo = $('Extract Session Cookie').first().json;\n  if (cookieInfo.loginOk) {\n    const info = $('qBittorrent Transfer Info').first().json;\n    const gb = (n) => (n / 1024 / 1024 / 1024).toFixed(1);\n    qbitLine = `qBittorrent this session \u2014 \u2b07 ${gb(info.dl_info_data)} GB / \u2b06 ${gb(info.up_info_data)} GB`;\n  }\n} catch (e) {}\n\nconst lines = [\n  '\ud83d\udcca **Weekly Media Server Digest**',\n  '',\n  `Library sizes \u2014 Sonarr: ${safeLen('Sonarr Series Count')} series | Sonarr 4K: ${safeLen('Sonarr 4K Series Count')} series | Radarr: ${safeLen('Radarr Movie Count')} movies | Radarr 4K: ${safeLen('Radarr 4K Movie Count')} movies`,\n  '',\n  ...tautulliLines,\n  '',\n  qbitLine\n];\n\nreturn [{ json: { message: lines.join('\\n') } }];\n"
+      },
+      "position": [
+        1980,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "e198b467-ae59-49ba-8139-b923106d9d0b",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        2200,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "c29b2a4b-f1e2-4b0a-ba95-6f7f77924c10"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

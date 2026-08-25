@@ -1,0 +1,178 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Aggregate Alert Message": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run mount_health_check.sh",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Filter Unhealthy": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Restart Unhealthy Container",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Aggregate Alert Message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run mount_health_check.sh": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Filter Unhealthy",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "CnKayVy2HwlMmtVY",
+  "isArchived": false,
+  "meta": null,
+  "name": "09 - Mount Health Self-Healer",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Every 15 Minutes",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "ssh_check",
+      "name": "Run mount_health_check.sh",
+      "parameters": {
+        "command": "cd /Users/kp-srv-01/Documents/docker && bash scripts/mount_health_check.sh"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "filter_unhealthy",
+      "name": "Filter Unhealthy",
+      "parameters": {
+        "jsCode": "const first = $input.first().json;\nconst raw = first.stdout ?? first.data ?? '';\nlet records = [];\ntry { records = JSON.parse(raw); } catch (e) {\n  return [{ json: { container: null, alertOnly: true, line: `Mount health check produced unparseable output: ${e.message}` } }];\n}\nconst bad = records.filter(r => r.ok === false);\nreturn bad.map(r => ({ json: {\n  container: r.container,\n  path: r.path,\n  status: r.status,\n  line: `\ud83d\udd27 **${r.container}** \u2014 mount \\`${r.path}\\` is ${r.status === 'container_missing' ? 'missing entirely (no container found)' : 'inaccessible (ENOENT)'}. ${r.status === 'container_missing' ? 'Not restarting (nothing to restart).' : 'Auto-restarting container.'}`\n} }));\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "restart_container",
+      "name": "Restart Unhealthy Container",
+      "parameters": {
+        "command": "={{ $json.status === 'container_missing' ? 'true' : 'docker restart ' + $json.container }}"
+      },
+      "position": [
+        660,
+        -100
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "aggregate_message",
+      "name": "Aggregate Alert Message",
+      "parameters": {
+        "jsCode": "const lines = $input.all().map(i => i.json.line);\nconst header = 'This is the known OrbStack/SMB-passthrough mount issue \u2014 the container\\'s bind-mounted NAS share dropped and got restarted automatically.';\nreturn [{ json: { message: `**\ud83e\ude7a Mount Health Self-Healer**\\n${lines.join('\\n')}\\n\\n_${header}_` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        880,
+        100
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "909995ee-1da5-4e97-b583-279160af1281"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

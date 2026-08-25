@@ -1,0 +1,216 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Assign Group": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Summary",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build User Payload": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create User",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Create User": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Prepare Group Assignments",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "New Hire Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build User Payload",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Prepare Group Assignments": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Assign Group",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "ejCEgXD14EaV5KlM",
+  "isArchived": false,
+  "meta": null,
+  "name": "04a - Entra Joiner",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "d1f65927-16a7-49a8-9806-e28e96ce8e57",
+      "name": "New Hire Request",
+      "parameters": {
+        "formDescription": "Submit details to provision a new Entra ID account (joiner workflow).",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Personal/Contact Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Job Title",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Department",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Groups to assign",
+              "placeholder": "Comma-separated group Object IDs (preferred over display names)",
+              "requiredField": false
+            }
+          ]
+        },
+        "formTitle": "New Hire Request",
+        "options": {}
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "webhookId": "52b797a1-85c3-4f6a-884d-1f42f793719b"
+    },
+    {
+      "id": "9bd6252f-5c11-4c15-9c8a-d03e9e6f600f",
+      "name": "Build User Payload",
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst first = (item['First Name'] || '').trim();\nconst last = (item['Last Name'] || '').trim();\nconst email = (item['Personal/Contact Email'] || '').trim();\nconst jobTitle = item['Job Title'] || '';\nconst department = item['Department'] || '';\nconst groupsRaw = item['Groups to assign'] || '';\n\nconst localPart = email.split('@')[0].toLowerCase().replace(/[^a-z0-9.]/g, '');\nconst mailNickname = localPart || (first + last).toLowerCase().replace(/[^a-z0-9.]/g, '');\n// TODO: replace YOUR-TENANT with your real verified domain (or *.onmicrosoft.com) once your tenant exists\nconst userPrincipalName = `${mailNickname}@YOUR-TENANT.onmicrosoft.com`;\n\nfunction genPassword(len) {\n  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#%^&*';\n  let pw = '';\n  for (let i = 0; i < len; i++) pw += chars[Math.floor(Math.random() * chars.length)];\n  return pw;\n}\n\nconst groups = groupsRaw.split(',').map(g => g.trim()).filter(Boolean);\n\nreturn [{\n  json: {\n    displayName: `${first} ${last}`.trim(),\n    mailNickname,\n    userPrincipalName,\n    tempPassword: genPassword(16),\n    jobTitle,\n    department,\n    groups,\n  }\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "oAuth2Api": {
+          "id": "zOkAMuHCI3SdjSvr",
+          "name": "Entra Graph (App-Only)"
+        }
+      },
+      "id": "b2f307ae-c8e7-4031-837c-3ce86e6b79b8",
+      "name": "Create User",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "jsonBody": "={{ JSON.stringify({ accountEnabled: true, displayName: $json.displayName, mailNickname: $json.mailNickname, userPrincipalName: $json.userPrincipalName, passwordProfile: { forceChangePasswordNextSignIn: true, password: $json.tempPassword }, jobTitle: $json.jobTitle, department: $json.department }) }}",
+        "method": "POST",
+        "nodeCredentialType": "oAuth2Api",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://graph.microsoft.com/v1.0/users"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "0481f523-452e-4f7a-93d6-eb195af36517",
+      "name": "Prepare Group Assignments",
+      "parameters": {
+        "jsCode": "const newUser = $input.first().json;\nconst groups = $('Build User Payload').first().json.groups;\nreturn groups.map(g => ({ json: { groupId: g, userId: newUser.id } }));",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "oAuth2Api": {
+          "id": "zOkAMuHCI3SdjSvr",
+          "name": "Entra Graph (App-Only)"
+        }
+      },
+      "id": "78da6911-6ac4-4279-a214-33e881d7ef91",
+      "name": "Assign Group",
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "jsonBody": "={{ JSON.stringify({ '@odata.id': 'https://graph.microsoft.com/v1.0/directoryObjects/' + $json.userId }) }}",
+        "method": "POST",
+        "nodeCredentialType": "oAuth2Api",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "=https://graph.microsoft.com/v1.0/groups/{{ $json.groupId }}/members/$ref"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "9aad7948-7fc3-48d3-a4eb-a5e28f7fbf8a",
+      "name": "Build Summary",
+      "parameters": {
+        "jsCode": "const created = $('Create User').first().json;\nconst groupResults = $('Assign Group').all().map(i => i.json);\nreturn [{\n  json: {\n    newUserId: created.id,\n    userPrincipalName: created.userPrincipalName,\n    displayName: created.displayName,\n    groupsAssigned: groupResults.length,\n    timestamp: new Date().toISOString(),\n  }\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

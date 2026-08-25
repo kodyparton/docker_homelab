@@ -1,0 +1,161 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Daily 09:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Snapshot Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Filter Failures & Format Alert": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run backup_check.sh": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Filter Failures & Format Alert",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Snapshot Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run backup_check.sh",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "3JHqgAwVYe4p0iw9",
+  "isArchived": false,
+  "meta": null,
+  "name": "03 - Backup Verification",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Daily 09:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "ssh_check",
+      "name": "Run backup_check.sh",
+      "parameters": {
+        "command": "cd /Users/kp-srv-01/Documents/docker && bash scripts/backup_check.sh"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "classify",
+      "name": "Filter Failures & Format Alert",
+      "parameters": {
+        "jsCode": "const first = $input.first().json;\nconst raw = first.stdout ?? first.data ?? '';\nlet records = [];\ntry { records = JSON.parse(raw); } catch (e) {\n  return [{ json: { message: `\u26a0\ufe0f Backup verification could not parse backup_check.sh output: ${e.message}\\nraw: ${String(raw).slice(0,500)}` } }];\n}\nconst failed = records.filter(r => r.status !== 'ok');\nif (failed.length === 0) return [];\nconst lines = failed.map(r => {\n  if (r.status === 'missing') return `\ud83d\udd34 ${r.service} \u2014 no backup file found at all`;\n  const bits = [];\n  if (!r.integrityOk) bits.push('failed integrity check');\n  if (r.stale) bits.push(`stale (${r.ageDays}d old, threshold ${r.staleThresholdDays}d)`);\n  return `\ud83d\udfe0 ${r.service} \u2014 ${bits.join(', ')} (${r.file})`;\n});\nreturn [{ json: { message: `**Backup Verification \u2014 failures found**\\n${lines.join('\\n')}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "aa479861-0ef0-4671-abf2-86548f5934fc"
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "qdrant_snapshot",
+      "name": "Snapshot Qdrant",
+      "parameters": {
+        "command": "curl -s -X POST http://localhost:6333/collections/second_brain/snapshots > /dev/null && ls -t /Users/kp-srv-01/Documents/docker/qdrant/snapshots/second_brain/*.snapshot 2>/dev/null | tail -n +4 | while read -r f; do rm -f \"$f\" \"$f.checksum\"; done"
+      },
+      "position": [
+        220,
+        -100
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

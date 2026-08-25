@@ -1,0 +1,74 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Daily 06:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Refresh docs/ in Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "FDHrLRhYvV4HafL6",
+  "isArchived": false,
+  "meta": null,
+  "name": "22 - Refresh Homelab Knowledge",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Daily 06:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 6,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "refresh",
+      "name": "Refresh docs/ in Qdrant",
+      "parameters": {
+        "command": "cd /Users/kp-srv-01/Documents/docker && python3 scripts/seed_second_brain.py docs/"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

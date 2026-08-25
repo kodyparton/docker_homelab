@@ -1,0 +1,271 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Build Summary Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Generate Consolidated Summary",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Summary": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Store Summary in Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Enough to Consolidate?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Summary Prompt",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Generate Consolidated Summary": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Summary",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Conversations Older Than 30 Days": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Enough to Consolidate?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Store Summary in Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Delete Original Entries",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Weekly Sunday 04:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Conversations Older Than 30 Days",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "4VNg00GoYsLF2WiL",
+  "isArchived": false,
+  "meta": null,
+  "name": "23 - Weekly Memory Consolidation",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Weekly Sunday 04:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                0
+              ],
+              "triggerAtHour": 4,
+              "triggerAtMinute": 0,
+              "weeksInterval": 1
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "get_old",
+      "name": "Get Conversations Older Than 30 Days",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', range: { lt: new Date(Date.now() - 30*86400000).toISOString().slice(0,10) } } ] }, limit: 500, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "check_enough",
+      "name": "Enough to Consolidate?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e1",
+              "leftValue": "={{ ($json.result.points || []).length }}",
+              "operator": {
+                "operation": "gte",
+                "type": "number"
+              },
+              "rightValue": 5
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "id": "build_summary_prompt",
+      "name": "Build Summary Prompt",
+      "parameters": {
+        "jsCode": "const points = $json.result.points;\nconst dates = points.map(p => p.payload.date).sort();\nconst raw = points.map(p => `[${p.payload.date}] ${p.payload.text}`).join('\\n');\nconst prompt = `Summarize the following month-plus-old conversation log into a short, dense paragraph capturing the notable facts, decisions, and events \\u2014 the kind of thing worth remembering long-term. Skip small talk and routine exchanges. Be concise.\\n\\nLog:\\n${raw}\\n\\nSummary:`;\nreturn [{ json: { prompt, ids: points.map(p => p.id), dateFrom: dates[0], dateTo: dates[dates.length-1], count: points.length } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "generate_summary",
+      "name": "Generate Consolidated Summary",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 120000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "embed_summary",
+      "name": "Embed Summary",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.response }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 60000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "store_summary",
+      "name": "Store Summary in Qdrant",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Generate Consolidated Summary').first().json.response, type: 'conversation_summary', date: $('Build Summary Prompt').first().json.dateTo, date_from: $('Build Summary Prompt').first().json.dateFrom, date_to: $('Build Summary Prompt').first().json.dateTo, source_count: $('Build Summary Prompt').first().json.count, added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        1320,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "delete_originals",
+      "name": "Delete Original Entries",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: $('Build Summary Prompt').first().json.ids }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/delete"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

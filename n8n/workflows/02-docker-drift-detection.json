@@ -1,0 +1,129 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run drift_check.sh",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Filter Drifted & Format Alert": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run drift_check.sh": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Filter Drifted & Format Alert",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "BT6HWEX9LnNtePJo",
+  "isArchived": false,
+  "meta": null,
+  "name": "02 - Docker Drift Detection",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Every 6 Hours",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "ssh_check",
+      "name": "Run drift_check.sh",
+      "parameters": {
+        "command": "cd /Users/kp-srv-01/Documents/docker && bash scripts/drift_check.sh"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "classify",
+      "name": "Filter Drifted & Format Alert",
+      "parameters": {
+        "jsCode": "const first = $input.first().json;\nconst raw = first.stdout ?? first.data ?? '';\nlet records = [];\ntry { records = JSON.parse(raw); } catch (e) {\n  return [{ json: { message: `\u26a0\ufe0f Drift detection could not parse drift_check.sh output: ${e.message}\\nraw: ${String(raw).slice(0,500)}` } }];\n}\nconst drifted = records.filter(r => r.drift);\nif (drifted.length === 0) return [];\nconst lines = drifted.map(r => `\ud83d\udd34 ${r.service} (${r.dir}) \u2014 ${r.reason}: expected \\`${r.expectedImage}\\`, container status \\`${r.containerStatus}\\`, running image \\`${r.actualImage || 'n/a'}\\``);\nreturn [{ json: { message: `**Docker Drift Detection**\\n${lines.join('\\n')}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "16ebd339-e5fe-4f9c-be31-70a758380f97"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

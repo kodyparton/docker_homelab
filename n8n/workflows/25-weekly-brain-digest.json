@@ -1,0 +1,305 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Anything This Week?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Generate Digest",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Attach Channel": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get This Week's Facts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Digest Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Anything This Week?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "EDIT ME: Discord Channel ID": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Attach Channel",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Generate Digest": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post Digest to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get This Week's Conversations": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Digest Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get This Week's Facts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get This Week's Conversations",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Weekly Sunday 18:00": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Attach Channel",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "LQmIUUM6VrVBa2BX",
+  "isArchived": false,
+  "meta": null,
+  "name": "25 - Weekly Brain Digest",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "channel_id",
+      "name": "EDIT ME: Discord Channel ID",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "CHANNEL_ID",
+              "type": "string",
+              "value": "YOUR_DISCORD_CHANNEL_ID"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "trigger",
+      "name": "Weekly Sunday 18:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                0
+              ],
+              "triggerAtHour": 18,
+              "triggerAtMinute": 0,
+              "weeksInterval": 1
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        200
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "merge",
+      "name": "Attach Channel",
+      "parameters": {
+        "combineBy": "combineAll",
+        "mode": "combine",
+        "options": {}
+      },
+      "position": [
+        220,
+        100
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3
+    },
+    {
+      "id": "get_week_facts",
+      "name": "Get This Week's Facts",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'fact' } }, { key: 'date', range: { gte: new Date(Date.now() - 7*86400000).toISOString().slice(0,10) } } ] }, limit: 300, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        440,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "get_week_convos",
+      "name": "Get This Week's Conversations",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', range: { gte: new Date(Date.now() - 7*86400000).toISOString().slice(0,10) } } ] }, limit: 300, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        660,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "build_digest_prompt",
+      "name": "Build Digest Prompt",
+      "parameters": {
+        "jsCode": "const facts = ($('Get This Week\\'s Facts').first().json.result.points || []).map(p => p.payload.text);\nconst convos = ($json.result.points || []).map(p => p.payload.text);\nconst CHANNEL_ID = $('Attach Channel').first().json.CHANNEL_ID;\n\nif (facts.length === 0 && convos.length === 0) {\n  return [{ json: { skip: true, CHANNEL_ID } }];\n}\n\nconst raw = `New facts this week:\\n${facts.join('\\n') || '(none)'}\\n\\nConversations this week:\\n${convos.join('\\n') || '(none)'}`;\nconst prompt = `Write a short, warm weekly digest titled \\\"What I learned about you this week\\\" summarizing the raw notes below. Group related items naturally, mention what got asked about most if there's a pattern. Keep it to a few sentences \\u2014 this is a quick recap, not an essay. Don't invent anything not in the notes.\\n\\n${raw}\\n\\nDigest:`;\nreturn [{ json: { prompt, skip: false, CHANNEL_ID } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "check_skip",
+      "name": "Anything This Week?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "s1",
+              "leftValue": "={{$json.skip}}",
+              "operator": {
+                "operation": "equals",
+                "type": "boolean"
+              },
+              "rightValue": false
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1100,
+        100
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "id": "generate_digest",
+      "name": "Generate Digest",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 120000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        1320,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "sDbQDBjyqJeQ8NTr",
+          "name": "Second Brain Discord Bot"
+        }
+      },
+      "id": "post_digest",
+      "name": "Post Digest to Discord",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ content: '**\\ud83e\\udde0 What I learned about you this week**\\n\\n' + $json.response.slice(0, 1900) }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "=https://discord.com/api/v10/channels/{{$('Build Digest Prompt').first().json.CHANNEL_ID}}/messages"
+      },
+      "position": [
+        1540,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

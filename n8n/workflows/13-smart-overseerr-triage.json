@@ -1,0 +1,309 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Already Subscribed?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Decline Request",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Approve Request",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Approve Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Check Subscription Match": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Already Subscribed?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Decline Request": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extract Request Info": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get TMDB Watch Providers",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get TMDB Watch Providers": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Check Subscription Match",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Overseerr Webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Streaming Subscriptions",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Streaming Subscriptions": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract Request Info",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "Vnn2bw1MiF8qz35o",
+  "isArchived": false,
+  "meta": null,
+  "name": "13 - Smart Overseerr Triage",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "64c82dcb-3fb1-4603-870c-88ff416687c4",
+      "name": "Overseerr Webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "overseerr-triage",
+        "responseMode": "onReceived"
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "cdd77a72-6143-420b-9e43-63bd197790bb"
+    },
+    {
+      "id": "e3e299fa-f200-4071-9014-0ce176857f45",
+      "name": "Streaming Subscriptions",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ffd511a9-2e9f-4608-b741-73751db85e81",
+              "name": "subscriptions",
+              "type": "array",
+              "value": "=[\"Netflix\",\"Disney Plus\",\"Max\",\"Hulu\",\"Apple TV Plus\"]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "cfe4d946-a198-410c-91c7-bf5255ae0a6c",
+      "name": "Extract Request Info",
+      "parameters": {
+        "jsChode": "",
+        "jsCode": "\nconst body = $input.first().json;\n\nconst tmdbId = body?.media?.tmdbId ?? body?.tmdbId ?? body?.media?.tmdbId2 ?? null;\nconst mediaTypeRaw = body?.media?.media_type ?? body?.media?.mediaType ?? body?.mediaType ?? 'movie';\nconst mediaType = String(mediaTypeRaw).toLowerCase().includes('tv') ? 'tv' : 'movie';\nconst requestId = body?.request?.request_id ?? body?.request?.id ?? body?.requestId ?? body?.request_id ?? null;\nconst title = body?.subject ?? body?.media?.title ?? body?.request?.title ?? 'Unknown title';\n\nconst subs = $('Streaming Subscriptions').first().json.subscriptions;\n\nreturn [{\n  json: { tmdbId, mediaType, requestId, title, subscriptions: subs }\n}];\n"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "ffed81c7-6ec8-47be-98d5-5583cf47dc8b",
+      "name": "Get TMDB Watch Providers",
+      "parameters": {
+        "options": {},
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "api_key",
+              "value": "YOUR_TMDB_API_KEY"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "url": "=https://api.themoviedb.org/3/{{$json.mediaType}}/{{$json.tmdbId}}/watch/providers"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "890cb9ff-aa58-4b0f-8ede-9e6dbc61881e",
+      "name": "Check Subscription Match",
+      "parameters": {
+        "jsCode": "\nconst ctx = $('Extract Request Info').first().json;\nconst providersResp = $input.first().json;\n\nconst flatrate = providersResp?.results?.US?.flatrate ?? [];\nconst subs = (ctx.subscriptions || []).map(s => String(s).toLowerCase());\n\nlet matchedProvider = null;\nfor (const p of flatrate) {\n  const name = String(p.provider_name || '').toLowerCase();\n  if (subs.some(s => name.includes(s) || s.includes(name))) {\n    matchedProvider = p.provider_name;\n    break;\n  }\n}\n\nreturn [{\n  json: {\n    ...ctx,\n    alreadyAvailable: !!matchedProvider,\n    matchedProvider\n  }\n}];\n"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "98cd9a09-5450-4344-9cc7-0361da44735c",
+      "name": "Already Subscribed?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "cf0365e0-a814-4e66-aa30-1ae84627b1cc",
+              "leftValue": "={{$json.alreadyAvailable}}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "gUTHkRrrHKtpnIK2",
+          "name": "Overseerr API Key"
+        }
+      },
+      "id": "24b7b326-5e04-461c-891b-894a136af291",
+      "name": "Decline Request",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "options": {},
+        "sendHeaders": false,
+        "url": "=http://192.168.178.69:30023/api/v1/request/{{$json.requestId}}/decline"
+      },
+      "position": [
+        1320,
+        -100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "gUTHkRrrHKtpnIK2",
+          "name": "Overseerr API Key"
+        }
+      },
+      "id": "54087dba-a839-4146-981f-21d887fb669f",
+      "name": "Approve Request",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "options": {},
+        "sendHeaders": false,
+        "url": "=http://192.168.178.69:30023/api/v1/request/{{$json.requestId}}/approve"
+      },
+      "position": [
+        1320,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "74744fcb-17af-478e-b4ff-cf158f53233d",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$('Check Subscription Match').first().json.alreadyAvailable ? '\ud83d\udeab Declined **' + $('Check Subscription Match').first().json.title + '** \u2014 already available on ' + $('Check Subscription Match').first().json.matchedProvider : '\u2705 Approved **' + $('Check Subscription Match').first().json.title + '** \u2014 not on any subscribed service'}}"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "58a8abc1-e29c-4e97-896e-441144fa05ac"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

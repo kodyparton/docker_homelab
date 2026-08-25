@@ -1,0 +1,131 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Classify & Format Alert": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Daily 08:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Run cert_check.sh",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Run cert_check.sh": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Classify & Format Alert",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "bjSOzvcj7irAzMu0",
+  "isArchived": false,
+  "meta": null,
+  "name": "01 - Certificate & Domain Expiry Monitor",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Daily 08:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "ssh_check",
+      "name": "Run cert_check.sh",
+      "parameters": {
+        "command": "cd /Users/kp-srv-01/Documents/docker && bash scripts/cert_check.sh"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "id": "classify",
+      "name": "Classify & Format Alert",
+      "parameters": {
+        "jsCode": "const first = $input.first().json;\nconst raw = first.stdout ?? first.data ?? '';\nlet records = [];\ntry { records = JSON.parse(raw); } catch (e) {\n  return [{ json: { message: `\u26a0\ufe0f Certificate/domain monitor could not parse cert_check.sh output: ${e.message}\\nraw: ${String(raw).slice(0,500)}` } }];\n}\nconst flagged = records.filter(r => r.severity && r.severity !== 'OK');\nif (flagged.length === 0) return [];\nconst lines = flagged.map(r => {\n  const emoji = r.severity === 'URGENT' ? '\ud83d\udd34' : r.severity === 'WARNING' ? '\ud83d\udfe0' : r.severity === 'ERROR' ? '\u26a0\ufe0f' : '\ud83d\udfe1';\n  if (r.severity === 'ERROR') return `${emoji} ${r.name} \u2014 ${r.note}`;\n  return `${emoji} [${r.severity}] ${r.name} (${r.type}) expires ${r.expiresOn} \u2014 ${r.daysLeft} days left`;\n});\nreturn [{ json: { message: `**Certificate & Domain Expiry Monitor**\\n${lines.join('\\n')}` } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "discord_alert",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "6d96f3da-4479-47d9-ad82-9ff0fb23fc55"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

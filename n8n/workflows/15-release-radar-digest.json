@@ -1,0 +1,323 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Build Digest": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Compute Date Range": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Sonarr Calendar",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Radarr 4K Calendar": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Digest",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Radarr Calendar": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Radarr 4K Calendar",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Sonarr 4K Calendar": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Radarr Calendar",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Sonarr Calendar": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Sonarr 4K Calendar",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Weekly Monday 08:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Compute Date Range",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "X986EgGloQwiPmfj",
+  "isArchived": false,
+  "meta": null,
+  "name": "15 - Release Radar Digest",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "22337626-0abd-4458-be68-6f76f936fea1",
+      "name": "Weekly Monday 08:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0,
+              "weeksInterval": 1
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "ba04bb94-a7df-4f2e-8e0c-b2611a3a0128",
+      "name": "Compute Date Range",
+      "parameters": {
+        "jsCode": "\nconst start = new Date();\nconst end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);\nconst fmt = (d) => d.toISOString().slice(0, 10);\nreturn [{ json: { start: fmt(start), end: fmt(end) } }];\n"
+      },
+      "position": [
+        220,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "qGzQ5lDTmLavLkZz",
+          "name": "Sonarr API Key"
+        }
+      },
+      "id": "b4601b19-08a1-4b4f-8910-eb3f0f799608",
+      "name": "Sonarr Calendar",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "start",
+              "value": "={{$('Compute Date Range').first().json.start}}"
+            },
+            {
+              "name": "end",
+              "value": "={{$('Compute Date Range').first().json.end}}"
+            },
+            {
+              "name": "includeSeries",
+              "value": "true"
+            }
+          ]
+        },
+        "sendHeaders": false,
+        "sendQuery": true,
+        "url": "http://192.168.178.69:30027/api/v3/calendar"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OW9giRVQHfY6wu7t",
+          "name": "Sonarr 4K API Key"
+        }
+      },
+      "id": "0d363549-5981-4e26-ab4a-bdd2818eb89f",
+      "name": "Sonarr 4K Calendar",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "start",
+              "value": "={{$('Compute Date Range').first().json.start}}"
+            },
+            {
+              "name": "end",
+              "value": "={{$('Compute Date Range').first().json.end}}"
+            },
+            {
+              "name": "includeSeries",
+              "value": "true"
+            }
+          ]
+        },
+        "sendHeaders": false,
+        "sendQuery": true,
+        "url": "http://192.168.178.69:30030/api/v3/calendar"
+      },
+      "position": [
+        660,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "AIjIagd8xorNqd51",
+          "name": "Radarr API Key"
+        }
+      },
+      "id": "b7b02c82-fd62-4f8e-ac41-e6dc58ea2600",
+      "name": "Radarr Calendar",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "start",
+              "value": "={{$('Compute Date Range').first().json.start}}"
+            },
+            {
+              "name": "end",
+              "value": "={{$('Compute Date Range').first().json.end}}"
+            }
+          ]
+        },
+        "sendHeaders": false,
+        "sendQuery": true,
+        "url": "http://192.168.178.69:30025/api/v3/calendar"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mL1kq1s3DR2UX1uf",
+          "name": "Radarr 4K API Key"
+        }
+      },
+      "id": "f4d406e1-6557-4e97-b116-5828df52b09d",
+      "name": "Radarr 4K Calendar",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "start",
+              "value": "={{$('Compute Date Range').first().json.start}}"
+            },
+            {
+              "name": "end",
+              "value": "={{$('Compute Date Range').first().json.end}}"
+            }
+          ]
+        },
+        "sendHeaders": false,
+        "sendQuery": true,
+        "url": "http://192.168.178.69:30031/api/v3/calendar"
+      },
+      "position": [
+        1100,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "e357749c-a89b-4f8e-9294-988e5208151c",
+      "name": "Build Digest",
+      "parameters": {
+        "jsCode": "\nfunction fmtEpisodes(nodeName) {\n  const items = $(nodeName).first().json;\n  if (!Array.isArray(items) || items.length === 0) return [];\n  return items\n    .sort((a, b) => new Date(a.airDateUtc) - new Date(b.airDateUtc))\n    .map(e => `  \u2022 ${e.series?.title || 'Unknown'} S${String(e.seasonNumber).padStart(2,'0')}E${String(e.episodeNumber).padStart(2,'0')} \u2014 ${e.airDate}`);\n}\n\nfunction fmtMovies(nodeName) {\n  const items = $(nodeName).first().json;\n  if (!Array.isArray(items) || items.length === 0) return [];\n  return items.map(m => {\n    const date = m.digitalRelease || m.physicalRelease || m.inCinemas || 'TBD';\n    return `  \u2022 ${m.title} \u2014 ${String(date).slice(0,10)}`;\n  });\n}\n\nconst sections = [\n  ['\ud83d\udcfa TV', fmtEpisodes('Sonarr Calendar')],\n  ['\ud83d\udcfa TV (4K)', fmtEpisodes('Sonarr 4K Calendar')],\n  ['\ud83c\udfac Movies', fmtMovies('Radarr Calendar')],\n  ['\ud83c\udfac Movies (4K)', fmtMovies('Radarr 4K Calendar')],\n];\n\nlet lines = ['\ud83d\uddd3\ufe0f **Release Radar \u2014 this week**', ''];\nlet anything = false;\nfor (const [label, rows] of sections) {\n  if (rows.length) {\n    anything = true;\n    lines.push(label + ':');\n    lines.push(...rows);\n    lines.push('');\n  }\n}\nif (!anything) {\n  lines.push('Nothing scheduled this week.');\n}\n\nreturn [{ json: { message: lines.join('\\n') } }];\n"
+      },
+      "position": [
+        1320,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "7zvDf6r6CjfgtTip",
+          "name": "Homelab Discord Webhook"
+        }
+      },
+      "id": "15ebdc13-72e7-40aa-8d61-04b8edf0e685",
+      "name": "Post to Discord",
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}"
+      },
+      "position": [
+        1540,
+        0
+      ],
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "webhookId": "8c8c91df-752e-47e0-a63f-62174df3fd19"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

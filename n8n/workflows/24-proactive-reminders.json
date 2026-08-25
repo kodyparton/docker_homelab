@@ -1,0 +1,340 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Any Facts?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build Scan Prompt",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Anything to Remind?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post Reminder to Discord",
+            "type": "main"
+          }
+        ],
+        []
+      ]
+    },
+    "Attach Channel": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get All Facts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build Scan Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Scan for Upcoming Items",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Daily 08:00": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Attach Channel",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "EDIT ME: Discord Channel ID": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Attach Channel",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get All Facts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Any Facts?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Parse Reminders": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Anything to Remind?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Scan for Upcoming Items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Parse Reminders",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "UdGLDtxh2IhQQkPh",
+  "isArchived": false,
+  "meta": null,
+  "name": "24 - Proactive Reminders",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "channel_id",
+      "name": "EDIT ME: Discord Channel ID",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "CHANNEL_ID",
+              "type": "string",
+              "value": "YOUR_DISCORD_CHANNEL_ID"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "trigger",
+      "name": "Daily 08:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        200
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "merge",
+      "name": "Attach Channel",
+      "parameters": {
+        "combineBy": "combineAll",
+        "mode": "combine",
+        "options": {}
+      },
+      "position": [
+        220,
+        100
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3
+    },
+    {
+      "id": "get_facts",
+      "name": "Get All Facts",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'fact' } } ] }, limit: 300, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        440,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "check_any",
+      "name": "Any Facts?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a1",
+              "leftValue": "={{ ($json.result.points || []).length }}",
+              "operator": {
+                "operation": "gt",
+                "type": "number"
+              },
+              "rightValue": 0
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        100
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "id": "build_scan_prompt",
+      "name": "Build Scan Prompt",
+      "parameters": {
+        "jsCode": "const points = $json.result.points;\nconst today = new Date().toISOString().slice(0,10);\nconst facts = points.map((p,i) => `${i+1}. ${p.payload.text}`).join('\\n');\nconst prompt = `Today's date is ${today}. Below is a list of stored facts about Kody. Identify ONLY the ones that reference a date, deadline, or event that is happening today or within the next 3 days. Respond with ONLY a JSON array (no other text) of strings describing what's coming up and why \\u2014 e.g. [\\\"Dentist appointment is today (mentioned March 3rd)\\\"]. If none are relevant, respond with [].\\n\\nFacts:\\n${facts}\\n\\nJSON array:`;\nreturn [{ json: { prompt } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        880,
+        100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "scan_facts",
+      "name": "Scan for Upcoming Items",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", format: \"json\", stream: false, prompt: $json.prompt }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 120000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        1100,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "parse_reminders",
+      "name": "Parse Reminders",
+      "parameters": {
+        "jsCode": "let items = [];\ntry {\n  const parsed = JSON.parse($json.response);\n  if (Array.isArray(parsed)) {\n    items = parsed.filter(x => typeof x === 'string');\n  } else if (parsed && typeof parsed === 'object') {\n    // model sometimes returns {\"fact\": \"reason\"} instead of an array\n    items = Object.values(parsed).filter(x => typeof x === 'string');\n  }\n} catch (e) { items = []; }\nreturn [{ json: { items, hasItems: items.length > 0, CHANNEL_ID: $('Attach Channel').first().json.CHANNEL_ID } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1320,
+        100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "check_has_items",
+      "name": "Anything to Remind?",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "h1",
+              "leftValue": "={{$json.hasItems}}",
+              "operator": {
+                "operation": "equals",
+                "type": "boolean"
+              },
+              "rightValue": true
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1540,
+        100
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "sDbQDBjyqJeQ8NTr",
+          "name": "Second Brain Discord Bot"
+        }
+      },
+      "id": "post_reminder",
+      "name": "Post Reminder to Discord",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ content: '**\\ud83d\\udce2 Coming up**\\n' + $json.items.map(i => '- ' + i).join('\\n') }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "=https://discord.com/api/v10/channels/{{$json.CHANNEL_ID}}/messages"
+      },
+      "position": [
+        1760,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

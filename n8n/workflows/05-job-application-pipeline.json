@@ -1,0 +1,271 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Search Config",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Existing URLs": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Score, Filter & Dedupe",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Score, Filter & Dedupe": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Create Job Page",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Search Adzuna NL": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Existing URLs",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Search Config": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Search Adzuna NL",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "JC6zZoQM0UFoGvv8",
+  "isArchived": false,
+  "meta": null,
+  "name": "05 - Job Application Pipeline",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "6143c4c6-0a70-40d5-bd62-a8d495a349a7",
+      "name": "Every 6 Hours",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "2c95804c-a63d-4f2d-9cfb-dd2e11208845",
+      "name": "Search Config",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9a40bcc-33d5-407f-90e6-77dd49e4e6b0",
+              "name": "searchTerms",
+              "type": "string",
+              "value": "IT support OR systems administrator OR infrastructure engineer OR helpdesk OR endpoint engineer"
+            },
+            {
+              "id": "0cb17848-ca59-4090-baa6-e67690237199",
+              "name": "keywordWeights",
+              "type": "string",
+              "value": "[{\"keyword\": \"azure\", \"weight\": 3}, {\"keyword\": \"active directory\", \"weight\": 3}, {\"keyword\": \"entra\", \"weight\": 3}, {\"keyword\": \"powershell\", \"weight\": 2}, {\"keyword\": \"docker\", \"weight\": 2},{\"keyword\": \"jam\", \"weight\": 3},{\"keyword\": \"intone\", \"weight\": 3},{\"keyword\": \"MDM\", \"weight\": 3}, {\"keyword\": \"microsoft 365\", \"weight\": 2}, {\"keyword\": \"networking\", \"weight\": 1}, {\"keyword\": \"remote\", \"weight\": 1}]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "2927c1d9-ea33-4a2b-b0d7-4a5fa96f2344",
+      "name": "Search Adzuna NL",
+      "parameters": {
+        "options": {},
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "app_id",
+              "value": "4013600d"
+            },
+            {
+              "name": "app_key",
+              "value": "5451db140653097d53be6327df0e0e80"
+            },
+            {
+              "name": "results_per_page",
+              "value": "50"
+            },
+            {
+              "name": "what_or",
+              "value": "={{ $json.searchTerms }}"
+            },
+            {
+              "name": "content-type",
+              "value": "1"
+            },
+            {
+              "name": "sort_by",
+              "value": "date"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "url": "https://api.adzuna.com/v1/api/jobs/nl/search/1"
+      },
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "qOZjvxX9fWnfMZQG",
+          "name": "Job Pipeline Notion"
+        }
+      },
+      "id": "2b3fd7d2-8138-442d-90e4-0383f09787c6",
+      "name": "Get Existing URLs",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3c05e411e488808c90e9e6d11f070d03?v=3c05e411e48880aea0e3000cb67ca32b"
+        },
+        "operation": "getAll",
+        "options": {},
+        "resource": "databasePage",
+        "returnAll": true
+      },
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "4f941b77-f705-4a0f-8d95-1e354722c745",
+      "name": "Score, Filter & Dedupe",
+      "parameters": {
+        "jsCode": "const response = $('Search Adzuna NL').first().json;\nconst results = response.results || [];\nconst weights = JSON.parse($('Search Config').first().json.keywordWeights);\n\n// existing Notion rows: with Simplify on, each property is keyed by its exact\n// Notion column name -- this assumes the URL column is literally named \"URL\"\nconst existingUrls = new Set(\n  $input.all().map(i => i.json.URL).filter(Boolean)\n);\n\nconst MIN_SCORE = 3;\n\nfunction score(text) {\n  const lower = (text || '').toLowerCase();\n  return weights.reduce((sum, w) => sum + (lower.includes(w.keyword.toLowerCase()) ? w.weight : 0), 0);\n}\n\nreturn results\n  .filter(job => !existingUrls.has(job.redirect_url))\n  .map(job => {\n    const text = `${job.title} ${job.description || ''}`;\n    return {\n      json: {\n        title: job.title,\n        company: (job.company && job.company.display_name) || '',\n        location: (job.location && job.location.display_name) || '',\n        url: job.redirect_url,\n        created: job.created,\n        score: score(text),\n      }\n    };\n  })\n  .filter(job => job.score >= MIN_SCORE);"
+      },
+      "position": [
+        880,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "notionApi": {
+          "id": "qOZjvxX9fWnfMZQG",
+          "name": "Job Pipeline Notion"
+        }
+      },
+      "id": "2e5c8c94-0f7d-45fb-8695-6aad0efefe3a",
+      "name": "Create Job Page",
+      "parameters": {
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3c05e411e488808c90e9e6d11f070d03?v=3c05e411e48880aea0e3000cb67ca32b"
+        },
+        "options": {},
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "URL",
+              "type": "url",
+              "urlValue": "={{ $json.url }}"
+            },
+            {
+              "key": "Company",
+              "textContent": "={{ $json.company }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Location",
+              "textContent": "={{ $json.location }}",
+              "type": "rich_text"
+            },
+            {
+              "key": "Score",
+              "numberValue": "={{ $json.score }}",
+              "type": "number"
+            },
+            {
+              "date": "={{ $json.created }}",
+              "includeTime": false,
+              "key": "Posted Date",
+              "type": "date"
+            },
+            {
+              "key": "Status",
+              "selectValue": "New",
+              "type": "select"
+            }
+          ]
+        },
+        "resource": "databasePage",
+        "title": "={{ $json.title }}"
+      },
+      "position": [
+        1104,
+        0
+      ],
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

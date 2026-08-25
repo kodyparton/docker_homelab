@@ -1,0 +1,437 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Attach Config": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Today's Conversations",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Combine Into Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Generate Journal Entry",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Daily 23:45": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Attach Config",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "EDIT ME: Discord Channel ID": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Attach Config",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embed Journal Entry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Store Journal in Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Generate Journal Entry": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Embed Journal Entry",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Today's Apple Health": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Today's Strava Activities",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Today's Conversations": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Today's Photos",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Today's Photos": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Get Today's Apple Health",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Get Today's Strava Activities": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Combine Into Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Store Journal in Qdrant": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Save to Trilium (optional)",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "Post Journal to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "Vcr6njgRUcf3h2gP",
+  "isArchived": false,
+  "meta": null,
+  "name": "20 - Daily Journal Summary",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "channel_id",
+      "name": "EDIT ME: Discord Channel ID",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "CHANNEL_ID",
+              "type": "string",
+              "value": "YOUR_DISCORD_CHANNEL_ID"
+            },
+            {
+              "id": "2",
+              "name": "TRILIUM_JOURNAL_PARENT_NOTE_ID",
+              "type": "string",
+              "value": "YOUR_TRILIUM_JOURNAL_PARENT_NOTE_ID"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "trigger",
+      "name": "Daily 23:45",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 23,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        220
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "merge",
+      "name": "Attach Config",
+      "parameters": {
+        "combineBy": "combineAll",
+        "mode": "combine",
+        "options": {}
+      },
+      "position": [
+        220,
+        120
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3
+    },
+    {
+      "id": "get_conversations",
+      "name": "Get Today's Conversations",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 200, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        440,
+        -160
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "get_photos",
+      "name": "Get Today's Photos",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'photo' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 200, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        440,
+        0
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "get_apple_health",
+      "name": "Get Today's Apple Health",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'apple_health' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 200, with_payload: true }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points/scroll"
+      },
+      "position": [
+        440,
+        160
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "credentials": {
+        "oAuth2Api": {
+          "id": "8Zo1HvysNztniF8F",
+          "name": "Strava API"
+        }
+      },
+      "id": "get_strava",
+      "name": "Get Today's Strava Activities",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "method": "GET",
+        "options": {
+          "timeout": 20000
+        },
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "after",
+              "value": "={{ Math.floor(new Date(new Date().toISOString().slice(0,10)).getTime() / 1000) }}"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "url": "https://www.strava.com/api/v3/athlete/activities"
+      },
+      "position": [
+        440,
+        320
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "combine",
+      "name": "Combine Into Prompt",
+      "parameters": {
+        "jsCode": "function points(nodeName) {\n  try {\n    const r = $(nodeName).first().json;\n    return (r.result && r.result.points) || [];\n  } catch (e) { return []; }\n}\nfunction strava() {\n  try {\n    const r = $('Get Today\\'s Strava Activities').first().json;\n    return Array.isArray(r) ? r : [];\n  } catch (e) { return []; }\n}\n\nconst convos = points('Get Today\\'s Conversations');\nconst photos = points('Get Today\\'s Photos');\nconst health = points('Get Today\\'s Apple Health');\nconst activities = strava();\n\nconst lines = [];\nif (convos.length) {\n  lines.push('Conversations today:');\n  convos.forEach(p => lines.push('- ' + p.payload.text));\n}\nif (photos.length) {\n  lines.push('Photos shared today:');\n  photos.forEach(p => lines.push('- ' + p.payload.text));\n}\nif (activities.length) {\n  lines.push('Strava activities today:');\n  activities.forEach(a => lines.push(`- ${a.name}: ${a.type}, ${(a.distance/1609.34).toFixed(1)} mi, ${Math.round(a.moving_time/60)} min`));\n}\nif (health.length) {\n  lines.push('Apple Health workouts today:');\n  health.forEach(p => lines.push('- ' + p.payload.text));\n}\n\nconst hasAnything = convos.length || photos.length || activities.length || health.length;\nconst raw = hasAnything ? lines.join('\\n') : '(nothing logged today)';\n\nconst prompt = `Write a short, warm, first-person journal entry for today based on the raw notes below. Write like a person reflecting at the end of their day, not a report. If there's very little material, keep it brief and honest rather than padding it out. Don't invent details that aren't in the notes.\\n\\nToday's raw notes:\\n${raw}\\n\\nJournal entry:`;\n\nreturn [{ json: { prompt, hasAnything, photoCount: photos.length } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        660,
+        80
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "generate_journal",
+      "name": "Generate Journal Entry",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"qwen2.5:7b-instruct\", prompt: $json.prompt, stream: false }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 120000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/generate"
+      },
+      "position": [
+        880,
+        80
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "embed_journal",
+      "name": "Embed Journal Entry",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ model: \"nomic-embed-text\", prompt: $json.response }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 60000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:11434/api/embeddings"
+      },
+      "position": [
+        1100,
+        80
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "store_journal",
+      "name": "Store Journal in Qdrant",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ points: [{ id: Date.now() * 1000 + Math.floor(Math.random() * 1000), vector: $json.embedding, payload: { text: $('Generate Journal Entry').first().json.response, type: 'journal', date: new Date().toISOString().slice(0,10), added_at: new Date().toISOString() } }] }) }}",
+        "method": "PUT",
+        "options": {
+          "timeout": 30000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:6333/collections/second_brain/points"
+      },
+      "position": [
+        1320,
+        80
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "continueOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GFJf4mAYeajicPbJ",
+          "name": "Trilium ETAPI"
+        }
+      },
+      "id": "trilium_note",
+      "name": "Save to Trilium (optional)",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ parentNoteId: $('Attach Config').first().json.TRILIUM_JOURNAL_PARENT_NOTE_ID, title: new Date().toISOString().slice(0,10), type: 'text', content: $('Generate Journal Entry').first().json.response.replace(/\\n/g, '<br>') }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "http://192.168.178.69:8080/etapi/create-note"
+      },
+      "position": [
+        1540,
+        -40
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "sDbQDBjyqJeQ8NTr",
+          "name": "Second Brain Discord Bot"
+        }
+      },
+      "id": "post_discord",
+      "name": "Post Journal to Discord",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ content: '**Today\\'s Journal Entry** \\ud83d\\udcd6\\n\\n' + $('Generate Journal Entry').first().json.response.slice(0, 1900) }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "=https://discord.com/api/v10/channels/{{$('Attach Config').first().json.CHANNEL_ID}}/messages"
+      },
+      "position": [
+        1540,
+        200
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

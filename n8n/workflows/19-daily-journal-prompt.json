@@ -1,0 +1,165 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Attach Channel": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Pick Prompts",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Daily 21:00": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "Attach Channel",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "EDIT ME: Discord Channel ID": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Attach Channel",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Pick Prompts": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Post Prompt to Discord",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "description": null,
+  "id": "HlQ1Wsp12aMQVTRw",
+  "isArchived": false,
+  "meta": null,
+  "name": "19 - Daily Journal Prompt",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "channel_id",
+      "name": "EDIT ME: Discord Channel ID",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "CHANNEL_ID",
+              "type": "string",
+              "value": "YOUR_DISCORD_CHANNEL_ID"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "trigger",
+      "name": "Daily 21:00",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 1,
+              "field": "days",
+              "triggerAtHour": 21,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        200
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "merge",
+      "name": "Attach Channel",
+      "parameters": {
+        "combineBy": "combineAll",
+        "mode": "combine",
+        "options": {}
+      },
+      "position": [
+        220,
+        100
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3
+    },
+    {
+      "id": "pick_prompt",
+      "name": "Pick Prompts",
+      "parameters": {
+        "jsCode": "const prompts = [\n  'What went well today?',\n  \"What's one thing you're grateful for right now?\",\n  'What drained your energy today, and what gave you energy?',\n  \"What's on your mind that you haven't said out loud yet?\",\n  'What did you learn today?',\n  'Who did you connect with today?',\n  \"What's one small win worth remembering?\",\n  'What would make tomorrow better than today?'\n];\nconst shuffled = prompts.sort(() => Math.random() - 0.5).slice(0, 3);\nconst message = `**Evening check-in** \\ud83c\\udf19\\n${shuffled.map(p => `- ${p}`).join('\\n')}\\n\\nJust reply here \u2014 I'll fold it into tonight's journal entry.`;\nreturn [{ json: { message, CHANNEL_ID: $input.first().json.CHANNEL_ID } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        440,
+        100
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "sDbQDBjyqJeQ8NTr",
+          "name": "Second Brain Discord Bot"
+        }
+      },
+      "id": "post_prompt",
+      "name": "Post Prompt to Discord",
+      "parameters": {
+        "jsonBody": "={{ JSON.stringify({ content: $json.message }) }}",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "=https://discord.com/api/v10/channels/{{$json.CHANNEL_ID}}/messages"
+      },
+      "position": [
+        660,
+        100
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": []
+}

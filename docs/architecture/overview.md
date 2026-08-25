@@ -140,3 +140,4 @@ All via Nginx Proxy Manager (`nginx-app-1`), certs via Let's Encrypt DNS-01 thro
 
 - Container runtime is **OrbStack**, not Docker Desktop.
 - Media/download storage is a UniFi Drive NAS, SMB-mounted on the macOS host and passed through OrbStack's VM into containers — this passthrough is the root cause of the mount-drop issue documented in `known-issues.md` and self-healed by n8n workflow 09.
+- OrbStack's VM memory is capped at **12GB** out of this Mac's 16GB total (`orb config set memory_mib 12288`) — raised from the 8GB default after real OOM-kills in the `ollama` container (see `docs/containers/ollama.md`). Changing this restarts every container on the host (`orb stop && orb start`); all come back automatically via `restart:unless-stopped`.

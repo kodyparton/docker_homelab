@@ -59,8 +59,14 @@ Not covered by `scripts/backup_check.sh`. Models are re-downloadable (not unique
 - **Disk space is tight on this host.** Pulling `qwen2.5:7b-instruct` (4.7GB) failed once with "no space left on device" until 22GB of unused Docker images were pruned. Check `df -h` before pulling additional/larger models.
 - **No GPU passthrough to Docker containers on macOS.** Confirmed via Ollama's own startup log (`msg="inference compute" id=cpu library=cpu`) — inference is CPU-only regardless of the M1's GPU cores. This makes it genuinely slow: ~35-40s for even a short classify call, ~60-100s for a full generated answer. `OLLAMA_KEEP_ALIVE=60m` is set specifically to avoid paying an additional ~25s model-reload penalty on top of that whenever the model's been idle. Every workflow that calls Ollama needs a generous timeout (90-180s) to account for this — a too-short timeout here was the direct cause of a real "second brain isn't working" bug on 2026-08-25 (see `known-issues.md`).
 - Cold-start inference (first request after container start, or first request for a model not yet loaded into memory) is noticeably slower than subsequent requests, on top of the above.
+- **Can get OOM-killed under load** (`llama-server process has terminated: signal: killed` in `docker logs ollama`) if the host doesn't have enough memory headroom — this genuinely happened on 2026-08-25 when OrbStack's VM was capped at 8GB. Fixed by giving the VM more memory (`orb config set memory_mib 12288`, see the host-level note below) rather than anything Ollama-side; if it recurs, check `docker stats ollama` for memory pressure before assuming it's a workflow bug.
+- **Keep prompts small.** Dumping a large dataset (e.g. an entire media library) into a prompt to answer a narrow question makes even simple queries take minutes on this hardware and risks hitting node-level timeouts. Filter/summarize data in a Code node before it ever reaches the prompt — see how `18 - Second Brain - Chat`'s `media_query` intent does this (fuzzy-matches to ~5 relevant items instead of sending the whole library).
+
+## Host-level dependency
+
+This container's reliability depends on OrbStack's VM having enough memory, which is a **host-level setting, not a Docker Compose setting** — `orb config set memory_mib <value>` then `orb stop && orb start` (restarts every container on this host, they all come back via `restart:unless-stopped`). Currently set to 12288 (12GB) out of this Mac's 16GB total.
 
 ## Change Log
 
 - `2026-08-24` — Deployed with `qwen2.5:7b-instruct` and `nomic-embed-text`.
-- `2026-08-25` — Set `OLLAMA_KEEP_ALIVE=60m` and increased calling workflows' timeouts after root-causing a real failure to CPU-only inference speed.
+- `2026-08-25` — Set `OLLAMA_KEEP_ALIVE=60m` and increased calling workflows' timeouts after root-causing a real failure to CPU-only inference speed. Separately, root-caused and fixed real OOM-kills by increasing OrbStack's VM memory from 8GB to 12GB.

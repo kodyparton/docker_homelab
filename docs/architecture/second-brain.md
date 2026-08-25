@@ -83,6 +83,41 @@ Any image attachment (with or without a caption) gets logged rather than answere
 
 Every exchange through this bot — facts, questions, chat, photos — also gets logged with today's date, which is what makes the [daily journaling system](journaling.md) possible, and what gives it same-day conversational memory.
 
+## Reading and writing your other self-hosted apps
+
+As of 2026-08-25, the classifier recognizes 9 intents, not 4 — the brain can now read from and write to Vikunja, Trilium, and your media stack directly, not just its own Qdrant memory.
+
+| You say... | Intent | What happens |
+|---|---|---|
+| "remind me to renew the car registration" | `task` | Creates a real task in Vikunja |
+| "what tasks do I have" / "what's on my to-do list" | `list_tasks` | Lists your open Vikunja tasks, soonest-due first |
+| "mark the vet call as done" / "I finished X" | `complete_task` | Finds the closest-matching open Vikunja task (via an LLM match, not string-matching) and marks it done — tells you if nothing matched confidently rather than guessing |
+| "save this as a note: ..." / "write this down" | `note` | Creates a proper note in Trilium (separate from the daily journal) |
+| "do I have X show/movie" / "what have I been watching" | `media_query` | Checks your **live** Sonarr/Radarr library and Tautulli watch history — not stored memory, real current data |
+
+**`media_query` is fully working right now** — no new credentials needed, it reuses the same Sonarr/Radarr/Tautulli API keys already configured elsewhere in this repo. Verified live: asked "do I have House of the Dragon in my library" and got back the correct answer with real episode-download counts.
+
+**`list_tasks`, `complete_task`, and `note` are built but need one thing from you first**: Vikunja and Trilium already have real accounts (you set them up yourself), but I don't have login credentials for either, so I couldn't generate the API tokens myself. See Setup below.
+
+### How `media_query` actually works (worth knowing)
+
+Naively dumping your whole Sonarr+Radarr library into the prompt made even a simple yes/no question take 3+ minutes and time out — a real problem hit and fixed during testing. It now fuzzy-matches the question's meaningful words against library titles *in code* (word-boundary matching, not substring — an earlier version matched "some" inside "Awesome" and had to be fixed) before ever calling the LLM, and only sends the 5 or so most-relevant matches as context. If literally nothing matches, it skips the LLM call entirely and answers directly. This keeps it fast and keeps the model from rambling about an entire library it wasn't asked about.
+
+## Setup steps for the new integrations
+
+1. **Vikunja**: log into `http://192.168.178.69:30037` with your existing account → Settings → API Tokens → create one → paste it into n8n's **"Vikunja API Token"** credential as `Bearer YOUR_TOKEN`. Then pick (or create) a project for the brain to use, note its ID (visible in the URL when you open the project), and replace `YOUR_VIKUNJA_PROJECT_ID` in the **"Create Vikunja Task"** node's URL, and in **"Get Vikunja Tasks"**/**"Get Open Tasks"** if you want task listing scoped to that one project (currently they list tasks across *all* your projects, which is probably what you want, but worth knowing).
+2. **Trilium**: log into `http://192.168.178.69:8080` → Options → ETAPI → Create new token → paste it into n8n's **"Trilium ETAPI"** credential (just the raw token, no prefix). Create a note to serve as the general notes parent (separate from the Journal parent note from `journaling.md`), get its note ID, and replace `YOUR_TRILIUM_NOTES_PARENT_NOTE_ID` in the **"Save Trilium Note"** node.
+
+## Other integration opportunities identified but not built
+
+Surveyed while building the above — these are real, feasible, just out of scope for this pass:
+
+- **Overseerr media requests** ("add X movie to my watchlist") — would need a TMDB API key (same gap noted for workflow 13) to resolve a title to a TMDB ID before creating the Overseerr request.
+- **qBittorrent download status** ("what's downloading right now") — blocked on the same qBittorrent WebUI password gap noted since the Homepage build; the API itself is straightforward once that's filled in.
+- **Prowlarr indexer health via chat** ("are my indexers healthy") — low value beyond what workflow 12 already automates, deprioritized.
+- **Vikunja: due-date awareness in `list_tasks`** — currently lists all open tasks sorted by due date; could be extended to a dedicated "what's overdue" filter.
+- **Homepage / NPM** — not applicable; these are pure infrastructure/dashboard, not naturally "read or write data" targets for a chat assistant.
+
 ## Setting the foundation of knowledge
 
 An empty brain isn't useful. Two ways to seed it:

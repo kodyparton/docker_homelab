@@ -206,7 +206,7 @@
       "id": "get_conversations",
       "name": "Get Today's Conversations",
       "parameters": {
-        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 200, with_payload: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ], must_not: [ { key: 'domain', match: { value: 'test' } } ], }, limit: 200, with_payload: true }) }}",
         "method": "POST",
         "options": {
           "timeout": 30000
@@ -226,7 +226,7 @@
       "id": "get_photos",
       "name": "Get Today's Photos",
       "parameters": {
-        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'photo' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 200, with_payload: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'photo' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ], must_not: [ { key: 'domain', match: { value: 'test' } } ], }, limit: 200, with_payload: true }) }}",
         "method": "POST",
         "options": {
           "timeout": 30000
@@ -246,7 +246,7 @@
       "id": "get_apple_health",
       "name": "Get Today's Apple Health",
       "parameters": {
-        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'apple_health' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ] }, limit: 200, with_payload: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'apple_health' } }, { key: 'date', match: { value: new Date().toISOString().slice(0,10) } } ], must_not: [ { key: 'domain', match: { value: 'test' } } ], }, limit: 200, with_payload: true }) }}",
         "method": "POST",
         "options": {
           "timeout": 30000

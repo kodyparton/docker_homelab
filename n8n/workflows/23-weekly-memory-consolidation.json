@@ -118,7 +118,7 @@
       "id": "get_old",
       "name": "Get Conversations Older Than 30 Days",
       "parameters": {
-        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', range: { lt: new Date(Date.now() - 30*86400000).toISOString().slice(0,10) } } ] }, limit: 500, with_payload: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', range: { lt: new Date(Date.now() - 30*86400000).toISOString().slice(0,10) } } ], must_not: [ { key: 'domain', match: { value: 'test' } } ], }, limit: 500, with_payload: true }) }}",
         "method": "POST",
         "options": {
           "timeout": 30000

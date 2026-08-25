@@ -175,7 +175,7 @@
       "id": "get_facts",
       "name": "Get All Facts",
       "parameters": {
-        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'fact' } } ] }, limit: 300, with_payload: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'fact' } } ], must_not: [ { key: 'domain', match: { value: 'test' } } ], }, limit: 300, with_payload: true }) }}",
         "method": "POST",
         "options": {
           "timeout": 30000

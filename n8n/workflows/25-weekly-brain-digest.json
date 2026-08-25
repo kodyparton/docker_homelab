@@ -166,7 +166,7 @@
       "id": "get_week_facts",
       "name": "Get This Week's Facts",
       "parameters": {
-        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'fact' } }, { key: 'date', range: { gte: new Date(Date.now() - 7*86400000).toISOString().slice(0,10) } } ] }, limit: 300, with_payload: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'fact' } }, { key: 'date', range: { gte: new Date(Date.now() - 7*86400000).toISOString().slice(0,10) } } ], must_not: [ { key: 'domain', match: { value: 'test' } } ], }, limit: 300, with_payload: true }) }}",
         "method": "POST",
         "options": {
           "timeout": 30000
@@ -186,7 +186,7 @@
       "id": "get_week_convos",
       "name": "Get This Week's Conversations",
       "parameters": {
-        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', range: { gte: new Date(Date.now() - 7*86400000).toISOString().slice(0,10) } } ] }, limit: 300, with_payload: true }) }}",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'type', match: { value: 'conversation' } }, { key: 'date', range: { gte: new Date(Date.now() - 7*86400000).toISOString().slice(0,10) } } ], must_not: [ { key: 'domain', match: { value: 'test' } } ], }, limit: 300, with_payload: true }) }}",
         "method": "POST",
         "options": {
           "timeout": 30000

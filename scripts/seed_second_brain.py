@@ -28,9 +28,40 @@ QDRANT_URL = "http://localhost:6333/collections/second_brain/points"
 EMBED_MODEL = "nomic-embed-text"
 
 
+MAX_WORDS_PER_CHUNK = 700  # ~2048 tokens is the embedding model's hard limit; stay well under it
+
+
+def _split_oversized(chunk: str) -> list[str]:
+    """A paragraph with no blank lines (long bullet, big markdown table) can
+    still blow past the embedding model's context window. Fall back to
+    grouping individual lines up to a safe word count."""
+    words = chunk.split()
+    if len(words) <= MAX_WORDS_PER_CHUNK:
+        return [chunk]
+    lines = chunk.split("\n")
+    if len(lines) > 1:
+        pieces, current, current_words = [], [], 0
+        for line in lines:
+            w = len(line.split())
+            if current and current_words + w > MAX_WORDS_PER_CHUNK:
+                pieces.append("\n".join(current))
+                current, current_words = [], 0
+            current.append(line)
+            current_words += w
+        if current:
+            pieces.append("\n".join(current))
+        return [p for p in pieces if p.strip()]
+    # single unbroken line longer than the limit - hard-split on words
+    return [" ".join(words[i:i + MAX_WORDS_PER_CHUNK]) for i in range(0, len(words), MAX_WORDS_PER_CHUNK)]
+
+
 def chunk_text(text: str) -> list[str]:
     chunks = [c.strip() for c in text.split("\n\n")]
-    return [c for c in chunks if len(c) > 20]  # skip trivial fragments
+    chunks = [c for c in chunks if len(c) > 20]  # skip trivial fragments
+    out = []
+    for c in chunks:
+        out.extend(_split_oversized(c))
+    return out
 
 
 def embed(text: str) -> list[float]:

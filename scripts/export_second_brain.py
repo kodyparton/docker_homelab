@@ -66,7 +66,8 @@ def main(out_path: str):
         lines.append("")
         for item in items:
             date_str = f"[{item['date']}] " if item.get("date") else ""
-            lines.append(f"- {date_str}{item.get('text', '(no text)')}")
+            tag_str = f" `{item['domain']}:{','.join(item.get('tags') or [])}`" if item.get("domain") else ""
+            lines.append(f"- {date_str}{item.get('text', '(no text)')}{tag_str}")
         lines.append("")
 
     with open(out_path, "w") as f:

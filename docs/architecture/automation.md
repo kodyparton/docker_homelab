@@ -50,6 +50,7 @@ Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have
 | 23 | Weekly Memory Consolidation | weekly Sun 04:00 | Qdrant, Ollama | Summarizes conversation entries older than 30 days into one point, deletes the originals |
 | 24 | Proactive Reminders | daily 08:00 | Qdrant, Ollama, Discord | Scans stored facts for anything date-relevant to today/next 3 days, alerts if found |
 | 25 | Weekly Brain Digest | weekly Sun 18:00 | Qdrant, Ollama, Discord | "What I learned about you this week" — new facts + conversation summary |
+| 26 | Refresh Obsidian Knowledge | daily 06:15 | SSH, `scripts/seed_second_brain.py` | Re-seeds `~/Obsidian/KodyBrain` into Qdrant (delete-by-source then re-insert), read-only — nothing writes back to the vault |
 
 ## Workflows That Take Automated Write Actions
 

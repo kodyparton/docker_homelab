@@ -2,7 +2,7 @@
 
 A self-hosted, Discord-native knowledge assistant: chat with it to ask questions grounded in facts it's been taught, and teach it new facts the same way. Fully local — no external API calls, no per-message cost, nothing leaves this Mac.
 
-This is a **separate system** from Kody's existing Obsidian-based second brain (the `SOUL.md`/`USER.md`/`MEMORY.md`/daily-notes system that Claude Code itself operates as, with its own Discord bot). The two are deliberately not merged — different bot application, different credentials, different failure domain. This one is homelab infrastructure, versioned and documented like everything else in this repo; the Obsidian one is a personal daily-driver assistant. They can absolutely be pointed at each other later (e.g., feed the Obsidian vault into this one's memory) but that's an opt-in step, not automatic.
+This is a **separate system** from Kody's existing Obsidian-based second brain (the `SOUL.md`/`USER.md`/`MEMORY.md`/daily-notes system that Claude Code itself operates as, with its own Discord bot) — different bot application, different credentials, different failure domain. This one is homelab infrastructure, versioned and documented like everything else in this repo; the Obsidian one is a personal daily-driver assistant. As of 2026-08-25 there's a deliberate one-way bridge between them: this brain reads the Obsidian vault's content daily (see "Obsidian vault integration" below), but nothing writes back — the Obsidian assistant's own file management stays untouched.
 
 ## How it works
 
@@ -132,7 +132,7 @@ Accepts `.md`/`.txt` files, chunks them on blank lines (paragraph-level, so retr
 
 **Already done, and kept fresh automatically**: the entire homelab documentation set (every container doc + architecture map) is in its memory. **Workflow 22 - Refresh Homelab Knowledge** re-runs this seed against `docs/` every morning at 06:00 — the script deletes-then-reinserts each file's chunks by source path, so edits to a doc replace the stale version rather than piling up duplicates, and new docs get picked up automatically. Ask it things like "what port is sonarr on" or "why does the mount keep breaking" and it answers grounded in the same docs a human would read, updated daily.
 
-**2. Point it at more of your life, if you want to.** The script works on any markdown/text — the Obsidian vault (`~/Obsidian/KodyBrain`), old notes, a braindump file, anything. This is a deliberate choice to leave to you rather than something done automatically: run `python3 scripts/seed_second_brain.py ~/Obsidian/KodyBrain` yourself whenever you want that content queryable here too. Nothing about this stack reaches into that vault on its own.
+**2. Your Obsidian vault is already included, automatically** (as of 2026-08-25) — see "Obsidian vault integration" below. The same script works on any other markdown/text too — old notes, a braindump file, anything — run `python3 scripts/seed_second_brain.py <path>` yourself whenever you want more content queryable here.
 
 **3. Ongoing, the natural way** — just keep saying `remember: ...` in Discord as things come up. That's the intended steady-state, not a one-time chore.
 
@@ -165,15 +165,6 @@ All four originally-deferred ideas from v1 are done as of 2026-08-24:
 - ✅ **A `forget` capability** — no longer keyword-gated (see "Forgetting something" above); natural language, confidence-thresholded.
 - ✅ **Feeding it live homelab state** — workflow 22, daily 06:00.
 
-## Extending it further
-
-Ideas not yet built:
-
-- **Vision-capable photo understanding** — currently photos are logged by filename/caption only, the LLM never looks at pixel content. Would need a vision model (e.g. `llava`, `qwen2.5vl`) — untested whether this hardware (M1, 16GB, already running one 7B model) can comfortably run two models loaded at once; worth a memory-usage test before committing to it.
-- **Cross-channel/cross-user conversation isolation** — recent-history lookups currently filter by date only, not by Discord channel or author. Fine for a single-user bot in one channel (the deployed setup), but if `brain-bot` ever listens in multiple channels or multiple people talk to it, conversations would blend together. Would need `channel_id`/`author_id` added to the conversation log payload (they're already sent by the bot, just not stored yet) and filtered on.
-- **Explicit fact correction** — right now updating a fact means forgetting the old one and stating the new one as two separate messages. A natural "actually it's X, not Y" in one message would need the classifier to support a fifth intent (`correct`) that does a search-and-replace in one step.
-- **Feeding it the Obsidian vault** — still an explicit opt-in the user runs themselves (see above), not automated, by design.
-
 ## Brainstormed ideas — now built (2026-08-24)
 
 All 6 buildable ideas from the 2026-08-24 brainstorm are done (the 7th, correlating homelab state with journal mood, needed no build — it already works today, since both live in the same memory: just ask it something like "was I stressed the week the mount kept breaking"):
@@ -190,4 +181,13 @@ All 6 buildable ideas from the 2026-08-24 brainstorm are done (the 7th, correlat
 - **Vision-capable photo understanding** — currently photos are logged by filename/caption only, the LLM never looks at pixel content. Would need a vision model (e.g. `llava`, `qwen2.5vl`) — untested whether this hardware (M1, 16GB, already running Ollama's 7B model *and* Whisper) can comfortably run a third model; worth a memory-usage test before committing to it.
 - **Cross-channel/cross-user conversation isolation** — recent-history lookups currently filter by date only, not by Discord channel or author. Fine for a single-user bot in one channel (the deployed setup), but if `brain-bot` ever listens in multiple channels or multiple people talk to it, conversations would blend together. Would need `channel_id`/`author_id` added to the conversation log payload (they're already sent by the bot, just not stored yet) and filtered on.
 - **Explicit fact correction** — right now updating a fact means forgetting the old one and stating the new one as two separate messages. A natural "actually it's X, not Y" in one message would need a 6th classifier intent (`correct`) that does a search-and-replace in one step.
-- **Feeding it the Obsidian vault** — still an explicit opt-in the user runs themselves (see above), not automated, by design.
+
+## Obsidian vault integration (2026-08-25)
+
+**Done, read-only, automatic.** `~/Obsidian/KodyBrain` — Kody's other, Obsidian-based second brain (`SOUL.md`/`USER.md`/`MEMORY.md`/`HABITS.md`/daily notes) — is now seeded into this brain's memory too, kept fresh by **workflow 26 - Refresh Obsidian Knowledge** (daily 06:15, 15 minutes after the homelab docs refresh so they don't contend for Ollama at the same time). Same mechanism as the docs refresh: `scripts/seed_second_brain.py ~/Obsidian/KodyBrain`, delete-by-source-then-reinsert, so edited vault notes replace their stale version rather than duplicating.
+
+What this means in practice: ask the Discord bot something like "what are my habit pillars" or "what did I decide about X" and it can answer from the Obsidian vault's content, not just what you've told it directly in Discord. Verified live — a semantic search for "what are my habit pillars" correctly surfaced the exact `HABITS.md` pillar list.
+
+**Deliberately read-only — nothing writes back to the vault.** Kody's Obsidian-based assistant has its own file-organization logic and explicit rules about what touches that vault (see its `SOUL.md`: "Never modify files outside `~/Obsidian/KodyBrain/` or `.claude/`"). Having a second, independent system also writing into the same vault risks real conflicts — competing file-naming conventions, race conditions if both write around the same time, one system's note-organization logic fighting the other's. If two-way sync (e.g., the `note` intent writing to Obsidian instead of/alongside Trilium) is ever wanted, it should be a deliberate, separately-considered decision, not a side effect of this read sync.
+
+**One gap worth knowing**: the vault is small right now (68KB, 12 files, mostly the same profile/memory files that already show up in Claude Code's own context each session) — daily notes and any Journal/Research/Family/Projects content that gets added later will get picked up automatically by the daily refresh, no action needed.

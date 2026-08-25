@@ -76,12 +76,12 @@ You don't do anything for these — they just happen. Reply to the evening promp
 
 ## Things worth knowing
 
-- **It only knows what you've told it, plus this entire homelab's documentation** — every service, every port, every known issue, refreshed automatically every morning. Ask it something like "why does the mount keep breaking on sonarr" and it'll answer correctly from the actual docs.
+- **It only knows what you've told it, plus this entire homelab's documentation and your Obsidian vault** — every service/port/known issue, and everything in `~/Obsidian/KodyBrain` (your other second brain's `SOUL.md`/`USER.md`/`MEMORY.md`/`HABITS.md`/daily notes), both refreshed automatically every morning. Ask it "why does the mount keep breaking on sonarr" or "what are my habit pillars" and it answers from the real source either way. This is read-only — nothing this bot does ever writes back into your Obsidian vault.
 - **Replies take a few seconds to ~30 seconds.** It's running entirely on this Mac, not a cloud API — there's real thinking happening, not instant lookup. It shows "typing..." the whole time.
 - **Nothing leaves this machine.** No external AI API, no cloud service sees what you tell it.
 - **Old conversations get quietly tidied up.** Once a chat exchange is over a month old, it gets summarized into one condensed memory instead of kept verbatim forever — keeps things fast and relevant without losing the substance.
 - **Want to see everything it knows, all at once?** Run `python3 scripts/export_second_brain.py` in the repo — dumps everything to a markdown file you can read top to bottom.
-- **Want to feed it something big at once** (old notes, a braindump, even your Obsidian vault) instead of typing facts one at a time? `python3 scripts/seed_second_brain.py <file-or-folder>`.
+- **Want to feed it something else big at once** (old notes, a braindump, another folder) instead of typing facts one at a time? `python3 scripts/seed_second_brain.py <file-or-folder>`. Your Obsidian vault is already covered automatically, no need to run this for that.
 
 ## One-time setup checklist
 

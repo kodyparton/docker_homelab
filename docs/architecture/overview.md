@@ -108,10 +108,11 @@ Solid arrows are functional dependencies (data/API calls the app needs to work).
 | Huntarr | 30036 | 9705 | |
 | Ollama | 11434 | 11434 | LAN only, no auth — do not expose publicly |
 | Qdrant | 6333 | 6333 | LAN only, no auth — do not expose publicly |
+| Infisical | 30034 | 8080 | LAN only, real auth (unlike Ollama/Qdrant) but holds secrets — conservative default |
 
 `brain-bot` has no listening port — outbound only (Discord Gateway + calls to n8n).
 
-Convention: LAN-only services generally live in the `300xx` range. `30034` is currently unused (gap, not a mistake).
+Convention: LAN-only services generally live in the `300xx` range. `30034` (formerly a gap) is now Infisical.
 
 ## Domain / Reverse Proxy Map
 

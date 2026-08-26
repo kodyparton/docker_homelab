@@ -146,6 +146,13 @@
         server: my-docker
         container: vikunja
 
+    - Infisical:
+        icon: infisical.png
+        href: http://192.168.178.69:30034
+        description: Secrets & credential manager
+        server: my-docker
+        container: infisical
+
     - Watchtower:
         icon: watchtower.png
         description: Auto-updates container images (no web UI)

@@ -63,6 +63,8 @@ DOC_RULES = [
     ("docs/containers/whisper.md", ("homelab", ["second-brain-system", "ai"])),
     ("docs/containers/infisical.md", ("homelab", ["ops", "credentials"])),
     ("docs/architecture/secrets-and-rotation.md", ("homelab", ["ops", "credentials"])),
+    ("docs/architecture/stack-review-2026-08-26.md", ("homelab", ["ops"])),
+    ("docs/containers/uptime-kuma.md", ("homelab", ["ops"])),
     ("docs/containers/watchtower.md", ("homelab", ["ops"])),
     ("docs/templates/container.md", ("homelab", [])),
     ("docs/README.md", ("homelab", [])),

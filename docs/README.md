@@ -1,6 +1,6 @@
 # Homelab Documentation
 
-Documentation for the `docker_homelab` stack — a Mac Mini running ~23 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
+Documentation for the `docker_homelab` stack — a Mac Mini running ~24 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
 
 ## Start here
 
@@ -39,6 +39,8 @@ One file per running container in [`containers/`](containers/), each following t
 | Qdrant | [containers/qdrant.md](containers/qdrant.md) |
 | Brain Bot | [containers/brain-bot.md](containers/brain-bot.md) |
 | Whisper | [containers/whisper.md](containers/whisper.md) |
+| Infisical | [containers/infisical.md](containers/infisical.md) |
+| Uptime Kuma | [containers/uptime-kuma.md](containers/uptime-kuma.md) |
 
 ## Keeping this updated
 

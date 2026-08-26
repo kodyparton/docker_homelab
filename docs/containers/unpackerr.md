@@ -21,7 +21,7 @@ Watches the shared downloads folder and extracts archives (rar/zip/etc.) that So
 
 | Host path | Container path | Purpose | Notes |
 |---|---|---|---|
-| `/Users/kp-srv-01/mnt/downloads` | `/mnt/downloads` | downloads folder to watch/extract in | **Note:** this path is `~/mnt/downloads`, not `/Volumes/downloads` like every other service — check this is actually the same underlying share if debugging extraction issues. |
+| `/Volumes/downloads` | `/mnt/downloads` | downloads folder to watch/extract in | Fixed 2026-08-26 — was pointed at `~/mnt/downloads`, a completely different, empty local directory, not an alias for the real share. |
 
 ## Dependencies
 
@@ -46,9 +46,10 @@ n/a — stateless, no config worth backing up beyond the `.env`.
 
 ## Known Issues / Gotchas
 
-- The mount path discrepancy noted above (`~/mnt/downloads` vs. `/Volumes/downloads`) hasn't caused an observed problem, but hasn't been explicitly verified to point at the identical share either — worth double-checking if unpackerr ever seems to miss an extraction.
+None currently open — see change log for the mount fix.
 
 ## Change Log
 
+- `2026-08-26` — **Found genuinely broken since setup**: the mount path (`~/mnt/downloads`) was not an alias for the real downloads share, it was an entirely separate, empty local directory — Sonarr/Radarr place completed downloads at `/Volumes/downloads`, and Unpackerr could never see them, permanently failing with "no such file or directory" for every completed item, retried forever. The wrong directory also held 55MB of Unpackerr's own rotated log files (`UN_LOG_FILE` was set to write inside the same broken path) — deleted, and `UN_LOG_FILE` removed entirely in favor of plain `docker logs` output. Fixed the volume mount to `/Volumes/downloads:/mnt/downloads`, matching every other service; verified live — the "no such file" errors stopped immediately and previously-stuck items were found correctly on restart.
 - `2026-08-24` — Doc created.
 - `2026-08-17` — Moved 4 hardcoded API keys out of `compose.yml` into a gitignored `.env`.

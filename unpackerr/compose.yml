@@ -4,12 +4,11 @@ services:
     image: golift/unpackerr
     container_name: unpackerr
     volumes:
-      - /Users/kp-srv-01/mnt/downloads:/mnt/downloads
+      - /Volumes/downloads:/mnt/downloads
     restart: always
     user: 1001:988
     environment:
       - TZ=America/Chicago
-      - UN_LOG_FILE=/mnt/downloads/unpackerr.log
       - UN_SONARR_0_URL=http://192.168.178.69:30027
       - UN_SONARR_0_API_KEY=${UN_SONARR_0_API_KEY}
       - UN_RADARR_0_URL=http://192.168.178.69:30025

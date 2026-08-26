@@ -45,6 +45,11 @@ flowchart LR
         BrainBot["Brain Bot"]
         Ollama
         Qdrant
+        Whisper
+    end
+    subgraph "Infra & Ops"
+        Infisical
+        UptimeKuma["Uptime Kuma"]
     end
 
     Prowlarr --> Sonarr
@@ -59,7 +64,9 @@ flowchart LR
     Unpackerr --> Sonarr
     Unpackerr --> Radarr
     Huntarr --> Sonarr
+    Huntarr --> SonarrHD
     Huntarr --> Radarr
+    Huntarr --> RadarrHD
     Overseerr --> Sonarr
     Overseerr --> Radarr
     Plex --> Tautulli
@@ -77,9 +84,12 @@ flowchart LR
     Watchtower -.-> Radarr
     Watchtower -.-> Prowlarr
     BrainBot --> n8n
+    BrainBot -.-> Whisper
     n8n --> Ollama
     n8n --> Qdrant
 ```
+
+Infisical and Uptime Kuma are shown with no edges yet — both are deployed but not wired into anything else's dependency chain: Infisical is read from ad hoc by scripts (not yet by n8n directly), and Uptime Kuma has no monitors configured yet. Edges will get added here once that's real, not before.
 
 Solid arrows are functional dependencies (data/API calls the app needs to work). Dotted arrows are n8n/Watchtower/NPM reaching in from outside — monitoring, automation, or routing rather than core function.
 
@@ -109,6 +119,7 @@ Solid arrows are functional dependencies (data/API calls the app needs to work).
 | Ollama | 11434 | 11434 | LAN only, no auth — do not expose publicly |
 | Qdrant | 6333 | 6333 | LAN only, no auth — do not expose publicly |
 | Infisical | 30034 | 8080 | LAN only, real auth (unlike Ollama/Qdrant) but holds secrets — conservative default |
+| Uptime Kuma | 30038 | 3001 | LAN only for now |
 
 `brain-bot` has no listening port — outbound only (Discord Gateway + calls to n8n).
 

@@ -61,6 +61,8 @@ DOC_RULES = [
     ("docs/containers/unpackerr.md", ("homelab", ["media"])),
     ("docs/containers/vikunja.md", ("homelab", ["productivity"])),
     ("docs/containers/whisper.md", ("homelab", ["second-brain-system", "ai"])),
+    ("docs/containers/infisical.md", ("homelab", ["ops", "credentials"])),
+    ("docs/architecture/secrets-and-rotation.md", ("homelab", ["ops", "credentials"])),
     ("docs/containers/watchtower.md", ("homelab", ["ops"])),
     ("docs/templates/container.md", ("homelab", [])),
     ("docs/README.md", ("homelab", [])),

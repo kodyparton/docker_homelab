@@ -8,6 +8,30 @@ Every number below came from querying the live Plex/Radarr/Sonarr/Overseerr/Taut
 
 All the technical pieces exist and this is buildable. **The problem isn't feasibility — it's that the rules as stated would flag ~85% of the library on day one.** That's not a reason not to do it, but it does mean the thresholds need revisiting before anything is automated, and it makes the "flag things to keep" step much bigger than it sounds.
 
+## SETTLED RULES (as of 2026-08-26)
+
+| Rule | Decision |
+|---|---|
+| Staleness threshold | **365 days** without a view |
+| Grace period in "Leaving Soon" | **30 days** (unchanged) |
+| Never-watched items | **Protected — excluded entirely** |
+| Keep flag | Plex label `keep`, set from any Plex client |
+| Timer reset | Any view by any user removes it from the collection |
+
+With all three settled, the real target list is **162 items** — down from ~671 under the original rules:
+
+| Library | Flagged | of Total | % |
+|---|---|---|---|
+| Movies | 103 | 493 | 21% |
+| Movies - 4K | 19 | 81 | 23% |
+| TV Shows | 37 | 217 | 17% |
+| TV Shows - 4K | 3 | 13 | 23% |
+| **Total** | **162** | **~791** | **~20%** |
+
+Of those 162: **144** watched-then-cold, **18** part-watched shows, **0** currently keep-labeled.
+
+**Worth knowing: 162 items is only 142 distinct titles.** 20 titles are flagged in *both* their 4K and HD copies, so both copies would be deleted — a complete removal of that title, not a downgrade to one format. Examples: The Matrix Resurrections, Spider-Man (2002), Guardians of the Galaxy, Black Panther: Wakanda Forever. If the intent for duplicated titles is "keep one copy, drop the redundant one," that's a **separate rule that does not exist yet** and would need adding.
+
 ## UPDATE 2026-08-26: threshold set to 365 days
 
 Kody moved the staleness threshold from 90 to 365 days. Real measured effect:
@@ -121,8 +145,9 @@ Either way I can generate a **candidate list first** — every item that would b
 
 ## Open questions for you
 
-1. **Never-watched items** — protected, or deleted on an `addedAt` timer? (biggest single decision — this is 146 of the 308, and it's what sweeps in the whole Harry Potter collection, all 8 films, added 2022 and never played)
-2. ~~Are 90/30 the right numbers~~ — **settled 2026-08-26: 365 days.** The 30-day grace period after entering "Leaving Soon" is unchanged and still needs confirming.
+1. ~~Never-watched items~~ — **settled 2026-08-26: protected, excluded entirely.** Removes 146 items including the whole Harry Potter collection. Reversible later via `--include-never-watched`.
+2. ~~Are 90/30 the right numbers~~ — **settled 2026-08-26: 365-day staleness, 30-day grace period.**
 3. **Movies only to start, or TV too?** (recommendation unchanged: movies first — TV carries all 18 part-watched cases)
 4. **Should other users' viewing count?** Right now the rule is "anyone watches it, timer resets" — Tautulli shows at least two other users (`carla514` and others) with activity. Confirming this is the intent.
 5. **Delete files, or just unmonitor and leave them?** A middle ground exists: stop managing it in Radarr/Sonarr but keep the file, which gets the curation without the irreversibility.
+6. **NEW — duplicated titles**: 20 titles are flagged in both 4K and HD, so both copies go. Should a duplicated title instead drop only one copy (and if so, which)? No rule for this exists yet.

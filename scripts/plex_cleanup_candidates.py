@@ -14,9 +14,10 @@ Usage:
 
 Rules implemented (matching the design doc):
   - "Stale" = no view in --days (default 365).
-  - Items never viewed fall back to their added-at date, but are reported
-    in their own category, since whether those should ever be deleted is
-    an open decision.
+  - Items NEVER viewed are protected and excluded by default (decision
+    2026-08-26). Plex has no record anyone ever played them, so there's no
+    real signal they're unwanted - only that they haven't been got to yet.
+    Pass --include-never-watched to see them anyway (report only).
   - 4K and 1080p copies of the same title are treated as ONE title: a view
     of either counts as a view of both. Plex tracks them separately, so
     without this a naive run would delete the copy you don't happen to use.
@@ -63,6 +64,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=365, help="staleness threshold (default 365)")
     ap.add_argument("--csv", help="write full candidate list to this CSV path")
+    ap.add_argument("--include-never-watched", action="store_true",
+                    help="also report items Plex has never recorded a play for "
+                         "(protected by default - see design doc)")
     args = ap.parse_args()
 
     token = get_secret("PLEX_TOKEN")
@@ -103,7 +107,11 @@ def main():
         if has_keep_label(it):
             category = "protected (keep label)"
         elif not effective_view:
-            category = "never watched"
+            # Protected by decision 2026-08-26: never-played is not evidence
+            # of "unwanted", just "not got to yet".
+            if not args.include_never_watched:
+                continue
+            category = "never watched (PROTECTED - report only)"
         elif it.get("type") == "show" and 0 < (it.get("viewedLeafCount") or 0) < (it.get("leafCount") or 0):
             category = "part-watched show"
         else:
@@ -143,9 +151,16 @@ def main():
         print(f"  {sname:16} {flagged:4} of {total:4} flagged ({pct:.0f}%)")
 
     print("\nBY CATEGORY")
-    for cat in ["watched, gone cold", "never watched", "part-watched show", "protected (keep label)"]:
+    for cat in ["watched, gone cold", "part-watched show",
+                "never watched (PROTECTED - report only)", "protected (keep label)"]:
         n = sum(1 for r in rows if r["category"] == cat)
-        print(f"  {cat:26} {n:4}")
+        if n or not cat.startswith("never"):
+            print(f"  {cat:40} {n:4}")
+    if not args.include_never_watched:
+        print("  (never-watched items excluded entirely - protected by policy)")
+
+    deletable = [r for r in rows if r["category"] in ("watched, gone cold", "part-watched show")]
+    print(f"\n  ACTUAL DELETION CANDIDATES: {len(deletable)}")
 
     dupes = sum(1 for r in rows if r["has_4k_or_hd_duplicate"])
     saved = sum(1 for r in rows if r["viewed_other_copy_only"])

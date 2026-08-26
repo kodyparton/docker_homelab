@@ -41,7 +41,9 @@ Not exposed via NPM. LAN-only (`192.168.178.69:30034`) — deliberate, given wha
 
 ## Backups
 
-Not yet wired into workflow 03 (Backup Verification) or any snapshot routine. **This is the one open item that matters most** — `infisical/data/postgres` is now where secrets will live; losing it (or the `ENCRYPTION_KEY` in `.env`) without a backup means losing everything stored. Worth adding a `pg_dump`-based backup step before this holds anything real.
+Workflow 03 (Backup Verification, daily 09:00) runs `docker exec infisical-db pg_dump -U infisical infisical | gzip` into `infisical/backups/` (gitignored), keeps the last 7, and `scripts/backup_check.sh` alerts if it's missing or older than 2 days. Verified live — a real dump was taken and confirmed readable/valid.
+
+**Still not covered**: the `ENCRYPTION_KEY` in `infisical/.env` itself. A `pg_dump` alone is not enough to restore from — without that specific key, the dump's encrypted secret values are unrecoverable. That key needs its own separate, secure backup (e.g. somewhere outside this repo entirely, like a physical note or a different password manager) — deliberately not something to script into an automated backup alongside the data it protects, since bundling them together would defeat the point of having a separate root key at all.
 
 ## Automation
 

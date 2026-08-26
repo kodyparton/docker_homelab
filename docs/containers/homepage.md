@@ -31,7 +31,7 @@ Dashboard aggregating every self-hosted service in this stack into one page, wit
 
 ## Credentials & Secrets
 
-`homepage/.env` (gitignored) holds real API keys for every widget as `HOMEPAGE_VAR_*` variables, referenced in `config/services.yaml` via `{{HOMEPAGE_VAR_...}}` templating — never hardcoded directly. `.env.example` is the committed placeholder template. qBittorrent's password entry is still a literal placeholder (`changeme`) pending the real WebUI password.
+`homepage/.env` (gitignored) holds real API keys for every widget as `HOMEPAGE_VAR_*` variables, referenced in `config/services.yaml` via `{{HOMEPAGE_VAR_...}}` templating — never hardcoded directly. `.env.example` is the committed placeholder template. qBittorrent's password entry is still a weak default value, not the real WebUI password — see `docs/architecture/secrets-and-rotation.md`, flagged there as an active exposure worth fixing directly, independent of the Infisical migration.
 
 ## External Access
 

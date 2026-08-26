@@ -15,6 +15,7 @@ launchd-out.log
 .env
 !*.env.example
 scripts/.n8n_api_key
+scripts/.infisical_credentials
 
 # runtime data / configs / credentials / media state for every service
 */config/
@@ -29,6 +30,7 @@ scripts/.n8n_api_key
 vikunja/files/
 qdrant/storage/
 qdrant/snapshots/
+infisical/backups/
 
 # re-include compose files that happen to live under a config/ dir
 # (git won't look inside an ignored dir, so unignore the dir, then

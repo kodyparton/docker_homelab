@@ -3,12 +3,23 @@
   "activeVersion": null,
   "activeVersionId": null,
   "connections": {
-    "Daily 09:00": {
+    "Backup Infisical": {
       "main": [
         [
           {
             "index": 0,
             "node": "Snapshot Qdrant",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Daily 09:00": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Backup Infisical",
             "type": "main"
           }
         ]
@@ -146,6 +157,25 @@
       "position": [
         220,
         -100
+      ],
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "sshPassword": {
+          "id": "E8Y36aEflXOSkIVX",
+          "name": "Mac Mini SSH"
+        }
+      },
+      "id": "infisical_backup",
+      "name": "Backup Infisical",
+      "parameters": {
+        "command": "mkdir -p /Users/kp-srv-01/Documents/docker/infisical/backups && docker exec infisical-db pg_dump -U infisical infisical | gzip > /Users/kp-srv-01/Documents/docker/infisical/backups/infisical-$(date +%Y%m%d-%H%M%S).sql.gz && ls -t /Users/kp-srv-01/Documents/docker/infisical/backups/*.sql.gz | tail -n +8 | xargs -r rm -f"
+      },
+      "position": [
+        220,
+        -200
       ],
       "type": "n8n-nodes-base.ssh",
       "typeVersion": 1

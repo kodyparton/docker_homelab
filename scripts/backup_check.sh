@@ -18,6 +18,7 @@ CHECKS=(
   "lazylibrarian|$REPO_ROOT/lazylibrarian/config/*.tgz|tgz|14"
   "audiobookshelf|$REPO_ROOT/audiobookshelf/metadata/backups/*|dir|14"
   "qdrant|$REPO_ROOT/qdrant/snapshots/second_brain/*.snapshot|raw|2"
+  "infisical|$REPO_ROOT/infisical/backups/*.sql.gz|raw|2"
 )
 
 first=true

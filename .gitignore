@@ -32,6 +32,10 @@ qdrant/storage/
 qdrant/snapshots/
 infisical/backups/
 
+# generated media/watch-history reports - personal viewing data, and this
+# repo is public. Regenerate locally with scripts/plex_cleanup_candidates.py
+plex-cleanup-candidates*.csv
+
 # re-include compose files that happen to live under a config/ dir
 # (git won't look inside an ignored dir, so unignore the dir, then
 # re-ignore everything in it except the compose file)

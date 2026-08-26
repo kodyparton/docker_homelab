@@ -8,7 +8,30 @@ Every number below came from querying the live Plex/Radarr/Sonarr/Overseerr/Taut
 
 All the technical pieces exist and this is buildable. **The problem isn't feasibility — it's that the rules as stated would flag ~85% of the library on day one.** That's not a reason not to do it, but it does mean the thresholds need revisiting before anything is automated, and it makes the "flag things to keep" step much bigger than it sounds.
 
-## Blast radius under the proposed rules (>90 days unwatched)
+## UPDATE 2026-08-26: threshold set to 365 days
+
+Kody moved the staleness threshold from 90 to 365 days. Real measured effect:
+
+| | 90-day rule | **365-day rule** |
+|---|---|---|
+| Movies | 421 of 493 (85%) | **208 of 493 (42%)** |
+| Movies - 4K | 78 of 81 (96%) | **57 of 81 (70%)** |
+| TV Shows | 172 of 217 (79%) | **39 of 217 (18%)** |
+| TV Shows - 4K | — | **4 of 13 (31%)** |
+| **Total flagged** | **~671** | **308** |
+
+Breakdown of those 308 by category:
+- **144** watched, then went cold (the intended target)
+- **146** never watched at all (open decision — see problem #1)
+- **18** part-watched shows (highest-risk deletions — see problem #2)
+- **0** protected (no `keep` labels exist yet)
+
+The TV number improving most (79% → 18%) makes sense: shows get rewatched and added to over time, so a year is a much more natural cadence for them than three months.
+
+Generate a current copy of this list any time with:
+`python3 scripts/plex_cleanup_candidates.py --days 365 --csv out.csv` — read-only, changes nothing.
+
+## Blast radius under the original proposed rules (>90 days unwatched)
 
 | Library | Total | Would enter "Leaving Soon" immediately | % |
 |---|---|---|---|
@@ -41,8 +64,10 @@ Worth stating plainly because it changes what "success" means: this can't really
 ### 2. Partially-watched shows are the worst deletion case
 The Mandalorian at 7/16 episodes, The Last Thing He Told Me at 7/15. Deleting a show someone is midway through is a worse outcome than deleting one never started. Recommend: any show with `viewedLeafCount > 0` but `< leafCount` gets excluded, or a much longer timer.
 
-### 3. 4K and 1080p copies are tracked separately
-78 duplicate titles. Plex treats them as independent items with independent view dates — **watching the 4K copy does not mark the 1080p copy as watched.** A naive implementation would delete whichever copy you don't happen to use, and could delete the 1080p version of something you actively watch in 4K. Any implementation has to match titles across the two libraries and treat a view of either as a view of both.
+### 3. ~~4K and 1080p copies are tracked separately~~ — **tested, this was wrong**
+Original claim: that Plex tracks view state independently per copy, so a naive run would delete whichever copy you don't use. **Checked all 78 duplicate pairs directly: every single one has identical view state.** Plex already syncs watch status across copies that match to the same metadata GUID, so this problem doesn't exist in practice.
+
+Cross-library matching is still implemented in `scripts/plex_cleanup_candidates.py` as cheap defensive insurance (it costs nothing and would catch an unmatched-metadata edge case), but it is *not* load-bearing — it saved 0 items from wrong deletion when measured. Correcting this here rather than leaving a plausible-sounding claim that testing disproved.
 
 ### 4. Re-requesting a deleted item can silently fail
 Your existing **workflow 13 (Smart Overseerr Triage)** auto-*declines* requests for anything available on a streaming service you subscribe to. So the "delete it, request it again if you want it back" path breaks exactly for popular titles — someone re-requests a deleted movie, workflow 13 declines it automatically, and nothing comes back. This needs an explicit exemption: requests for previously-deleted items should bypass the streaming-availability check.
@@ -96,8 +121,8 @@ Either way I can generate a **candidate list first** — every item that would b
 
 ## Open questions for you
 
-1. **Never-watched items** — protected, or deleted on an `addedAt` timer? (biggest single decision)
-2. **Are 90/30 the right numbers** given the 85% result, or should they start much longer — say 365/60 — and tighten later?
-3. **Movies only to start, or TV too?**
+1. **Never-watched items** — protected, or deleted on an `addedAt` timer? (biggest single decision — this is 146 of the 308, and it's what sweeps in the whole Harry Potter collection, all 8 films, added 2022 and never played)
+2. ~~Are 90/30 the right numbers~~ — **settled 2026-08-26: 365 days.** The 30-day grace period after entering "Leaving Soon" is unchanged and still needs confirming.
+3. **Movies only to start, or TV too?** (recommendation unchanged: movies first — TV carries all 18 part-watched cases)
 4. **Should other users' viewing count?** Right now the rule is "anyone watches it, timer resets" — Tautulli shows at least two other users (`carla514` and others) with activity. Confirming this is the intent.
 5. **Delete files, or just unmonitor and leave them?** A middle ground exists: stop managing it in Radarr/Sonarr but keep the file, which gets the curation without the irreversibility.

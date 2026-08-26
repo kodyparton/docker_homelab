@@ -120,6 +120,10 @@ Solid arrows are functional dependencies (data/API calls the app needs to work).
 | Qdrant | 6333 | 6333 | LAN only, no auth — do not expose publicly |
 | Infisical | 30034 | 8080 | LAN only, real auth (unlike Ollama/Qdrant) but holds secrets — conservative default |
 | Uptime Kuma | 30038 | 3001 | LAN only for now |
+| Authelia | 30039 | 9091 | SSO/OIDC provider — **requires `auth.kodyparton.com` via NPM to function**, see `sso.md` |
+| Vaultwarden | 30040 | 80 | Password manager. SSO + local login both enabled (deliberate) |
+| Paperless-ngx | 30041 | 8000 | Documents/OCR. SQLite + internal redis |
+| Immich | 30042 | 2283 | Photos. Library on NAS (`/Volumes/media/immich`), not boot disk |
 
 `brain-bot` has no listening port — outbound only (Discord Gateway + calls to n8n).
 

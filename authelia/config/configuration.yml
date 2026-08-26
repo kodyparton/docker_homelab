@@ -1,0 +1,125 @@
+---
+# Authelia - SSO / OIDC identity provider for the homelab.
+# Declarative on purpose: this file is git-tracked, so the whole auth setup
+# is reviewable and reproducible, matching how the rest of this repo works.
+# Secrets are NOT here - they come from env vars (see authelia/.env, gitignored).
+
+theme: dark
+
+server:
+  address: 'tcp://0.0.0.0:9091'
+
+log:
+  level: info
+
+totp:
+  issuer: kodyparton.com
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+    password:
+      algorithm: argon2
+
+access_control:
+  # Default deny. Rules below are evaluated top-down, first match wins.
+  default_policy: deny
+  rules:
+    # Authelia's own endpoints must stay reachable or you can't log in.
+    - domain: 'auth.kodyparton.com'
+      policy: bypass
+    - domain: '*.kodyparton.com'
+      policy: one_factor
+
+session:
+  name: authelia_session
+  # Cookie domain must cover every app that shares this session.
+  cookies:
+    - domain: 'kodyparton.com'
+      authelia_url: 'https://auth.kodyparton.com'
+      default_redirection_url: 'https://home.kodyparton.com'
+      expiration: 12h
+      inactivity: 2h
+      remember_me: 1M
+
+regulation:
+  # Brute-force protection: lock an account after repeated failures.
+  max_retries: 4
+  find_time: 2m
+  ban_time: 10m
+
+storage:
+  local:
+    path: /data/db.sqlite3
+
+notifier:
+  # No SMTP configured yet, so password-reset / 2FA-registration emails are
+  # written to this file instead of being sent. Read them with:
+  #   docker exec authelia cat /data/notification.txt
+  # Swap this for an smtp: block once mail is available.
+  filesystem:
+    filename: /data/notification.txt
+
+identity_validation:
+  reset_password:
+    jwt_lifespan: 5m
+
+identity_providers:
+  oidc:
+    jwks:
+      - key_id: 'main'
+        algorithm: 'RS256'
+        use: 'sig'
+        key: |
+          {{- fileContent "/config/oidc.key" | nindent 10 }}
+    enable_client_debug_messages: false
+    clients:
+      # ---------------- Immich ----------------
+      - client_id: immich
+        client_name: Immich
+        client_secret: '$argon2id$v=19$m=65536,t=3,p=4$MtFIqr+45HJ4AJWlZ9QA1w$6DnEyelh8BsEWjWXJkpiOJbARhHVEQ6tyay1BfAv+PM'
+        public: false
+        authorization_policy: one_factor
+        require_pkce: true
+        pkce_challenge_method: 'S256'
+        redirect_uris:
+          - 'http://192.168.178.69:30042/auth/login'
+          - 'http://192.168.178.69:30042/user-settings'
+          - 'app.immich:///oauth-callback'
+        scopes: ['openid', 'profile', 'email']
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_post'
+
+      # ---------------- Paperless-ngx ----------------
+      - client_id: paperless
+        client_name: Paperless-ngx
+        client_secret: '$argon2id$v=19$m=65536,t=3,p=4$kpRhDySYmx5kQqAvRaKm+g$iYr+dgJj2Wj+FtIjbD7AwZ0W7dvNWNfOj69SvGoj/SI'
+        public: false
+        authorization_policy: one_factor
+        require_pkce: true
+        pkce_challenge_method: 'S256'
+        redirect_uris:
+          - 'http://192.168.178.69:30041/accounts/oidc/authelia/login/callback/'
+        scopes: ['openid', 'profile', 'email']
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_post'
+
+      # ---------------- Vaultwarden ----------------
+      # NOTE: local email/password login stays enabled on Vaultwarden as a
+      # deliberate break-glass path - if Authelia is down, the password vault
+      # must still be reachable. See docs/architecture/sso.md.
+      - client_id: vaultwarden
+        client_name: Vaultwarden
+        client_secret: '$argon2id$v=19$m=65536,t=3,p=4$9wHuPJio/15dnOf4dCGvNA$j7t1OhyIzsYaG8dTR65LHvKghrH+XNt+GWvJHazBwzs'
+        public: false
+        authorization_policy: one_factor
+        require_pkce: false
+        redirect_uris:
+          - 'http://192.168.178.69:30040/identity/connect/oidc-signin'
+        # response_types must be explicit here: 'offline_access' (needed for
+        # Vaultwarden's refresh tokens) is only valid alongside a code flow.
+        response_types: ['code']
+        grant_types: ['authorization_code', 'refresh_token']
+        scopes: ['openid', 'profile', 'email', 'offline_access']
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_basic'

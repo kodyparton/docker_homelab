@@ -1,0 +1,26 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    ports:
+      - "30040:80"
+    volumes:
+      - ./data:/data
+    environment:
+      - TZ=America/Chicago
+      - DOMAIN=http://192.168.178.69:30040
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+      # Open signups off - accounts are created deliberately, not by anyone
+      # who can reach the LAN. Invite users via the /admin panel instead.
+      - SIGNUPS_ALLOWED=false
+      - INVITATIONS_ALLOWED=true
+      # ---- SSO (Authelia) ----
+      # Deliberately configured alongside, NOT replacing, local login: if
+      # Authelia is down this vault must still open. See docs/architecture/sso.md.
+      - SSO_ENABLED=true
+      - SSO_ONLY=false
+      - SSO_AUTHORITY=https://auth.kodyparton.com
+      - SSO_CLIENT_ID=vaultwarden
+      - SSO_CLIENT_SECRET=${OIDC_CLIENT_SECRET}
+      - SSO_SCOPES=openid email profile offline_access

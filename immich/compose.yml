@@ -1,0 +1,67 @@
+services:
+  immich-postgres:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3
+    container_name: immich-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=immich
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=immich
+      - POSTGRES_INITDB_ARGS=--data-checksums
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    # Internal only - no host port.
+
+  immich-redis:
+    image: redis:7-alpine
+    container_name: immich-redis
+    restart: unless-stopped
+    volumes:
+      - ./cache:/data
+    # Internal only - no host port.
+
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:release
+    container_name: immich-server
+    restart: unless-stopped
+    depends_on:
+      - immich-postgres
+      - immich-redis
+    ports:
+      - "30042:2283"
+    volumes:
+      # Photo library lives on the NAS (23TB free), NOT the boot disk.
+      - /Volumes/media/immich:/data
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=America/Chicago
+      - DB_HOSTNAME=immich-postgres
+      - DB_USERNAME=immich
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE_NAME=immich
+      - REDIS_HOSTNAME=immich-redis
+      # Machine-learning host points at the ML container below. If that
+      # container is stopped, Immich degrades gracefully - upload, browsing
+      # and albums all keep working, only smart-search/face-grouping stop.
+      - IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:release
+    container_name: immich-machine-learning
+    restart: unless-stopped
+    volumes:
+      - ./cache/ml:/cache
+    environment:
+      - TZ=America/Chicago
+      # CPU-only box shared with Ollama. Measured: a 3rd concurrent model
+      # dropped Ollama to 0.49 tok/s. Capping ML threads keeps face/CLIP
+      # jobs from starving the second brain. Raise only if Ollama moves off
+      # this host or a GPU becomes available.
+      - MACHINE_LEARNING_WORKERS=1
+      - MACHINE_LEARNING_WORKER_TIMEOUT=300
+      - OMP_NUM_THREADS=2
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 3G

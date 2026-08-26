@@ -160,6 +160,35 @@
         server: my-docker
         container: uptime-kuma
 
+    - Authelia:
+        icon: authelia.png
+        href: http://192.168.178.69:30039
+        description: SSO / OIDC identity provider
+        server: my-docker
+        container: authelia
+
+    - Vaultwarden:
+        icon: vaultwarden.png
+        href: http://192.168.178.69:30040
+        description: Password manager
+        server: my-docker
+        container: vaultwarden
+
+- Personal:
+    - Immich:
+        icon: immich.png
+        href: http://192.168.178.69:30042
+        description: Photos & video backup
+        server: my-docker
+        container: immich-server
+
+    - Paperless:
+        icon: paperless-ngx.png
+        href: http://192.168.178.69:30041
+        description: Documents & OCR
+        server: my-docker
+        container: paperless
+
     - Watchtower:
         icon: watchtower.png
         description: Auto-updates container images (no web UI)

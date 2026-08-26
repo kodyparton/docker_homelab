@@ -32,6 +32,16 @@ qdrant/storage/
 qdrant/snapshots/
 infisical/backups/
 
+# immich + paperless runtime state. These are NOT matched by the */data/
+# and */config/ rules above, and immich/postgres is a live database - it
+# was caught staged for commit to this public repo once, hence the
+# explicit entries.
+immich/postgres/
+immich/cache/
+paperless/media/
+paperless/consume/
+paperless/export/
+
 # generated media/watch-history reports - personal viewing data, and this
 # repo is public. Regenerate locally with scripts/plex_cleanup_candidates.py
 plex-cleanup-candidates*.csv
@@ -42,6 +52,17 @@ plex-cleanup-candidates*.csv
 !lazylibrarian/config/
 lazylibrarian/config/*
 !lazylibrarian/config/compose.yml
+
+# authelia: configuration.yml is declarative architecture worth tracking
+# (its OIDC client secrets are argon2 digests of 48-char random strings -
+# safe to publish by design). Deliberately NOT tracked: oidc.key (private
+# signing key) and users_database.yml (user password hashes - this repo is
+# public, and a hash of a human-chosen password is an offline-cracking
+# target even though the current one is random).
+!authelia/config/
+authelia/config/*
+!authelia/config/configuration.yml
+!authelia/config/*.example
 
 # homepage dashboard: config/ is desired-state YAML (like compose.yml),
 # not runtime data, so track the YAML but still ignore anything else

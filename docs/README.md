@@ -1,6 +1,6 @@
 # Homelab Documentation
 
-Documentation for the `docker_homelab` stack — a Mac Mini running ~24 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
+Documentation for the `docker_homelab` stack — a Mac Mini running ~28 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
 
 ## Start here
 
@@ -9,6 +9,7 @@ Documentation for the `docker_homelab` stack — a Mac Mini running ~24 self-hos
 - **[Automation Map](architecture/automation.md)** — every n8n workflow, what it touches, what it's allowed to change automatically.
 - **[Second Brain (technical)](architecture/second-brain.md)** — how the second brain is built: architecture, internals, setup steps.
 - **[Daily Journaling](architecture/journaling.md)** — evening prompts, automatic daily journal generation from conversations/photos/Strava/Apple Health, setup steps.
+- **[Single Sign-On](architecture/sso.md)** — Authelia OIDC setup, what's still blocked on DNS, and why Vaultwarden keeps local login.
 - **[Known Issues](architecture/known-issues.md)** — open problems and their status, resolved-issue changelog.
 
 ## Per-service docs
@@ -41,6 +42,10 @@ One file per running container in [`containers/`](containers/), each following t
 | Whisper | [containers/whisper.md](containers/whisper.md) |
 | Infisical | [containers/infisical.md](containers/infisical.md) |
 | Uptime Kuma | [containers/uptime-kuma.md](containers/uptime-kuma.md) |
+| Authelia (SSO) | [containers/authelia.md](containers/authelia.md) |
+| Vaultwarden | [containers/vaultwarden.md](containers/vaultwarden.md) |
+| Paperless-ngx | [containers/paperless.md](containers/paperless.md) |
+| Immich | [containers/immich.md](containers/immich.md) |
 
 ## Keeping this updated
 

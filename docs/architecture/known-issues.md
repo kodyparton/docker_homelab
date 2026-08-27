@@ -4,17 +4,25 @@ Running log of infra problems found, their root cause, and whether they're fixed
 
 ## Open
 
-### `downloads.kodyparton.com` routes to a dead host
+### ~~`downloads.kodyparton.com` routes to a dead host~~ — RESOLVED 2026-08-27
+Verified fixed: NPM now forwards `downloads.kodyparton.com` → `192.168.178.69:30024` (was `10.10.0.130`). Kept below for history.
+
+### (historical) `downloads.kodyparton.com` routed to a dead host
 - **Found:** 2026-08-17 (rediscovered 2026-08-24, still open)
 - **What:** NPM's proxy host for qBittorrent forwards to `10.10.0.130:30024`, a host that doesn't respond to ping — same class of stale-migration issue as the n8n one below, just never fixed for this domain.
 - **Actual location:** `192.168.178.69:30024` (this Mac, `network_mode: host`).
 - **Fix (manual, NPM UI):** `192.168.178.69:81` → Hosts → Proxy Hosts → edit `downloads.kodyparton.com` → Forward Hostname/IP `192.168.178.69`, Forward Port `30024` → Save.
 - **Why manual:** direct writes to NPM's live database/container have been blocked by a safety check as production-infrastructure changes that should go through NPM's own UI/API rather than a raw file/DB edit — see the NPM doc for why a DB row alone isn't even sufficient (routing is driven by generated nginx conf files, not just the database).
 
-### `home.kodyparton.com` (Homepage internal URL) not yet live
-- **Found:** 2026-08-24 (in progress)
-- **What:** Two manual steps outstanding — a Cloudflare DNS record and an NPM proxy host. See `docs/containers/homepage.md` → External Access for exact values.
-- **Why manual:** same reasoning as above; also, this one genuinely needs a real Cloudflare dashboard action from the account owner regardless of tooling.
+### `home.kodyparton.com` — **diagnosed 2026-08-27: only the DNS record is missing**
+- **Found:** 2026-08-24. Re-diagnosed 2026-08-27 after Kody reported still needing IP:port.
+- **Root cause, proven**: the NPM side is already complete and working. The Cloudflare DNS record simply does not exist.
+  - `dscacheutil -q host -a name home.kodyparton.com` → **NO RECORD** (also true for `auth.kodyparton.com`; `n8n.kodyparton.com` resolves fine).
+  - NPM **does** have the proxy host: `home.kodyparton.com` → `192.168.178.69:3000`, listening on 80+443 with the `*.kodyparton.com` wildcard cert.
+  - Bypassing DNS proves the server side works end to end:
+    `curl --resolve home.kodyparton.com:443:192.168.178.69 https://home.kodyparton.com/` → **HTTP 200**, cert `CN=*.kodyparton.com` valid to Oct 2026.
+- **The only remaining step (manual, Cloudflare dashboard):** add an **A record** for `home` → `192.168.178.69`, set to **DNS only (grey cloud, not proxied)**. Proxying would send it to Cloudflare's edge, which cannot reach a private LAN IP — grey cloud is what makes it resolve internally only.
+- **Same applies to `auth.kodyparton.com`** for SSO, except that one needs an NPM proxy host created too (→ `192.168.178.69:30039`), since it doesn't exist yet.
 
 ### SMB mount passthrough — deeper fix deferred
 - **Found:** 2026-08-24

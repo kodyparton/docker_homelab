@@ -152,7 +152,7 @@
       "id": "qdrant_snapshot",
       "name": "Snapshot Qdrant",
       "parameters": {
-        "command": "curl -s -X POST http://localhost:6333/collections/second_brain/snapshots > /dev/null && ls -t /Users/kp-srv-01/Documents/docker/qdrant/snapshots/second_brain/*.snapshot 2>/dev/null | tail -n +4 | while read -r f; do rm -f \"$f\" \"$f.checksum\"; done && curl -s -X POST http://localhost:6333/collections/shadow_log/snapshots > /dev/null && ls -t /Users/kp-srv-01/Documents/docker/qdrant/snapshots/shadow_log/*.snapshot 2>/dev/null | tail -n +4 | while read -r f; do rm -f \"$f\" \"$f.checksum\"; done"
+        "command": "test -d /Volumes/media/backups/qdrant || { echo \"NAS backup path missing - is /Volumes/media mounted?\"; exit 1; }; for c in second_brain shadow_log; do   curl -s -X POST http://localhost:6333/collections/$c/snapshots > /dev/null;  mkdir -p /Volumes/media/backups/qdrant/$c;  for f in /Users/kp-srv-01/Documents/docker/qdrant/snapshots/$c/*.snapshot; do [ -e \"$f\" ] || continue;    cp -n \"$f\" /Volumes/media/backups/qdrant/$c/ 2>/dev/null; done;  ls -t /Users/kp-srv-01/Documents/docker/qdrant/snapshots/$c/*.snapshot 2>/dev/null | tail -n +2 |    while read -r f; do rm -f \"$f\" \"$f.checksum\"; done;  ls -t /Volumes/media/backups/qdrant/$c/*.snapshot 2>/dev/null | tail -n +15 | xargs -r rm -f; done"
       },
       "position": [
         220,
@@ -171,7 +171,7 @@
       "id": "infisical_backup",
       "name": "Backup Infisical",
       "parameters": {
-        "command": "mkdir -p /Users/kp-srv-01/Documents/docker/infisical/backups && docker exec infisical-db pg_dump -U infisical infisical | gzip > /Users/kp-srv-01/Documents/docker/infisical/backups/infisical-$(date +%Y%m%d-%H%M%S).sql.gz && ls -t /Users/kp-srv-01/Documents/docker/infisical/backups/*.sql.gz | tail -n +8 | xargs -r rm -f"
+        "command": "test -d /Volumes/media/backups/infisical || { echo \"NAS backup path missing - is /Volumes/media mounted?\"; exit 1; }; docker exec infisical-db pg_dump -U infisical infisical | gzip > /Volumes/media/backups/infisical/infisical-$(date +%Y%m%d-%H%M%S).sql.gz && ls -t /Volumes/media/backups/infisical/*.sql.gz | tail -n +15 | xargs -r rm -f"
       },
       "position": [
         220,

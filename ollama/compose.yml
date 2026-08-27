@@ -4,7 +4,11 @@ services:
     image: ollama/ollama:latest
     container_name: ollama
     volumes:
-      - /Users/kp-srv-01/Documents/docker/ollama/config:/root/.ollama
+      # Model store moved to the external SSD 2026-08-27 - models are ~4.6GB
+      # and re-downloadable, so this is low-risk. If /Volumes/FastSSD is not
+      # mounted, ollama will start with an EMPTY model list rather than fail
+      # loudly - check this path first if models ever 'disappear'.
+      - /Volumes/FastSSD/ollama/config:/root/.ollama
     ports:
       - 11434:11434
     environment:

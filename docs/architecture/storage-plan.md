@@ -1,6 +1,6 @@
 # Storage Optimization & Migration Plan
 
-Drafted 2026-08-26. **Plan only — nothing migrated yet.** All figures measured from the live system.
+Drafted 2026-08-26. **Phases 1 and 2 executed 2026-08-27 — see "Results" at the bottom.** Phase 3 deliberately not done. All figures measured from the live system.
 
 ## Current state
 
@@ -103,3 +103,45 @@ Hold off on Phase 3. Moving the entire Docker VM onto a detachable drive, on a m
 2. **Confirm it can be erased** if it turns out to be exFAT (reformatting to APFS destroys its contents).
 3. **Which phase(s) to proceed with.**
 4. Worth considering separately: is upgrading the Mac Mini's internal storage (or moving to a machine with more) the better long-term answer than layering external drives onto an always-on server?
+
+
+---
+
+# Results — Phases 1 & 2 executed 2026-08-27
+
+## The drive
+
+WD_BLACK 4TB (`/dev/disk4`), was exFAT holding 1.2TB of media. **Before erasing, every one of its 49 items was verified to also exist on the NAS** — nothing unique was lost. Reformatted APFS as `FastSSD` (3.6TB usable).
+
+**Caveat found and worth remembering: the volume has `Owners: Disabled`.** `chown` inside a container *reports success but does not stick* — files stay root-owned. This did not affect what was migrated (Plex is a native macOS app; Ollama's container runs as root), but it **does block** moving anything uid-sensitive there — Postgres and every `linuxserver.io` PUID/PGID container included. Enabling it needs an interactive sudo:
+
+```
+sudo diskutil enableOwnership /Volumes/FastSSD
+```
+
+Run that before considering any database or *arr service for this drive.
+
+## Phase 1 — done
+
+- **Backups now write to the NAS** (`/Volumes/media/backups/`), not the boot disk. Workflow 03 updated and both commands executed live to prove they work: the Infisical dump on the NAS was decompressed and verified to contain 189 `CREATE TABLE` statements, not just "a file exists". Qdrant snapshots sync to the NAS keeping 14 there and only the newest locally. This also closes the "backups sit on the same disk as the originals" gap.
+- **Docker log rotation** set to 10MB×3 in `~/.orbstack/config/docker.json`. **Honest correction: this turned out to be a non-issue.** OrbStack already defaults to 20MB×5 per container, and total logs across all 35 containers were only 41MB. The tighter setting applies to newly-created containers; not worth restarting the whole stack to backfill.
+- **`scripts/disk_maintenance.sh`** added — report-only by default, `--apply` to act. Trims Plex's PhotoTranscoder cache only once it exceeds 10GB, prunes dangling Docker images, and *reports* other large caches without touching them. This exists because the 34GB PhotoTranscoder reclaim on 2026-08-26 was manual and it grows back.
+
+## Phase 2 — done
+
+| Moved | Size | Verification |
+|---|---|---|
+| Plex Media Server data → `/Volumes/FastSSD/PlexData` (symlinked) | 12GB | DB byte-identical (144,438,272 bytes) and 13,584 metadata items readable in the copy *before* the original was removed. After restart: same `machineIdentifier`, all 4 libraries, item counts 218/493/81/13 matching pre-move. |
+| Ollama models → `/Volumes/FastSSD/ollama/config` | 4.6GB | Both models load from SSD; a real inference call returned correctly; then a full second-brain round trip through Discord's webhook succeeded. |
+
+**Boot volume: 24GB → 42GB free.**
+
+## Unexplained growth — open item
+
+Free space measured **41GB at the start of the session, 24GB partway through**, before any migration ran — roughly 17GB consumed by something other than this work. Accounted for: ~4GB of Plex rebuilding caches after the 2026-08-26 clear. The remaining ~13GB is **not explained**. Ruled out: Time Machine local snapshots (deleted one, no change), Docker (unchanged at 28GB), the repo (unchanged), and Spotlight indexing the new SSD (that index lives on the SSD).
+
+Phase 2's 18GB recovery roughly cancelled it out, which means **the underlying consumer may still be active**. Worth watching `df -h /System/Volumes/Data` over a few days. A candidate not yet ruled out is the Photos library / iCloud downloading originals — `du` on it timed out rather than returning a figure.
+
+## Phase 3 — still not recommended
+
+Moving the OrbStack VM (28GB) would put 35 containers and four databases on a detachable drive. The `Owners: Disabled` finding above makes it worse: Postgres would need volume ownership enabled first. Given Phases 1-2 recovered enough headroom, the better long-term answer remains upgrading the Mini's internal storage rather than layering external drives onto an always-on server.

@@ -1,0 +1,16 @@
+services:
+  adguard:
+    image: adguard/adguardhome:latest
+    container_name: adguard
+    restart: unless-stopped
+    ports:
+      # DNS - the whole point. Both UDP and TCP.
+      - "53:53/udp"
+      - "53:53/tcp"
+      # Web UI / API. 3000 is taken by Homepage, so 30043.
+      - "30043:80"
+    volumes:
+      - ./work:/opt/adguardhome/work
+      - ./conf:/opt/adguardhome/conf
+    environment:
+      - TZ=America/Chicago

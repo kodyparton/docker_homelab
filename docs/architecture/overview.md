@@ -123,6 +123,7 @@ Solid arrows are functional dependencies (data/API calls the app needs to work).
 | Authelia | 30039 | 9091 | SSO/OIDC provider — **requires `auth.kodyparton.com` via NPM to function**, see `sso.md` |
 | Vaultwarden | 30040 | 80 | Password manager. SSO + local login both enabled (deliberate) |
 | Paperless-ngx | 30041 | 8000 | Documents/OCR. SQLite + internal redis |
+| AdGuard Home | 30043 (UI), 53 (DNS) | 80, 53 | LAN DNS resolver + ad blocking. Works around ISP DNS rebinding filter |
 | Immich | 30042 | 2283 | Photos. Library on NAS (`/Volumes/media/immich`), not boot disk |
 
 `brain-bot` has no listening port — outbound only (Discord Gateway + calls to n8n).
@@ -137,10 +138,11 @@ All via Nginx Proxy Manager (`nginx-app-1`), certs via Let's Encrypt DNS-01 thro
 |---|---|---|
 | `n8n.kodyparton.com` | `192.168.178.69:5678` | working |
 | `request.kodyparton.com` (Overseerr) | `192.168.178.69:30023` | working |
-| `downloads.kodyparton.com` (qBittorrent) | `10.10.0.130:30024` | **broken — dead host, needs manual fix in NPM UI** |
-| `home.kodyparton.com` (Homepage) | `192.168.178.69:3000` | **not yet created — needs manual DNS + NPM steps, see known-issues.md** |
+| `downloads.kodyparton.com` (qBittorrent) | `192.168.178.69:30024` | working (corrected from a stale `10.10.0.130`, verified 2026-08-27) |
+| `home.kodyparton.com` (Homepage) | `192.168.178.69:3000` | working **via AdGuard Home** — see below |
+| `auth.kodyparton.com` (Authelia SSO) | `192.168.178.69:30039` | DNS resolves; **NPM proxy host still needs creating** |
 
-`home.kodyparton.com` is intentionally different from the others: its Cloudflare DNS record should be set to **DNS only** (not proxied), so it resolves to a private LAN IP that's simply unreachable from outside the home network — that's the entire mechanism making it "internal only," no VPN or firewall rule required.
+**Important, learned the hard way (2026-08-27):** the internal-only hosts cannot rely on public DNS alone. A Cloudflare "DNS only" record pointing at `192.168.178.69` is correct, but the ISP/router path **silently drops DNS responses containing private IPs** (rebinding protection), so those names never resolved on the LAN. The fix is AdGuard Home (`adguard/`), which answers them locally — its response never crosses the filtering boundary. Clients must use `192.168.178.69` as their DNS server for this to take effect. Full diagnosis in `known-issues.md`.
 
 ## Data Flow (typical request lifecycle)
 

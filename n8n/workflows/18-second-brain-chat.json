@@ -2443,7 +2443,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ JSON.stringify({ parentNoteId: 'YOUR_TRILIUM_NOTES_PARENT_NOTE_ID', title: $json.title, type: 'text', content: $json.body }) }}",
+          "jsonBody": "={{ JSON.stringify({ parentNoteId: 'kFHqX51mdZ2B', title: $json.title, type: 'text', content: $json.body }) }}",
           "method": "POST",
           "options": {
             "timeout": 15000
@@ -5709,7 +5709,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ JSON.stringify({ parentNoteId: 'YOUR_TRILIUM_NOTES_PARENT_NOTE_ID', title: $json.title, type: 'text', content: $json.body }) }}",
+        "jsonBody": "={{ JSON.stringify({ parentNoteId: 'kFHqX51mdZ2B', title: $json.title, type: 'text', content: $json.body }) }}",
         "method": "POST",
         "options": {
           "timeout": 15000

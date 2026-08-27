@@ -1,6 +1,6 @@
 # Homelab Documentation
 
-Documentation for the `docker_homelab` stack — a Mac Mini running ~28 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
+Documentation for the `docker_homelab` stack — a Mac Mini running ~29 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
 
 ## Start here
 
@@ -46,6 +46,7 @@ One file per running container in [`containers/`](containers/), each following t
 | Vaultwarden | [containers/vaultwarden.md](containers/vaultwarden.md) |
 | Paperless-ngx | [containers/paperless.md](containers/paperless.md) |
 | Immich | [containers/immich.md](containers/immich.md) |
+| AdGuard Home | [containers/adguard.md](containers/adguard.md) |
 
 ## Keeping this updated
 

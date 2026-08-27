@@ -38,6 +38,10 @@ infisical/backups/
 # explicit entries.
 immich/postgres/
 immich/cache/
+# adguard: conf/ holds the admin bcrypt hash, work/ holds query logs and
+# blocklists. Neither is matched by the */config/ or */data/ rules above.
+adguard/conf/
+adguard/work/
 paperless/media/
 paperless/consume/
 paperless/export/

@@ -14,7 +14,11 @@ Verified fixed: NPM now forwards `downloads.kodyparton.com` → `192.168.178.69:
 - **Fix (manual, NPM UI):** `192.168.178.69:81` → Hosts → Proxy Hosts → edit `downloads.kodyparton.com` → Forward Hostname/IP `192.168.178.69`, Forward Port `30024` → Save.
 - **Why manual:** direct writes to NPM's live database/container have been blocked by a safety check as production-infrastructure changes that should go through NPM's own UI/API rather than a raw file/DB edit — see the NPM doc for why a DB row alone isn't even sufficient (routing is driven by generated nginx conf files, not just the database).
 
-### `home.kodyparton.com` / `auth.kodyparton.com` — **root cause found 2026-08-27: DNS rebinding protection**
+### ~~`home.kodyparton.com` / `auth.kodyparton.com`~~ — **RESOLVED 2026-08-27 via AdGuard Home**
+
+**Fix deployed:** AdGuard Home (`adguard/`, port 53) now answers these names locally, so the response never crosses the filtering boundary. Verified: `home.kodyparton.com` -> `192.168.178.69`, and HTTPS through it returns **200** on the valid wildcard cert. **Clients must point at `192.168.178.69` for DNS** for this to take effect. Note the router option below is no longer applicable — Kody no longer runs UniFi gear; the router is an ISP-supplied Sagemcom. Original diagnosis kept below.
+
+### (diagnosis) DNS rebinding protection
 - **Symptom:** the Cloudflare A records exist and are correct, NPM is fully configured, yet the hostnames will not resolve on the LAN — only `IP:port` works.
 - **This is NOT a missing record.** An earlier diagnosis said the DNS record was absent; that was wrong once the record was added and the symptom persisted. The real cause is one layer lower.
 

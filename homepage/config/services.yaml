@@ -153,6 +153,13 @@
         server: my-docker
         container: infisical
 
+    - AdGuard Home:
+        icon: adguard-home.png
+        href: http://192.168.178.69:30043
+        description: DNS resolver & ad blocking
+        server: my-docker
+        container: adguard
+
     - Uptime Kuma:
         icon: uptime-kuma.png
         href: http://192.168.178.69:30038

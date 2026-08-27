@@ -14,15 +14,33 @@ Verified fixed: NPM now forwards `downloads.kodyparton.com` → `192.168.178.69:
 - **Fix (manual, NPM UI):** `192.168.178.69:81` → Hosts → Proxy Hosts → edit `downloads.kodyparton.com` → Forward Hostname/IP `192.168.178.69`, Forward Port `30024` → Save.
 - **Why manual:** direct writes to NPM's live database/container have been blocked by a safety check as production-infrastructure changes that should go through NPM's own UI/API rather than a raw file/DB edit — see the NPM doc for why a DB row alone isn't even sufficient (routing is driven by generated nginx conf files, not just the database).
 
-### `home.kodyparton.com` — **diagnosed 2026-08-27: only the DNS record is missing**
-- **Found:** 2026-08-24. Re-diagnosed 2026-08-27 after Kody reported still needing IP:port.
-- **Root cause, proven**: the NPM side is already complete and working. The Cloudflare DNS record simply does not exist.
-  - `dscacheutil -q host -a name home.kodyparton.com` → **NO RECORD** (also true for `auth.kodyparton.com`; `n8n.kodyparton.com` resolves fine).
-  - NPM **does** have the proxy host: `home.kodyparton.com` → `192.168.178.69:3000`, listening on 80+443 with the `*.kodyparton.com` wildcard cert.
-  - Bypassing DNS proves the server side works end to end:
-    `curl --resolve home.kodyparton.com:443:192.168.178.69 https://home.kodyparton.com/` → **HTTP 200**, cert `CN=*.kodyparton.com` valid to Oct 2026.
-- **The only remaining step (manual, Cloudflare dashboard):** add an **A record** for `home` → `192.168.178.69`, set to **DNS only (grey cloud, not proxied)**. Proxying would send it to Cloudflare's edge, which cannot reach a private LAN IP — grey cloud is what makes it resolve internally only.
-- **Same applies to `auth.kodyparton.com`** for SSO, except that one needs an NPM proxy host created too (→ `192.168.178.69:30039`), since it doesn't exist yet.
+### `home.kodyparton.com` / `auth.kodyparton.com` — **root cause found 2026-08-27: DNS rebinding protection**
+- **Symptom:** the Cloudflare A records exist and are correct, NPM is fully configured, yet the hostnames will not resolve on the LAN — only `IP:port` works.
+- **This is NOT a missing record.** An earlier diagnosis said the DNS record was absent; that was wrong once the record was added and the symptom persisted. The real cause is one layer lower.
+
+**The proof.** Same hostname, same DNS provider, two transports:
+
+| Query | Result |
+|---|---|
+| DoH over HTTPS (`cloudflare-dns.com/dns-query`) | ✅ returns `192.168.178.69` |
+| Plain DNS on port 53 to the *same* provider (`@1.1.1.1`) | ❌ **times out** |
+| Plain DNS for `n8n.kodyparton.com` (answer is a *public* Cloudflare IP) | ✅ answers instantly |
+
+A resolver that genuinely lacked the record would return NXDOMAIN, not time out. Encrypted queries succeed because the network path cannot inspect them. The distinguishing factor is purely **whether the answer contains an RFC1918 private address**.
+
+**Conclusion: something on the network path (UniFi gateway and/or the ISP) is silently dropping DNS responses that contain private IPs — standard DNS rebinding protection.** It is doing its job; the setup just happens to be the exact pattern it defends against (a public DNS name resolving to a LAN address).
+
+### Fixes, best first
+
+**1. UniFi Local DNS Records (recommended for the household).** In UniFi Network → Settings → Routing / DNS → *Local DNS Records*, add `home.kodyparton.com` → `192.168.178.69` and `auth.kodyparton.com` → `192.168.178.69`. The answer then originates **at the gateway**, so it is never a "response in transit" to be filtered. Works for every device on the LAN, including TVs and guests that don't run Tailscale.
+
+**2. Point the Cloudflare records at the Tailscale IP instead.** This Mac is `100.77.239.108`. That is CGNAT space (`100.64.0.0/10`), **not** RFC1918, so rebinding filters ignore it. Verified working: `curl --resolve home.kodyparton.com:443:100.77.239.108 https://home.kodyparton.com/` → **HTTP 200**. Bonus: works from anywhere on the tailnet, not just at home. Cost: every client must be on Tailscale.
+
+**3. Disable rebinding protection on the gateway.** Fixes the root cause but removes a genuine security control — least preferred.
+
+**4. `/etc/hosts` on a single machine.** Immediate, but only that one device. Fine as a stopgap.
+
+Options 1 and 2 combine well: local DNS for devices at home, Tailscale IP for roaming.
 
 ### SMB mount passthrough — deeper fix deferred
 - **Found:** 2026-08-24

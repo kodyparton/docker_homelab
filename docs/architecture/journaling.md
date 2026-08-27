@@ -44,13 +44,49 @@ Then activate workflows 19, 20, and 21 in n8n's UI (API can't activate, same lim
 3. Click **"Connect my account"** on that credential in the n8n UI — this runs the OAuth consent flow in a popup and gets you a refresh token, which n8n stores and auto-renews from then on. No manual token copying needed once the Client ID/Secret are in.
 4. If this step is skipped, workflow 20 just quietly gets no Strava data for that day (the node has `continueOnFail` set) — the rest of the journal still generates normally.
 
-### Optional: Apple Health
+### Optional: Apple Health — **free path via Apple Shortcuts**
 
-There's no official Apple Health API — the standard self-hosted workaround is the iOS app **"Health Auto Export – JSON+CSV"** (App Store, one-time or subscription purchase depending on features used), which can automate a daily export via an iOS Shortcut and POST it to a URL.
+There's no official Apple Health API. The commonly-recommended app, *Health Auto Export*, puts its REST/webhook export behind a **paid tier** — as does *Health Webhook*. Neither is needed.
 
-1. Install the app, grant it Health access.
-2. Set up an automation (in the app or via iOS Shortcuts) to export workout data as JSON to: `https://n8n.kodyparton.com/webhook/apple-health-import` — run it daily, ideally before 23:45 so it's in before that day's journal summary runs.
-3. **The field-name parsing in workflow 21 is best-effort** — I built it defensively against the JSON shape that app has historically used, but couldn't verify against a real export in this session. After your first real export, check n8n's execution log for workflow 21; if `Extract Workouts` produced 0 items from a real workout, open that node's code and adjust the field paths to match what actually arrived (the raw payload is right there in the execution log to compare against).
+**Apple's own Shortcuts app is free, built into iOS, and can do this.** It reads HealthKit directly and POSTs wherever you want. Workflow 21 was rewritten 2026-08-27 to accept a simple flat payload that Shortcuts can actually produce.
+
+**Division of labour worth knowing:** Strava already covers *workouts*. So the Shortcut deliberately focuses on the daily metrics Strava does **not** provide — steps, sleep, resting heart rate, active energy.
+
+#### Build the Shortcut (iPhone)
+
+1. Shortcuts app → **+** → name it e.g. "Health to Brain".
+2. Add **Find Health Samples** actions for each metric you want. For each: set the type, sort by *Start Date* (descending or as appropriate), limit as needed, then use a **Calculate Statistics** action (Sum for steps/energy, Average for heart rate) to reduce it to a single number.
+   - Steps → *Steps*, today, **Sum**
+   - Active energy → *Active Energy*, today, **Sum**
+   - Exercise minutes → *Apple Exercise Time*, today, **Sum**
+   - Sleep → *Sleep Analysis*, last night, total hours
+   - Resting HR → *Resting Heart Rate*, today, **Average**
+3. Add a **Dictionary** action with these keys (omit any you skipped — the workflow handles partial data):
+
+   | Key | Value |
+   |---|---|
+   | `date` | Current Date, formatted `yyyy-MM-dd` |
+   | `steps` | the steps statistic |
+   | `activeEnergy` | the energy statistic |
+   | `exerciseMinutes` | the exercise statistic |
+   | `sleepHours` | the sleep total |
+   | `restingHR` | the heart-rate average |
+
+4. Add **Get Contents of URL**:
+   - URL: `https://n8n.kodyparton.com/webhook/apple-health-import`
+   - Method: **POST**
+   - Request Body: **JSON**
+   - Body: the Dictionary from step 3
+5. **Automation** tab → **+** → *Time of Day* → e.g. **23:00 daily** → run this shortcut. Turn **off** "Ask Before Running" so it fires unattended. 23:00 is before workflow 20's 23:45 journal summary, so the data lands in the same day's entry.
+
+#### Notes
+
+- Shortcuts sends numbers as **strings**; workflow 21 coerces them, so that's fine.
+- **Any subset of keys works.** Send only steps and sleep if that's all you care about — missing metrics are simply omitted from the summary line.
+- An entirely empty payload stores nothing rather than creating a blank record.
+- The old Health Auto Export payload shape (`{data:{workouts:[...]}}`) is still parsed, so nothing breaks if that app is ever used later.
+- Verified 2026-08-27 against four payload shapes (full, partial, empty, and the legacy workout format) before being documented here.
+- **Workflow 21 must be activated in n8n** for the webhook to accept anything — it ships inactive like every other workflow here.
 
 ### Optional: Trilium journal notes
 

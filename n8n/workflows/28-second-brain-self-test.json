@@ -376,7 +376,7 @@
       "id": "build_marker",
       "name": "Build Marker",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nstaticData.results = [];\nconst marker = `SELF-TEST MARKER ${new Date().toISOString()} - safe to ignore`;\nreturn [{ json: { marker } }];\n",
+        "jsCode": "// results are carried forward through item JSON - n8n's task-runner\n// sandbox does not expose $getWorkflowStaticData (fails with\n// 'this.getWorkflowStaticData is not a function').\nconst marker = `SELF-TEST MARKER ${new Date().toISOString()} - safe to ignore`;\nreturn [{ json: { marker, results: [] } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -425,7 +425,7 @@
       "id": "eval_chat",
       "name": "Eval Test (chat)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (chat)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Build Marker').first().json.results || [];\nconst test = $('Set Test (chat)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -474,7 +474,7 @@
       "id": "eval_question",
       "name": "Eval Test (question)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (question)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (chat)').first().json.results || [];\nconst test = $('Set Test (question)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -523,7 +523,7 @@
       "id": "eval_store",
       "name": "Eval Test (store)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (store)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (question)').first().json.results || [];\nconst test = $('Set Test (store)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -572,7 +572,7 @@
       "id": "eval_forget",
       "name": "Eval Test (forget)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (forget)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (store)').first().json.results || [];\nconst test = $('Set Test (forget)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -621,7 +621,7 @@
       "id": "eval_list_tasks",
       "name": "Eval Test (list_tasks)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (list_tasks)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (correct_cleanup)').first().json.results || [];\nconst test = $('Set Test (list_tasks)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -670,7 +670,7 @@
       "id": "eval_media_query",
       "name": "Eval Test (media_query)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (media_query)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (list_tasks)').first().json.results || [];\nconst test = $('Set Test (media_query)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -785,7 +785,7 @@
       "id": "eval_correct_setup",
       "name": "Eval Test (correct_setup)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (correct_setup)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (forget)').first().json.results || [];\nconst test = $('Set Test (correct_setup)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -834,7 +834,7 @@
       "id": "eval_correct",
       "name": "Eval Test (correct)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (correct)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (correct_setup)').first().json.results || [];\nconst test = $('Set Test (correct)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [
@@ -883,7 +883,7 @@
       "id": "eval_correct_cleanup",
       "name": "Eval Test (correct_cleanup)",
       "parameters": {
-        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst test = $('Set Test (correct_cleanup)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nstaticData.results.push({\n  label: test.label,\n  pass,\n  elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n});\nreturn [{ json: { results: staticData.results } }];\n",
+        "jsCode": "const prior = $('Eval Test (correct)').first().json.results || [];\nconst test = $('Set Test (correct_cleanup)').first().json;\nconst resp = $json;\nconst elapsed = Date.now() - test._start;\nconst errored = !!(resp.error || resp.errorMessage);\nconst reply = resp.reply || '';\nconst pass = !errored && reply.trim().length > 0 && elapsed < 240000;\nconst results = prior.concat([{\n  label: test.label, pass, elapsed_ms: elapsed,\n  reply_snippet: reply.slice(0, 120),\n  error: errored ? (resp.error || resp.errorMessage) : null,\n}]);\nreturn [{ json: { results } }];\n",
         "mode": "runOnceForAllItems"
       },
       "position": [

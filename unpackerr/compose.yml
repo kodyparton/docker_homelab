@@ -4,17 +4,29 @@ services:
     image: golift/unpackerr
     container_name: unpackerr
     volumes:
-      - /Volumes/downloads:/mnt/downloads
+      - nas_downloads:/mnt/downloads
     restart: always
-    user: 1001:988
+    user: 1000:1000
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
+      # PATHS must match the volume target below (/mnt/downloads). Without
+      # these, unpackerr silently falls back to its built-in default of
+      # /downloads, which does not exist in this container -- it starts
+      # cleanly, connects to all four *arr instances, retrieves their queues,
+      # and then extracts nothing, forever, with no error. Found 2026-08-31.
       - UN_SONARR_0_URL=http://192.168.178.69:30027
       - UN_SONARR_0_API_KEY=${UN_SONARR_0_API_KEY}
+      - UN_SONARR_0_PATHS_0=/mnt/downloads
       - UN_RADARR_0_URL=http://192.168.178.69:30025
       - UN_RADARR_0_API_KEY=${UN_RADARR_0_API_KEY}
+      - UN_RADARR_0_PATHS_0=/mnt/downloads
       - UN_SONARR_1_URL=http://192.168.178.69:30030
       - UN_SONARR_1_API_KEY=${UN_SONARR_1_API_KEY}
+      - UN_SONARR_1_PATHS_0=/mnt/downloads
       - UN_RADARR_1_URL=http://192.168.178.69:30031
       - UN_RADARR_1_API_KEY=${UN_RADARR_1_API_KEY}
+      - UN_RADARR_1_PATHS_0=/mnt/downloads
 
+volumes:
+  nas_downloads:
+    external: true

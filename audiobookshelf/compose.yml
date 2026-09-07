@@ -4,12 +4,16 @@ services:
     image: ghcr.io/advplyr/audiobookshelf:latest
     container_name: audiobookshelf
     ports:
-      - 30033:30033
+      - 30033:80
     volumes:
-      - /Volumes/media/audiobooks:/audiobooks
+      - nas_audiobooks:/audiobooks
       - /Users/kp-srv-01/Documents/docker/audiobookshelf/podcasts:/podcasts
       - /Users/kp-srv-01/Documents/docker/audiobookshelf/config:/config
       - /Users/kp-srv-01/Documents/docker/audiobookshelf/metadata:/metadata
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     restart: unless-stopped
+
+volumes:
+  nas_audiobooks:
+    external: true

@@ -1,15 +1,54 @@
+---
 title: Kody's Homelab
+description: Media, automation, and infrastructure
 favicon: https://gethomepage.dev/img/favicon.ico
+
 theme: dark
 color: slate
-headerStyle: clean
+
+# Glassmorphism look. `background` is a local file (config/images/) rather than
+# a remote URL on purpose -- a remote backdrop would leave the dashboard
+# looking broken whenever WAN is down, which is exactly when Kody opens it.
+# The gradient in custom.css renders with no image present, so this stays
+# commented until an image is actually dropped in.
+# background: /images/backdrop.jpg
+backgroundOpacity: 0.5
+cardBlur: sm
+
+headerStyle: boxed
+statusStyle: dot
+target: _blank
+showStats: true
+hideVersion: false
+disableCollapse: false
+
+# Every group that exists in services.yaml must be listed here, or it renders
+# unstyled at the bottom. "Personal" was missing before this pass, which is why
+# Immich/Paperless/Watchtower sat outside the row layout.
 layout:
   Media Management:
     style: row
     columns: 4
+    icon: mdi-television-classic
   Downloads & Books:
     style: row
     columns: 4
+    icon: mdi-download-circle
   Infrastructure:
     style: row
     columns: 4
+    icon: mdi-server-network
+  Network & Storage:
+    style: row
+    columns: 3
+    icon: mdi-nas
+  Personal:
+    style: row
+    columns: 3
+    icon: mdi-account-heart
+
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: false
+  showSearchSuggestions: true
+  hideVisitURL: false

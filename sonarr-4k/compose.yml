@@ -3,14 +3,20 @@ services:
   sonarr-4k:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr-4k
-    environment:        
+    environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     volumes:
       - /Users/kp-srv-01/Documents/docker/sonarr-4k/config:/config
-      - /Volumes/media/tv-4k:/mnt/tv-4k #optional
-      - /Volumes/downloads:/mnt/downloads
+      - nas_tv_4k:/mnt/tv-4k #optional
+      - nas_downloads:/mnt/downloads
     ports:
       - 30030:8989
     restart: always
+
+volumes:
+  nas_tv_4k:
+    external: true
+  nas_downloads:
+    external: true

@@ -6,5 +6,5 @@ services:
     env_file:
       - .env
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     restart: unless-stopped

@@ -4,7 +4,37 @@ Running log of infra problems found, their root cause, and whether they're fixed
 
 ## Open
 
-### The NAS delivers ~0.25–3 MB/s on a healthy gigabit link — this is the real cause of the Plex streaming problems
+### ~~The NAS delivers ~0.25–3 MB/s~~ — **FULLY RESOLVED 2026-09-01. Two stacked physical faults: a bad switch port AND a bad cable.**
+
+The single most useful lesson in this file: **this was diagnosed entirely from wire measurements, and every software-side theory along the way was wrong.** The NAS's own admin UI reported "healthy" throughout, a reboot made it measurably *worse*, and time was spent on Plex's storage tier, its Butler tasks, and a non-existent hardware-transcoding fault before the network was measured properly. Measure the wire first.
+
+| Stage | Latency to NAS | Sustained throughput |
+|---|---|---|
+| Original (bad port + bad cable) | 8.9–16.8 ms, 2.4 ms jitter | **0.245–3.1 MB/s**, varying 12x between runs |
+| After switch-port swap | 0.674 ms | **11.7 MB/s**, stable ±0.1 |
+| After cable swap | **0.702 ms** | **104–116 MB/s** |
+
+- **Two independent faults, and the second was masked by the first.** The bad port produced high latency and wildly erratic throughput. Fixing it revealed a hard, *flat* 11.7 MB/s ceiling — and that flatness was the tell: a device under strain varies between runs, a link at its rate limit does not. 11.7 MB/s ≈ 94 Mbps ≈ 100BASE-TX minus framing. **A cable with a damaged pair negotiates 100 Mbit instead of failing** (gigabit needs all four pairs, 100M needs two), which is why nothing ever reported an error.
+- **Final state verified across both clients and both shares:** Docker native CIFS 116 MB/s (`tv-4k`) and 115 MB/s (`downloads`); macOS smbfs — the path Plex actually uses — 104 MB/s. All on 500MB/200MB sustained reads. Full gigabit.
+- **Measurement caveat worth keeping:** an immediate re-read of the same file reported 6.4 GB/s. That is the page cache, not the network. Use a fresh file, or discard the first repeat.
+- **Headroom now:** a 1080p stream needs ~1.32 MB/s (~85x headroom); 4K remuxes at 60–100 Mbps need 7.5–12.5 MB/s (~10x headroom). Both comfortable.
+- **All 36 containers survived both link drops** with zero mount errors and no shadowed host mount — the first real-world tests of the create-time CIFS failure mode since it was documented. Nothing needed healing either time.
+
+### (superseded) Partial fix — switch port only
+- **Fix:** Kody swapped the NAS's switch port on 2026-09-01. Immediate, dramatic improvement:
+
+  | Metric | Before | After port swap |
+  |---|---|---|
+  | Latency to NAS | 8.9 ms (avg), 2.4 ms jitter | **0.674 ms, 0.126 ms jitter** |
+  | Latency to gateway (control) | 0.66 ms | 0.967 ms |
+  | Throughput | 0.245–3.1 MB/s, wildly variable | **11.7 MB/s, stable** |
+
+  The NAS is now *faster to respond than the gateway*. This confirms the marginal-link diagnosis: high latency + zero packet loss + no packet-size dependence really was a bad physical port, not a sick NAS. Its admin UI reported "healthy" throughout, and a reboot made things worse — neither was a useful signal. **Trust the wire measurements over the appliance's own health summary.**
+- **All 36 containers survived the link drop** with zero mount errors, and the host `/Volumes/media` mount was not shadowed. The port swap was the first real-world test of the CIFS-at-create-time failure mode since it was documented, and nothing needed healing.
+- **Still open, and it is a different problem:** throughput now sits at **11.7 / 11.8 MB/s across repeated runs — within 0.1 MB/s of each other.** That consistency is a hard link-rate ceiling, not a device bottleneck (contrast the pre-fix numbers, which swung 12x between runs). 11.7 MB/s ≈ 94 Mbps ≈ **100BASE-TX minus framing overhead**. The Mac's own `en0` is still `1000baseT <full-duplex>`, so the limitation is on the NAS's side of the wire: either the new switch port is a 100M port, or the cable cannot carry gigabit. **A cable with one damaged pair negotiates 100 Mbit rather than failing** — gigabit needs all four pairs, 100M needs two — which would also explain the original fault on the old port. Worth trying a known-good Cat5e/6 cable and a known-gigabit port, and checking the negotiated speed in the UNAS UI.
+- **Practical impact of the residual limit:** a 1080p stream needs ~1.32 MB/s, so there is now ~9x headroom and ordinary streaming should be fine. But 4K remuxes commonly run 60–100 Mbps (7.5–12.5 MB/s), which would saturate a 100M link outright — expect the `tv-4k` / `movies-4k` libraries to still struggle until this is gigabit.
+
+### (original diagnosis) The NAS delivers ~0.25–3 MB/s on a healthy gigabit link — this was the real cause of the Plex streaming problems
 - **Found:** 2026-08-31, chasing "Plex is still having considerable issues trying to stream."
 - **What:** sustained read throughput from the UNAS Pro (`192.168.178.38`) is between **245 kB/s and 3.1 MB/s**, wildly variable. A 1080p stream at 10,556 kbps needs ~1.32 MB/s sustained, so the NAS frequently cannot feed even *one* stream. Plex's client was caught live in `state=buffering` with playback progress frozen at the same millisecond across 40+ seconds of timeline reports.
 - **Measurements** (all against the same NAS, various paths):

@@ -7,7 +7,7 @@ All workflows live in the `n8n` container (`https://n8n.kodyparton.com`). Every 
 | Credential name | Type | Used by |
 |---|---|---|
 | `Mac Mini SSH` | `sshPassword` | 01, 02, 03, 09, 10, 11, 17, 27 |
-| `Homelab Discord Webhook` | `discordWebhookApi` | 01, 02, 03, 09, 10, 11, 12, 27, 29, 30 |
+| `Homelab Discord Webhook` | `discordWebhookApi` | 01, 02, 03, 09, 10, 11, 12, 27, 29, 30 (**placeholder — found 2026-08-28, webhook ID is literally `"PLACEHOLDER"`, has never sent a single alert; see known-issues.md**) |
 | `Sonarr API Key` / `Sonarr 4K API Key` | `httpHeaderAuth` | 14, 15 |
 | `Radarr API Key` / `Radarr 4K API Key` | `httpHeaderAuth` | 14, 15 |
 | `Prowlarr API Key` | `httpHeaderAuth` | 12 |
@@ -33,7 +33,7 @@ Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have
 | 04a | Entra Joiner | Form Trigger | Microsoft Graph API | Creates a user + assigns groups (needs a real Entra tenant, not yet set up) |
 | 04b | Entra Leaver | Form Trigger | Microsoft Graph API | Revokes sessions, removes groups, disables account |
 | 05 | Job Application Pipeline | every 6h | Adzuna API, Notion | Scores/dedupes NL job postings into Notion |
-| 09 | Mount Health Self-Healer | every 15min | sonarr/sonarr-4k/radarr/radarr-4k/qbittorrent mounts | **Auto-restarts** containers with a dropped SMB mount |
+| 09 | Mount Health Self-Healer | every 15min | host `/Volumes/media` mount; *(pending)* NAS CIFS volume mounts | **Now active** — the "found inactive 2026-08-29" note previously here is stale: a direct `GET /workflows/{id}` on 2026-08-30 returned `active: true`. Branch 1 reports the host-level `host_mount_shadowed` check for Plex's sake. A second branch running `scripts/cifs_volume_health_check.sh` is **prepared but not applied** — see "NAS volume self-healer" below for why it would not work yet. |
 | 10 | Storm Watch Snapshot | every 20min | NWS alerts API, local git | Local git commit (not push — see gotcha) on severe weather |
 | 11 | Storage Runway Forecast | daily 07:00 | host disk space | Alerts if projected to run out within 21 days |
 | 12 | Flaky Indexer Auto-Healer | every 6h | Prowlarr indexer stats | **Auto-disables** indexers with >50% failure rate |
@@ -41,10 +41,10 @@ Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have
 | 14 | Weekly Media Server Digest | weekly Mon 08:00 | Tautulli, Sonarr×2, Radarr×2, qBittorrent | Posts a digest to Discord |
 | 15 | Release Radar Digest | weekly Mon 08:00 | Sonarr×2, Radarr×2 calendars | Posts "this week's lineup" to Discord |
 | 16 | Earned It (Strava-Gated Media Unlock) | webhook (Strava) | Strava, Overseerr | **Auto-approves** oldest pending request on a new weekly activity |
-| 17 | Discord Ops Console | every 30s (poll) | Discord REST, SSH `docker ps` | Replies to `!status` in Discord with live container health |
+| 17 | Discord Ops Console | every 6h (throttled 2026-08-28, was 30s) | Discord REST, SSH `docker ps` | Replies to `!status` in Discord with live container health. **Has never actually worked** — bot token/channel ID are still placeholders; the 30s crash loop this caused (94% of n8n's entire execution history) is fixed and throttled but not finished. See known-issues.md. |
 | 18 | Second Brain - Chat | webhook (`brain-bot`) | Ollama, Qdrant, Vikunja, Trilium, Sonarr, Radarr, Tautulli | Everything it writes to Qdrant is tagged with a `domain` and up to 3 `tags` from a fixed vocabulary (see `docs/architecture/tagging.md`) — rides along with the classify pass, no extra LLM call. Conversational RAG: an LLM classification pass routes every message to one of 10 intents (store/forget/correct/question/chat/task/list_tasks/complete_task/note/media_query) — no required keywords. Unambiguous phrasing ("remember...", "forget...", "remind me to...") skips the classifier entirely via a regex fast-path, turning a ~2-3 minute round trip into ~1-4 seconds for `store`/`forget`/`task`/`list_tasks`. `correct` replaces a fact and stores its update in one message ("actually it's X, not Y") instead of a separate forget-then-store. `media_query` reads live Sonarr/Radarr/Tautulli data (not stored memory); `task`/`list_tasks`/`complete_task` read and write real Vikunja tasks; `note` writes to Trilium. Photos logged separately, voice messages transcribed by `whisper` before they ever reach this workflow. Every route writes a Qdrant entry, which feeds same-day conversational memory and the daily journal. Non-image messages first check a hash-keyed cache (`qa_cache` collection) before ever calling the classifier — an exact-repeat question gets an instant reply instead of another multi-minute LLM round trip. `forget`, `correct`, and `complete_task` snapshot what they're about to change into `shadow_log` before acting, so all three are recoverable. See `docs/architecture/second-brain.md`. |
-| 27 | Second Brain Health Monitor | every 15min | Ollama, Qdrant, Whisper APIs; SSH `docker ps` | Alerts to Discord if any second-brain service is unreachable or its container isn't `Up` |
-| 28 | Second Brain Self-Test | daily 05:00 | webhook `second-brain-chat` (calls workflow 18 directly) | Fires 6 canned messages through the safe-to-repeat intents (`chat`, `question`, a self-cleaning `store`+`forget` pair, `list_tasks`, `media_query`) and posts a pass/fail summary to Discord only when something fails or is too slow. Deliberately skips `task`/`complete_task`/`note` — those write real, non-idempotent data to Vikunja/Trilium. |
+| 27 | Second Brain Health Monitor | every 15min | Ollama, Qdrant, Whisper APIs; SSH `docker ps` | Alerts to Discord if any second-brain service is unreachable or its container isn't `Up`. Correctly detects and evaluates health every run, but its Discord alert step has been failing 100% of the time since it was built — see the `Homelab Discord Webhook` placeholder finding above. |
+| 28 | Second Brain Self-Test | daily 05:00 | webhook `second-brain-chat` (calls workflow 18 directly) | Fires canned messages through the safe-to-repeat intents (`chat`, `question`, a self-cleaning `store`+`forget` pair, a `forget_notfound` regression test added 2026-08-28, a self-cleaning `correct` setup/test/cleanup triple, `list_tasks`, `media_query`) and posts a pass/fail summary to Discord only when something fails or is too slow. Deliberately skips `task`/`complete_task`/`note` — those write real, non-idempotent data to Vikunja/Trilium. |
 | 29 | Weekly Duplicate Fact Scan | weekly Sat 05:00 | Qdrant (vector search only, no LLM) | Finds pairs of stored facts whose embeddings are near-identical (≥92% similarity) and posts them to Discord for manual review — report-only, never auto-merges or deletes |
 | 30 | Weekly Shadow Log Review | weekly Sun 19:00 | Qdrant (`shadow_log`) | Digests the week's `forget`/`complete_task` actions to Discord as an audit trail, and prunes `shadow_log` entries older than 90 days |
 | 19 | Daily Journal Prompt | daily 21:00 | Discord (bot API) | Posts 3 rotating reflective prompts to Discord |
@@ -60,7 +60,7 @@ Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have
 
 Worth knowing which workflows *do things* versus which only alert, since these deserve a closer look before activating:
 
-- **09** restarts containers (Sonarr/Radarr/qBittorrent) automatically.
+- **09** is **active** (verified 2026-08-30; the earlier "never actually on" finding is stale). `scripts/mount_health_check.sh` reports one host-level `host_mount_shadowed` check for Plex's sake rather than per-container statuses. Note its SSH node cannot currently run anything — the `Mac Mini SSH` credential is broken (see known-issues.md), so this workflow is active but effectively inert.
 - **12** disables Prowlarr indexers automatically.
 - **13** approves or declines Overseerr requests automatically.
 - **16** approves an Overseerr request automatically (at most once/week).
@@ -79,3 +79,31 @@ Everything else (01, 02, 03, 11, 14, 15, 27, 28, 29) only reads and alerts.
 - **SSH over docker.sock**: workflows that need host/container-level actions (09, 10, 11, 17) go through the `Mac Mini SSH` credential and run real shell scripts (`scripts/*.sh`) rather than mounting the Docker socket into n8n. Homepage's docker widget uses a different, narrower approach — a read-only `tecnativa/docker-socket-proxy` sidecar — because that's a continuously-running dashboard rather than a scheduled workflow.
 - **Discord via webhook, not bot**, for alerting (01–12) — simplest setup, no bot/gateway needed. Workflow 17 is the one exception: it needs read access to channel messages, which webhooks can't do, so it uses a dedicated bot token polling the REST API every 30s instead of Discord's Gateway (websocket) or Interactions endpoint (requires cryptographic signature verification that couldn't be tested without a live Discord app during development).
 - **No automated `git push`**: workflow 10's git snapshot commits locally only. An automated recurring push was flagged by a safety check as the kind of unattended action that should stay under explicit human control — add `&& git push origin main` to that workflow's SSH node yourself if you want it.
+
+## NAS volume self-healer (`scripts/cifs_volume_health_check.sh`)
+
+Added 2026-08-30 after 9 containers sat dead for 2+ hours following a brief NAS blip. A CIFS volume mount failure happens at container *creation*, so `restart: always` is never consulted and the container never recovers on its own — full write-up in `known-issues.md`. The script detects those containers and restarts them once the NAS answers again.
+
+**It is written and tested but NOT yet scheduled.** Two ways to run it, and the obvious one does not currently work:
+
+| Option | Status | Notes |
+|---|---|---|
+| Workflow 09 (n8n, every 15min) | **Blocked, twice over** | The `Mac Mini SSH` credential is broken, so the SSH node cannot execute any script; and the `Homelab Discord Webhook` credential is the literal string `"PLACEHOLDER"`, so no alert would ever be delivered. Wiring it in before both are fixed would produce a workflow that silently does nothing. The node/connection changes are prepared and ready to apply once the credentials are real. |
+| launchd agent (every 5min) | **Ready, awaiting go-ahead** | `scripts/com.kody.cifs-volume-healer.plist` + `scripts/cifs_volume_healer_cron.sh`. Needs **no credentials at all** — runs locally as `kp-srv-01`, talks straight to Docker. Works today, and recovers in ≤5 min instead of 2+ hours. |
+
+Install the launchd agent with:
+
+```bash
+cp /Users/kp-srv-01/Documents/docker/scripts/com.kody.cifs-volume-healer.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.kody.cifs-volume-healer.plist
+launchctl list | grep cifs-volume-healer   # confirm it registered
+```
+
+Uninstall with `launchctl unload ~/Library/LaunchAgents/com.kody.cifs-volume-healer.plist`.
+
+The wrapper logs to `cifs_volume_healer.log` (gitignored) **only** when a run is not `ok`, so a quiet homelab writes nothing and anything in that file is a real event. The log self-trims at 500 lines. To check the healer by hand at any time:
+
+```bash
+bash scripts/cifs_volume_health_check.sh | python3 -m json.tool   # act
+DRY_RUN=1 bash scripts/cifs_volume_health_check.sh                # detect only
+```

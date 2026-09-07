@@ -6,12 +6,12 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
       - WEBUI_PORT=30024
       - TORRENTING_PORT=50415
     volumes:
       - /Users/kp-srv-01/Documents/docker/qbittorrent/config:/config
-      - /Volumes/downloads:/mnt/downloads
+      - nas_downloads:/mnt/downloads
       #- /Users/kp-srv-01/Documents/docker/qbittorrent/downloading:/mnt/downloading
     #ports:
     #  - 30024:30024
@@ -24,3 +24,7 @@ services:
     network_mode: host
     # remove the ports: section entirely, it's meaningless under host networking
     # qBittorrent's listening port is now directly the host's port
+
+volumes:
+  nas_downloads:
+    external: true

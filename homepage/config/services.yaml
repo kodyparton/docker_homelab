@@ -2,7 +2,7 @@
 - Media Management:
     - Sonarr:
         icon: sonarr.png
-        href: http://192.168.178.69:30027
+        href: https://sonarr.kodyparton.com
         description: TV shows
         server: my-docker
         container: sonarr
@@ -13,7 +13,7 @@
 
     - Sonarr 4K:
         icon: sonarr.png
-        href: http://192.168.178.69:30030
+        href: https://sonarr4k.kodyparton.com
         description: TV shows (4K)
         server: my-docker
         container: sonarr-4k
@@ -24,7 +24,7 @@
 
     - Radarr:
         icon: radarr.png
-        href: http://192.168.178.69:30025
+        href: https://radarr.kodyparton.com
         description: Movies
         server: my-docker
         container: radarr
@@ -35,7 +35,7 @@
 
     - Radarr 4K:
         icon: radarr.png
-        href: http://192.168.178.69:30031
+        href: https://radarr4k.kodyparton.com
         description: Movies (4K)
         server: my-docker
         container: radarr-4k
@@ -46,7 +46,7 @@
 
     - Prowlarr:
         icon: prowlarr.png
-        href: http://192.168.178.69:9696
+        href: https://prowlarr.kodyparton.com
         description: Indexer manager
         server: my-docker
         container: prowlarr
@@ -55,10 +55,10 @@
           url: http://192.168.178.69:9696
           key: "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
 
-    - Overseerr:
-        icon: overseerr.png
+    - Seerr:
+        icon: seerr.png
         href: https://request.kodyparton.com
-        description: Media requests
+        description: Media requests (migrated from Overseerr 2026-08-29)
         server: my-docker
         container: overseerr
         widget:
@@ -68,7 +68,7 @@
 
     - Tautulli:
         icon: tautulli.png
-        href: http://192.168.178.69:30035
+        href: https://tautulli.kodyparton.com
         description: Plex stats
         server: my-docker
         container: tautulli
@@ -98,33 +98,32 @@
 
     - Huntarr:
         icon: mdi-target
-        href: http://192.168.178.69:30036
+        href: https://huntarr.kodyparton.com
         description: Missing/upgrade search automation
         server: my-docker
         container: huntarr
 
     - Audiobookshelf:
         icon: audiobookshelf.png
-        href: http://192.168.178.69:30033
+        href: https://audiobooks.kodyparton.com
         description: Audiobooks & podcasts
         server: my-docker
         container: audiobookshelf
+        # Staged — generate a token in Audiobookshelf under
+        # Settings → Users → (your user) → API Token, add to homepage/.env:
+        # widget:
+        #   type: audiobookshelf
+        #   url: http://192.168.178.69:30033
+        #   key: "{{HOMEPAGE_VAR_AUDIOBOOKSHELF_API_KEY}}"
 
     - LazyLibrarian:
         icon: lazylibrarian.png
-        href: http://192.168.178.69:30032
+        href: https://books.kodyparton.com
         description: Ebook management
         server: my-docker
         container: lazylibrarian
 
 - Infrastructure:
-    - Nginx Proxy Manager:
-        icon: nginx-proxy-manager.png
-        href: http://192.168.178.69:81
-        description: Reverse proxy admin
-        server: my-docker
-        container: nginx-app-1
-
     - n8n:
         icon: n8n.png
         href: https://n8n.kodyparton.com
@@ -134,67 +133,139 @@
 
     - Trilium:
         icon: trilium.png
-        href: http://192.168.178.69:8080
+        href: https://notes.kodyparton.com
         description: Notes
         server: my-docker
         container: trilium-trilium-1
 
     - Vikunja:
         icon: vikunja.png
-        href: http://192.168.178.69:30037
+        href: https://tasks.kodyparton.com
         description: Task & project management
         server: my-docker
         container: vikunja
 
     - Infisical:
         icon: infisical.png
-        href: http://192.168.178.69:30034
+        href: https://infisical.kodyparton.com
         description: Secrets & credential manager
         server: my-docker
         container: infisical
 
-    - AdGuard Home:
-        icon: adguard-home.png
-        href: http://192.168.178.69:30043
-        description: DNS resolver & ad blocking
-        server: my-docker
-        container: adguard
-
     - Uptime Kuma:
         icon: uptime-kuma.png
-        href: http://192.168.178.69:30038
+        href: https://uptime.kodyparton.com
         description: Uptime & status monitoring
         server: my-docker
         container: uptime-kuma
+        # Works with no credentials -- it reads the public status page rather
+        # than the admin API. The `default` status page is created, populated,
+        # and published by scripts/kuma_seed_monitors.sh; run that if this card
+        # reads 0 up / 0 down. Note that Kuma answers HTTP 200 with empty lists
+        # for a slug that does NOT exist, so an empty card cannot distinguish
+        # "no monitors" from "no status page" -- check the DB, not the endpoint.
+        widget:
+          type: uptimekuma
+          url: http://192.168.178.69:30038
+          slug: default
 
     - Authelia:
         icon: authelia.png
-        href: http://192.168.178.69:30039
+        href: https://auth.kodyparton.com
         description: SSO / OIDC identity provider
         server: my-docker
         container: authelia
 
     - Vaultwarden:
         icon: vaultwarden.png
-        href: http://192.168.178.69:30040
+        href: https://vault.kodyparton.com
         description: Password manager
         server: my-docker
         container: vaultwarden
 
+- Network & Storage:
+    - UNAS Pro:
+        icon: unifi.png
+        href: https://nas.kodyparton.com
+        description: UniFi NAS Pro — admin console (UniFi OS 4.0.3)
+        # href goes through NPM (real wildcard cert, no browser warning);
+        # the health check stays on the raw IP deliberately.
+        #
+        # ICMP ping, not siteMonitor. Pointing siteMonitor at the appliance
+        # directly fails both ways: https:// is a self-signed cert Homepage's
+        # fetch rejects, and http:// 301s to https, which its redirect follower
+        # refuses with ERR_INVALID_PROTOCOL (verified in the container logs).
+        # Pointing it at the NPM name instead would work, but would then be
+        # testing the proxy rather than the device -- ping answers the question
+        # this card is actually for: "is the NAS itself reachable?", which is
+        # what kills every CIFS-mounted container when it blips
+        # (see docs/architecture/known-issues.md).
+        ping: 192.168.178.38
+
+    - Ziggo Modem:
+        icon: mdi-router-network
+        href: https://ziggo.kodyparton.com
+        description: Ziggo cable modem / gateway — WAN uplink
+        # Same split as the UNAS above: browse via NPM, health-check the device
+        # itself. This is the WAN edge, so it going away explains an internet
+        # outage that no container-level check would account for.
+        ping: 192.168.178.1
+
+    - Nginx Proxy Manager:
+        icon: nginx-proxy-manager.png
+        href: http://192.168.178.69:81
+        description: Reverse proxy admin
+        server: my-docker
+        container: nginx-app-1
+        # Staged — needs an NPM login in homepage/.env, then uncomment:
+        # widget:
+        #   type: npm
+        #   url: http://192.168.178.69:81
+        #   username: "{{HOMEPAGE_VAR_NPM_USERNAME}}"
+        #   password: "{{HOMEPAGE_VAR_NPM_PASSWORD}}"
+
+    - AdGuard Home:
+        icon: adguard-home.png
+        href: https://dns.kodyparton.com
+        description: DNS resolver & ad blocking
+        server: my-docker
+        container: adguard
+        # Staged — the admin password is stored bcrypt-hashed in
+        # adguard/conf/AdGuardHome.yaml and cannot be read back out, so it has
+        # to be supplied by hand. Add to homepage/.env, then uncomment:
+        # widget:
+        #   type: adguard
+        #   url: http://192.168.178.69:30043
+        #   username: "{{HOMEPAGE_VAR_ADGUARD_USERNAME}}"
+        #   password: "{{HOMEPAGE_VAR_ADGUARD_PASSWORD}}"
+
 - Personal:
     - Immich:
         icon: immich.png
-        href: http://192.168.178.69:30042
+        href: https://photos.kodyparton.com
         description: Photos & video backup
         server: my-docker
         container: immich-server
+        # Staged — generate in Immich under Account Settings → API Keys,
+        # add to homepage/.env, then uncomment:
+        # widget:
+        #   type: immich
+        #   url: http://192.168.178.69:30042
+        #   key: "{{HOMEPAGE_VAR_IMMICH_API_KEY}}"
+        #   version: 2
 
     - Paperless:
         icon: paperless-ngx.png
-        href: http://192.168.178.69:30041
+        href: https://paperless.kodyparton.com
         description: Documents & OCR
         server: my-docker
         container: paperless
+        # Staged — generate under Django admin → Auth Tokens (or the user
+        # profile page), add to homepage/.env, then uncomment:
+        # widget:
+        #   type: paperlessngx
+        #   url: http://192.168.178.69:30041
+        #   key: "{{HOMEPAGE_VAR_PAPERLESS_API_KEY}}"
 
     - Watchtower:
         icon: watchtower.png

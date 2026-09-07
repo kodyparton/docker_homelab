@@ -8,6 +8,6 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     ports:
       - 30035:8181

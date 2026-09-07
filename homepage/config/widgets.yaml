@@ -1,10 +1,58 @@
 ---
+# Info bar across the top. Order here is the order rendered.
+
+- greeting:
+    text_size: xl
+    text: Kody's Homelab
+
+- datetime:
+    text_size: xl
+    format:
+      timeStyle: short
+      dateStyle: long
+      hourCycle: h23
+      # Europe/Amsterdam, not America/Chicago -- Kody is in Haarlem.
+      # See known-issues.md, "This entire stack is set to TZ=America/Chicago".
+      timeZone: Europe/Amsterdam
+
+# Open-Meteo needs NO API key, unlike the OpenWeatherMap widget.
+- openmeteo:
+    label: Haarlem
+    latitude: 52.3874
+    longitude: 4.6462
+    timezone: Europe/Amsterdam
+    units: metric
+    cache: 5
+
+# `disk: /app/config` is deliberate and NOT a typo. Homepage's ./config bind
+# mount is the only path in this container that crosses back to the real macOS
+# filesystem, so it is the one place the widget can measure the actual Mac Mini
+# boot disk. `disk: /` (the previous value) measured the OrbStack VM's 58G
+# overlay instead -- a number that meant nothing.
 - resources:
     label: Mac Mini
     cpu: true
     memory: true
-    disk: /
+    uptime: true
+    disk: /app/config
+    expanded: true
 
 - search:
     provider: duckduckgo
+    focus: false
+    showSearchSuggestions: true
     target: _blank
+
+# --- Staged, needs credentials -------------------------------------------
+# UniFi console widget for the UNAS Pro. Left commented rather than shipped
+# broken: with no credentials Homepage renders a red error card in the info
+# bar on every page load. To enable, add UNIFI_USERNAME / UNIFI_PASSWORD to
+# homepage/.env (a read-only local UniFi OS account, not the Ubiquiti SSO
+# login -- SSO accounts with 2FA cannot authenticate to the local API), then
+# uncomment. Note this reports the UNAS as a UniFi OS host; it is not a
+# Network-application controller, so client/WLAN counts will be absent.
+#
+# - unifi_console:
+#     url: https://192.168.178.38
+#     username: "{{HOMEPAGE_VAR_UNIFI_USERNAME}}"
+#     password: "{{HOMEPAGE_VAR_UNIFI_PASSWORD}}"

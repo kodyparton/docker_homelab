@@ -10,6 +10,7 @@
 update.log
 launchd-err.log
 launchd-out.log
+scripts/n8n_failure_check_state.json
 
 # secrets
 .env
@@ -31,6 +32,7 @@ vikunja/files/
 qdrant/storage/
 qdrant/snapshots/
 infisical/backups/
+*.tar.gz
 
 # immich + paperless runtime state. These are NOT matched by the */data/
 # and */config/ rules above, and immich/postgres is a live database - it
@@ -74,3 +76,9 @@ authelia/config/*
 !homepage/config/
 homepage/config/*
 !homepage/config/*.yaml
+# The dashboard theme layer is source, not runtime state -- track it so the
+# look survives a re-clone. (custom.js stays ignored; it is empty.)
+!homepage/config/custom.css
+
+# NAS volume self-healer runtime log (see docs/architecture/automation.md)
+cifs_volume_healer.log

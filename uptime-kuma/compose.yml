@@ -4,7 +4,7 @@ services:
     container_name: uptime-kuma
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     ports:
       - "30038:3001"
     volumes:

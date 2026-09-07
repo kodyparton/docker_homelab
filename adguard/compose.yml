@@ -13,4 +13,4 @@ services:
       - ./work:/opt/adguardhome/work
       - ./conf:/opt/adguardhome/conf
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam

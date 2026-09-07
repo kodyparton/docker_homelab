@@ -8,7 +8,7 @@ services:
     volumes:
       - ./data:/data
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
       - DOMAIN=http://192.168.178.69:30040
       - ADMIN_TOKEN=${ADMIN_TOKEN}
       # Open signups off - accounts are created deliberately, not by anyone
@@ -24,3 +24,12 @@ services:
       - SSO_CLIENT_ID=vaultwarden
       - SSO_CLIENT_SECRET=${OIDC_CLIENT_SECRET}
       - SSO_SCOPES=openid email profile offline_access
+      # ---- SMTP (Gmail relay, added 2026-08-29) ----
+      # Emergency access, org invites, 2FA emails, new-device login alerts.
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_SECURITY=starttls
+      - SMTP_FROM=${SMTP_USERNAME}
+      - SMTP_FROM_NAME=Vaultwarden
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}

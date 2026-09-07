@@ -8,7 +8,17 @@ services:
       - VIKUNJA_SERVICE_SECRET=${VIKUNJA_JWT_SECRET}
       - VIKUNJA_DATABASE_TYPE=sqlite
       - VIKUNJA_DATABASE_PATH=/db/vikunja.db
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
+      # ---- SMTP (Gmail relay, added 2026-08-29) ----
+      # Password reset (unavailable without this), task reminders, overdue
+      # notifications, account verification.
+      - VIKUNJA_MAILER_ENABLED=true
+      - VIKUNJA_MAILER_HOST=smtp.gmail.com
+      - VIKUNJA_MAILER_PORT=587
+      - VIKUNJA_MAILER_FORCESSL=false
+      - VIKUNJA_MAILER_USERNAME=${SMTP_USERNAME}
+      - VIKUNJA_MAILER_PASSWORD=${SMTP_PASSWORD}
+      - VIKUNJA_MAILER_FROMEMAIL=${SMTP_USERNAME}
     ports:
       - 30037:3456
     volumes:

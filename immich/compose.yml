@@ -31,10 +31,10 @@ services:
       - "30042:2283"
     volumes:
       # Photo library lives on the NAS (23TB free), NOT the boot disk.
-      - /Volumes/media/immich:/data
+      - nas_immich:/data
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
       - DB_HOSTNAME=immich-postgres
       - DB_USERNAME=immich
       - DB_PASSWORD=${DB_PASSWORD}
@@ -52,7 +52,7 @@ services:
     volumes:
       - ./cache/ml:/cache
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
       # CPU-only box shared with Ollama. Measured: a 3rd concurrent model
       # dropped Ollama to 0.49 tok/s. Capping ML threads keeps face/CLIP
       # jobs from starving the second brain. Raise only if Ollama moves off
@@ -65,3 +65,7 @@ services:
         limits:
           cpus: '2.0'
           memory: 3G
+
+volumes:
+  nas_immich:
+    external: true

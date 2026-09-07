@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     ports:
       # By default, Trilium will be available at http://localhost:8080
       # It will also be accessible at http://<host-ip>:8080

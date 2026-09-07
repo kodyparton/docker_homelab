@@ -6,7 +6,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     volumes:
       - /Users/kp-srv-01/Documents/docker/prowlarr/config:/config
     ports:

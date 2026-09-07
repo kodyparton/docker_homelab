@@ -53,12 +53,14 @@ storage:
     path: /data/db.sqlite3
 
 notifier:
-  # No SMTP configured yet, so password-reset / 2FA-registration emails are
-  # written to this file instead of being sent. Read them with:
-  #   docker exec authelia cat /data/notification.txt
-  # Swap this for an smtp: block once mail is available.
-  filesystem:
-    filename: /data/notification.txt
+  # Gmail SMTP relay via app password, added 2026-08-29. Password comes from
+  # AUTHELIA_NOTIFIER_SMTP_PASSWORD (authelia/.env, gitignored) - not here.
+  smtp:
+    address: 'submission://smtp.gmail.com:587'
+    sender: 'Homelab Authelia <{{ env "SMTP_USERNAME" }}>'
+    subject: '[Authelia] {title}'
+    startup_check_address: '{{ env "SMTP_USERNAME" }}'
+    username: '{{ env "SMTP_USERNAME" }}'
 
 identity_validation:
   reset_password:
@@ -83,8 +85,17 @@ identity_providers:
         require_pkce: true
         pkce_challenge_method: 'S256'
         redirect_uris:
+          # The https names are what browsers actually use now that Immich is
+          # reached through NPM. Without these, an SSO login from
+          # photos.kodyparton.com fails at the callback with an
+          # invalid_redirect_uri error from Authelia -- the client is fine, the
+          # URI simply was not registered. Added 2026-08-30.
+          - 'https://photos.kodyparton.com/auth/login'
+          - 'https://photos.kodyparton.com/user-settings'
+          # Kept for direct LAN access by IP, which still works and bypasses NPM.
           - 'http://192.168.178.69:30042/auth/login'
           - 'http://192.168.178.69:30042/user-settings'
+          # Mobile app deep link.
           - 'app.immich:///oauth-callback'
         scopes: ['openid', 'profile', 'email']
         userinfo_signed_response_alg: 'none'
@@ -99,6 +110,13 @@ identity_providers:
         require_pkce: true
         pkce_challenge_method: 'S256'
         redirect_uris:
+          # Same fix as the Immich client: the https name is what the browser
+          # actually uses now that Paperless sits behind NPM. Without this,
+          # Authelia rejects the callback with invalid_redirect_uri. Paperless
+          # builds this URL from PAPERLESS_URL, so the two must agree exactly,
+          # trailing slash included. Added 2026-08-30.
+          - 'https://paperless.kodyparton.com/accounts/oidc/authelia/login/callback/'
+          # Kept for direct LAN access by IP.
           - 'http://192.168.178.69:30041/accounts/oidc/authelia/login/callback/'
         scopes: ['openid', 'profile', 'email']
         userinfo_signed_response_alg: 'none'

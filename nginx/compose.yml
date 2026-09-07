@@ -12,7 +12,7 @@ services:
       # - '21:21' # FTP
 
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
 
       # Uncomment this if you want to change the location of
       # the SQLite DB file within the container

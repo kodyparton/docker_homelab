@@ -29,7 +29,11 @@ Self-hosted photo and video backup — the Google Photos replacement. Mobile aut
 
 ## Credentials & Secrets
 
-`immich/.env` (gitignored) holds `DB_PASSWORD` and `OIDC_CLIENT_SECRET`; both also in Infisical (`IMMICH_DB_PASSWORD`, `OIDC_CLIENT_SECRET_IMMICH`). The first web user created becomes the admin.
+`immich/.env` (gitignored) holds `DB_PASSWORD` and `OIDC_CLIENT_SECRET`; both also in Infisical (`IMMICH_DB_PASSWORD`, `OIDC_CLIENT_SECRET_IMMICH`). The first web user created becomes the admin — here `the admin's Gmail address`. Its login password was reset 2026-08-30 and is now in Infisical as `IMMICH_ADMIN_PASSWORD` (distinct from `IMMICH_DB_PASSWORD`, which is Postgres and will not log you in).
+
+**Resetting the admin password** needs a real terminal: `docker exec -it immich-server /usr/src/app/server/bin/immich-admin reset-admin-password`. It prompts and has no non-interactive flag, so it cannot be driven from a script without a TTY.
+
+**SSO (Authelia OIDC) is active as of 2026-08-30** — see `docs/architecture/sso.md`. Password login remains enabled as a deliberate fallback.
 
 ## External Access
 

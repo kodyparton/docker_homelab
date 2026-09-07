@@ -35,4 +35,12 @@ services:
       - REDIS_URL=redis://infisical-redis:6379
       - SITE_URL=http://192.168.178.69:30034
       - TELEMETRY_ENABLED=false
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
+      # Gmail SMTP relay via app password, added 2026-08-29 so the normal
+      # "forgot password" flow works instead of needing DB-level recovery.
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM_ADDRESS=${SMTP_USERNAME}
+      - SMTP_FROM_NAME=Infisical

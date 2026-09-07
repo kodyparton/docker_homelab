@@ -6,11 +6,17 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     volumes:
       - /Users/kp-srv-01/Documents/docker/sonarr/config:/config
-      - /Volumes/media/tv:/mnt/tv #optional
-      - /Volumes/downloads:/mnt/downloads
+      - nas_tv:/mnt/tv #optional
+      - nas_downloads:/mnt/downloads
     ports:
       - 30027:8989
     restart: always
+
+volumes:
+  nas_tv:
+    external: true
+  nas_downloads:
+    external: true

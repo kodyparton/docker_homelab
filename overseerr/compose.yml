@@ -1,14 +1,19 @@
 services:
-########## OVERSEERR CONFIGURATION ##########
+########## SEERR CONFIGURATION (migrated from Overseerr 2026-08-29) ##########
   overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
     container_name: overseerr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     volumes:
-      - /Users/kp-srv-01/Documents/docker/overseerr/config:/config
+      - /Users/kp-srv-01/Documents/docker/overseerr/config:/app/config
     ports:
       - 30023:5055
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     restart: always

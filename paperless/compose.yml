@@ -21,10 +21,19 @@ services:
       - ./export:/usr/src/paperless/export
       - ./consume:/usr/src/paperless/consume
     environment:
-      - PAPERLESS_TIME_ZONE=America/Chicago
+      - PAPERLESS_TIME_ZONE=Europe/Amsterdam
       - PAPERLESS_REDIS=redis://paperless-redis:6379
       - PAPERLESS_SECRET_KEY=${SECRET_KEY}
-      - PAPERLESS_URL=http://192.168.178.69:30041
+      # Must be the https name the browser actually uses. Paperless derives
+      # BOTH its Django CSRF/allowed-hosts AND the OIDC callback it hands to
+      # Authelia from this single value, so leaving it as the raw IP made SSO
+      # from paperless.kodyparton.com impossible: Authelia would bounce the
+      # browser back to an http IP URL, losing the session and failing CSRF.
+      - PAPERLESS_URL=https://paperless.kodyparton.com
+      # Direct IP access still works — these add it back alongside the
+      # hostname, which PAPERLESS_URL alone would have replaced.
+      - PAPERLESS_ALLOWED_HOSTS=paperless.kodyparton.com,192.168.178.69,localhost
+      - PAPERLESS_CSRF_TRUSTED_ORIGINS=https://paperless.kodyparton.com,http://192.168.178.69:30041
       - PAPERLESS_OCR_LANGUAGE=eng
       # SQLite (the default when no DB host is set) rather than Postgres:
       # deliberate on this hardware - Ollama already owns most of the RAM,
@@ -38,3 +47,12 @@ services:
       - PAPERLESS_APPS=allauth.socialaccount.providers.openid_connect
       - PAPERLESS_SOCIALACCOUNT_PROVIDERS={"openid_connect":{"APPS":[{"provider_id":"authelia","name":"Authelia SSO","client_id":"paperless","secret":"${OIDC_CLIENT_SECRET}","settings":{"server_url":"https://auth.kodyparton.com/.well-known/openid-configuration"}}]}}
       - PAPERLESS_SOCIAL_AUTO_SIGNUP=true
+      # ---- SMTP (Gmail relay, added 2026-08-29) ----
+      # Password reset, the "Email" workflow action, sending documents from the UI.
+      - PAPERLESS_EMAIL_HOST=smtp.gmail.com
+      - PAPERLESS_EMAIL_PORT=587
+      - PAPERLESS_EMAIL_USE_TLS=true
+      - PAPERLESS_EMAIL_USE_SSL=false
+      - PAPERLESS_EMAIL_HOST_USER=${SMTP_USERNAME}
+      - PAPERLESS_EMAIL_HOST_PASSWORD=${SMTP_PASSWORD}
+      - PAPERLESS_EMAIL_FROM=${SMTP_USERNAME}

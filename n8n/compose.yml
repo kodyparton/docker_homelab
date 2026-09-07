@@ -14,6 +14,17 @@ services:
       - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
       - TZ=${GENERIC_TIMEZONE}
+      # ---- SMTP (Gmail relay, added 2026-08-29) ----
+      # User invites, password reset, workflow/credential/project sharing
+      # notifications.
+      - N8N_EMAIL_MODE=smtp
+      - N8N_SMTP_HOST=smtp.gmail.com
+      - N8N_SMTP_PORT=587
+      - N8N_SMTP_SSL=false
+      - N8N_SMTP_STARTTLS=true
+      - N8N_SMTP_USER=${SMTP_USERNAME}
+      - N8N_SMTP_PASS=${SMTP_PASSWORD}
+      - N8N_SMTP_SENDER=${SMTP_USERNAME}
     volumes:
       - n8n_data:/home/node/.n8n
       - ./local-files:/files

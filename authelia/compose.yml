@@ -9,9 +9,15 @@ services:
       - ./config:/config:ro
       - ./data:/data
     environment:
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
       - X_AUTHELIA_CONFIG_FILTERS=template
       - AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET=${JWT_SECRET}
       - AUTHELIA_SESSION_SECRET=${SESSION_SECRET}
       - AUTHELIA_STORAGE_ENCRYPTION_KEY=${STORAGE_ENCRYPTION_KEY}
       - AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET=${OIDC_HMAC_SECRET}
+      - AUTHELIA_NOTIFIER_SMTP_PASSWORD=${SMTP_PASSWORD}
+      # Consumed by configuration.yml via the template filter above
+      # ({{ env "SMTP_USERNAME" }}), which reads the CONTAINER's environment --
+      # so this must be passed in explicitly or the address renders empty and
+      # Authelia fails its SMTP startup check.
+      - SMTP_USERNAME=${SMTP_USERNAME}

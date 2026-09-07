@@ -2,17 +2,40 @@
 
 Deployed 2026-08-26. Authelia is the homelab's OIDC identity provider, currently serving Immich, Paperless-ngx, and Vaultwarden.
 
-## ⚠️ Current status: built and working, but SSO is not active yet
+## Current status (updated 2026-08-30)
 
-Authelia itself is running and its OIDC provider is verified functional. **But it cannot be used until `auth.kodyparton.com` exists**, and that needs two manual steps only you can do (see "What's blocking" below).
+`auth.kodyparton.com` resolves and serves a valid discovery document — the two blocking steps described further down were completed in an earlier session and that section is retained only as history. **Immich SSO is live as of 2026-08-30.**
 
-Everything is deliberately built so this isn't a blocker for using the apps:
-
-| Service | Local login today | SSO once DNS is done |
+| Service | Local login | SSO status |
 |---|---|---|
-| Immich | ✅ works now | pre-configured, needs enabling in its admin UI |
-| Paperless-ngx | ✅ works now (`kody` superuser) | pre-configured in compose |
-| Vaultwarden | ✅ works now | pre-configured, **local login stays on permanently** |
+| Immich | ✅ still on (deliberate fallback) | ✅ **ACTIVE 2026-08-30** — "Login with Authelia" button live, full handshake verified |
+| Paperless-ngx | ✅ works (`kody` superuser, pw in Infisical) | ✅ **ACTIVE 2026-08-30** — "Authelia SSO" button live, handshake verified |
+| Vaultwarden | ✅ works | ⬜ pre-configured, **not enabled**. ⚠️ Its client has the *same latent redirect_uri bug* — only `http://192.168.178.69:30040/identity/connect/oidc-signin` is registered, no `https://vault.kodyparton.com` equivalent. Fix that at the same time SSO is turned on, or it will fail identically. Local login stays on permanently. |
+
+### The redirect_uri trap — hit twice, and still armed once
+
+Every OIDC client in this stack was registered **before** its app was reachable through NPM, so each one lists only a raw-IP `http://192.168.178.69:<port>/...` callback. The moment you log in from the public hostname, Authelia rejects the callback with `invalid_redirect_uri`. This bit Immich and Paperless on consecutive attempts, and Vaultwarden's client is still in that state.
+
+It presents as "SSO is broken" rather than "one URI is missing", which is what makes it expensive to diagnose. When wiring any new client:
+
+1. Register the **https** callback in Authelia (keep the IP one for direct LAN access — they coexist fine).
+2. Make sure the *app's own* notion of its base URL matches. Paperless builds its callback from `PAPERLESS_URL`; Immich builds its from the browser origin. If the app thinks it lives at an IP, it will send an IP callback no matter what Authelia allows.
+3. Verify by driving a real authorization request and **also** driving a deliberately bogus one. If the bogus URI is *not* rejected, your test proves nothing.
+
+### Enabling Immich SSO — what it actually took
+
+Run with `scripts/enable_immich_sso.py` (reads `OIDC_CLIENT_SECRET_IMMICH` and `IMMICH_ADMIN_PASSWORD` from Infisical, does a read-modify-write on Immich's live system config so an upgrade's new keys are never clobbered).
+
+**The part that would have silently broken it:** the Authelia client's `redirect_uris` listed only `http://192.168.178.69:30042/...` — the raw IP over http, from before Immich was reachable through NPM. A browser login from `https://photos.kodyparton.com` would have failed at the callback with `invalid_redirect_uri`. The https URIs were added (IP ones kept for direct LAN access, which still works).
+
+Settings chosen, and why:
+
+- `autoRegister: true` is safe **only because** the Authelia account `kody` carries the same email as the existing Immich admin (`the admin's Gmail address`, checked on both sides first). The first SSO login therefore links to that admin account rather than quietly creating a second, non-admin user.
+- `autoLaunch: false` on purpose. With it on, the login page bounces straight to Authelia — if SSO ever breaks you are locked out of your own library with no way back to the password form.
+- `passwordLogin` stays **enabled** as the escape hatch, for the same reason.
+- `profileSigningAlgorithm: none` and `tokenEndpointAuthMethod: client_secret_post` mirror the Authelia client's `userinfo_signed_response_alg: 'none'` and `token_endpoint_auth_method: 'client_secret_post'`. PKCE (S256) is required by the client and Immich sends it.
+
+**Verified, not assumed:** `/api/server/features` reports `oauth: true`; Immich's `/api/oauth/authorize` produces a correct PKCE authorization URL; and Authelia answers that URL with a `302` into its own login flow (`flow_id` issued) rather than an error — which is what proves the client_id, redirect_uri and PKCE challenge were all accepted.
 
 ## Why Authelia needs a real hostname
 
@@ -26,9 +49,9 @@ curl -H "Host: auth.kodyparton.com" \
 
 That second form is exactly what NPM sends, so this is purely a "needs to be behind the proxy" constraint, not a misconfiguration. Verified working — the discovery document returns correct endpoints under the right hostname.
 
-## What's blocking (manual steps for you)
+## (historical) What was blocking — RESOLVED
 
-Same pattern as `home.kodyparton.com`, still outstanding from an earlier session:
+Both steps below are **done**; `auth.kodyparton.com` has been working since. Kept for the reasoning, not as an action list:
 
 1. **Cloudflare DNS**: add `auth.kodyparton.com`. Set it **DNS only (not proxied)** pointing at the LAN IP, matching the `home.kodyparton.com` approach — this keeps it internal-only, which is right for an identity provider.
 2. **NPM proxy host**: `192.168.178.69:81` → Hosts → Proxy Hosts → Add:

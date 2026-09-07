@@ -6,7 +6,7 @@ services:
     environment:
       - ASR_MODEL=base
       - ASR_ENGINE=faster_whisper
-      - TZ=America/Chicago
+      - TZ=Europe/Amsterdam
     volumes:
       - /Users/kp-srv-01/Documents/docker/whisper/config:/root/.cache
     ports:

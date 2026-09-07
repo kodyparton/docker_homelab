@@ -1,0 +1,108 @@
+/* Kody's Homelab — visual theme layer.
+ *
+ * Deliberately CSS-only and fully local: no remote fonts, no CDN, no
+ * background image fetched over WAN. The dashboard has to look right when
+ * the internet is down, because that is precisely when it gets opened.
+ *
+ * Everything here is additive styling. Removing this file returns Homepage
+ * to its stock dark/slate theme with no functional loss. */
+
+/* ---- Animated depth gradient behind the whole page ---------------------- */
+/* Replaces the flat slate background with a slow-drifting aurora. 30s cycle
+ * is long enough to read as ambient rather than distracting. */
+body {
+  background:
+    radial-gradient(1200px 800px at 12% -10%, rgba(56, 189, 248, 0.16), transparent 60%),
+    radial-gradient(1000px 700px at 88% 0%,  rgba(168, 85, 247, 0.14), transparent 55%),
+    radial-gradient(900px 900px at 50% 115%, rgba(20, 184, 166, 0.12), transparent 60%),
+    #0b1120 !important;
+  background-attachment: fixed !important;
+}
+
+#page_container::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(700px 500px at 20% 30%, rgba(59, 130, 246, 0.10), transparent 60%),
+    radial-gradient(700px 500px at 80% 70%, rgba(236, 72, 153, 0.08), transparent 60%);
+  animation: aurora-drift 30s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.85; }
+  100% { transform: translate3d(0, -28px, 0) scale(1.08); opacity: 1; }
+}
+
+/* Respect the OS "reduce motion" setting — the drift is decoration, and an
+ * always-animating background is a real accessibility problem otherwise. */
+@media (prefers-reduced-motion: reduce) {
+  #page_container::before { animation: none; }
+  .service-card, .bookmark-card { transition: none !important; }
+}
+
+/* ---- Glass cards ------------------------------------------------------- */
+.service-card,
+.bookmark-card,
+#information-widgets > div {
+  background: rgba(30, 41, 59, 0.55) !important;
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(148, 163, 184, 0.14) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.30);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.service-card:hover,
+.bookmark-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(56, 189, 248, 0.18),
+    0 0 22px rgba(56, 189, 248, 0.14);
+}
+
+/* ---- Group headers ----------------------------------------------------- */
+/* Gradient rule under each section title so the row groups read as distinct
+ * bands rather than one undifferentiated wall of cards. */
+h2.service-group-name,
+.services-group > h2 {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg,
+      rgba(56, 189, 248, 0.85),
+      rgba(168, 85, 247, 0.55),
+      transparent) 1;
+}
+
+/* ---- Status dots ------------------------------------------------------- */
+/* settings.yaml uses `statusStyle: dot`; give the healthy state a soft glow
+ * so "everything is fine" is legible from across the room. */
+.status-online,
+[class*="bg-emerald-500"] {
+  box-shadow: 0 0 8px 1px rgba(16, 185, 129, 0.75);
+}
+[class*="bg-orange-400"],
+[class*="bg-red-500"] {
+  box-shadow: 0 0 8px 1px rgba(239, 68, 68, 0.75);
+}
+
+/* ---- Header + info bar ------------------------------------------------- */
+#information-widgets {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  margin-bottom: 14px;
+}
+
+/* Resource bars: flat slate → cyan/violet ramp. */
+.resource-bar,
+[class*="bg-theme-500/40"] {
+  background-image: linear-gradient(90deg, #22d3ee, #a855f7) !important;
+}

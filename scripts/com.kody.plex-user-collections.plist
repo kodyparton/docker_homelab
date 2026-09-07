@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Keeps the per-user "Requested by X" Plex collections in sync with Seerr
+  requests and Tautulli watch history. See docs/architecture/plex-user-collections.md.
+
+  SAFETY: the script this runs has no deletion capability at all. `--apply`
+  only ever adds or removes COLLECTION MEMBERSHIP; the deletion-candidate list
+  is printed to the log and acted on by nobody. There is no flag that makes it
+  remove media.
+
+  NOT INSTALLED BY DEFAULT -- same convention as com.kody.cifs-volume-healer.plist.
+  To install:
+      cp scripts/com.kody.plex-user-collections.plist ~/Library/LaunchAgents/
+      launchctl load ~/Library/LaunchAgents/com.kody.plex-user-collections.plist
+  To remove:
+      launchctl unload ~/Library/LaunchAgents/com.kody.plex-user-collections.plist
+      rm ~/Library/LaunchAgents/com.kody.plex-user-collections.plist
+
+  1800s = 30 min, matching the n8n_failure_check cron cadence. A no-op run
+  takes ~7s, so this is cheap. RunAtLoad is deliberately false: loading the
+  agent should not immediately mutate collections with no chance to review.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.kody.plex-user-collections</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/kp-srv-01/Documents/docker/scripts/plex_user_collections.py</string>
+        <string>--apply</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>1800</integer>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/Users/kp-srv-01/Documents/docker/plex_user_collections.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/kp-srv-01/Documents/docker/plex_user_collections.log</string>
+</dict>
+</plist>

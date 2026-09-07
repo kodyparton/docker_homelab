@@ -1,3 +1,5 @@
+> **See also `plex-user-collections.md` (built 2026-09-04).** A second, *request-driven* cleanup path now exists and is live: per-user "Requested by X" collections that drain as each requester finishes watching, flagging items only once every requester is done. It independently rediscovered this document's central lesson — a naive rule flagged **76% of the library** (627 of 820 items have no Seerr request at all) — and it reuses the `keep` label mechanism settled on below. The two designs are complementary: this one is staleness-driven, that one is request-driven. Neither deletes anything today.
+
 # Plex "Leaving Soon" Cleanup — Design & Feasibility
 
 **Status: design only, nothing built, nothing deleted.** Written 2026-08-26 at Kody's request, explicitly ahead of implementation so items can be flagged for keeping first.

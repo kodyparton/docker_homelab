@@ -1,3 +1,15 @@
+> ## ⚠️ CORRECTION 2026-09-01: `/Volumes/FastSSD` IS NOT AN SSD.
+>
+> Every reference below to a "USB 4TB SSD" is **wrong**, and it invalidates the tiering decision that put Plex's data there in Phase 2. Measured and identified on 2026-09-01:
+>
+> - IORegistry reports `Medium Type = "Solid State"` **only** for the internal `APPLE SSD AP0256Q`. The external reports `Vendor Name = "WD", Product Name = "Game Drive"` with no such field — it is a **WD_BLACK P10 Game Drive, a 5400 RPM 2.5" hard disk**. `diskutil` says only "Solid State: Info not available", which is what hid this.
+> - **Random 4K reads: 867 IOPS, 1.153 ms/read** (page cache bypassed via `F_NOCACHE`). No SSD does 867 random read IOPS; a cheap SATA SSD manages 20,000+. This is hard-disk performance.
+> - Sequential: 91 MB/s write, 114 MB/s read — vs the internal SSD at 1,184 MB/s write. (The internal *read* figure of 3 GB/s was cache-inflated and should not be quoted.)
+>
+> **Consequence:** Plex's live SQLite library database has been sitting on a spinning disk since 2026-08-27. Library views issue thousands of small random reads, so at 1.15 ms each this is a direct, mechanical explanation for slow library loading — reported independently by Kody on 2026-09-01 before this was measured. The drive is also shared with Ollama's models and (since 2026-08-31) Plex's transcode scratch, so transcoding adds **seek contention on the same spindle** as the database.
+>
+> The reliability tiering below still holds in shape, but this drive belongs in a "bulk/cold, sequential" tier — **not** anywhere near a database. Re-plan before moving anything else onto it.
+
 # Storage Optimization & Migration Plan
 
 Drafted 2026-08-26. **Phases 1 and 2 executed 2026-08-27 — see "Results" at the bottom.** Phase 3 deliberately not done. All figures measured from the live system.

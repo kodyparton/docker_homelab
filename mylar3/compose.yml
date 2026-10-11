@@ -1,0 +1,28 @@
+services:
+########## MYLAR3 CONFIGURATION ##########
+  mylar3:
+    image: lscr.io/linuxserver/mylar3:latest
+    container_name: mylar3
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/mylar3/config:/config
+      # Read-write: Mylar files finished issues into the library. Komga mounts
+      # the same volume read-only.
+      - nas_comics_v3:/comics
+      # Same path as qBittorrent and the other *arrs, so download paths match
+      # without a remote path mapping.
+      - nas_downloads:/mnt/downloads
+    ports:
+      - 30046:8090
+    # Docker's default address pools are nearly used up (see komga/compose.yml).
+    network_mode: bridge
+    restart: unless-stopped
+
+volumes:
+  nas_comics_v3:
+    external: true
+  nas_downloads:
+    external: true

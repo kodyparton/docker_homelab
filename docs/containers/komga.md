@@ -12,7 +12,7 @@ Comics server with a full web reader, reading lists and OPDS feeds. Serves the c
 | **Host** | Mac Mini (`192.168.178.69`) |
 | **Port(s)** | `30045:25600`: host `30045` → container `25600` |
 | **Local URL** | `http://192.168.178.69:30045` |
-| **Public URL** | `https://comics.kodyparton.com` (LAN-only DNS, via NPM proxy host 25) |
+| **Public URL** | `https://comics.kodyparton.com`: **public**, through a Cloudflare-proxied record (from home, via the AdGuard rewrite straight to NPM proxy host 25) |
 | **PUID/PGID** | runs as `1000:1000` through compose `user:` (not a linuxserver image, so no PUID/PGID) |
 | **Timezone** | `Europe/Amsterdam` |
 | **Restart policy** | `unless-stopped` |
@@ -27,12 +27,13 @@ Comics server with a full web reader, reading lists and OPDS feeds. Serves the c
 
 ## Dependencies
 
-- **Depends on:** the UNAS Pro (`nas_comics_v3` volume).
+- **Depends on:** the UNAS Pro (`nas_comics_v3` volume). New issues arrive from **Mylar3**, which writes into the same volume read-write; Komga picks them up on its next library scan.
 - **Depended on by:** Homepage (Komga card in the Personal group; its widget is staged, see `homepage.md`).
 
 ## Credentials & Secrets
 
-- **Admin account: not created yet, and that's urgent.** Komga starts unclaimed (`GET /api/v1/claim` → `{"isClaimed":false}`), and **whoever opens it first creates the admin**. Kody creates it on first visit (email + password). Store the password in Infisical as `KOMGA_ADMIN_PASSWORD`. It wasn't created by automation on purpose: account creation and choosing its password are the owner's to do.
+- **Admin account:** claimed by Kody on 2026-10-11, with his Gmail address as the email. That's what lets Google sign-in link to it. The password isn't in Infisical (`KOMGA_ADMIN_PASSWORD` would be the name, if stored). It wasn't created by automation on purpose: account creation and choosing its password are the owner's to do.
+- **Google OAuth client:** `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET` in Infisical (Kody created the client on 2026-10-11, in Testing mode, with test users as the allowlist), written into the gitignored `komga/.env` (mode 600) by `scripts/env_from_infisical.py`. It's one client shared by every app in the Google sign-in rollout.
 - Family members get their own Komga users (Server Settings → Users), with their Gmail addresses as the email, so Google sign-in can match them later.
 - Homepage widget (staged): `HOMEPAGE_VAR_KOMGA_USERNAME` / `HOMEPAGE_VAR_KOMGA_PASSWORD`. Any non-admin user works.
 
@@ -40,7 +41,7 @@ Comics server with a full web reader, reading lists and OPDS feeds. Serves the c
 
 - **NPM proxy host 25**: `comics.kodyparton.com` → `http://192.168.178.69:30045`, wildcard cert id 1, SSL forced, HTTP/2 + HSTS on, websockets on, **no advanced config**. Repointed from YACReader (`:30044`) on 2026-10-11. YACReader's `Host`-with-port workaround was removed at the same time: Komga doesn't need it, and it would put `:443` into the absolute URLs Komga builds for OPDS feeds and the OAuth2 redirect.
 - **AdGuard rewrite** `comics.kodyparton.com` → `192.168.178.69`: the existing one from the YACReader setup, unchanged.
-- Not in public (Cloudflare) DNS. **As of 2026-10-11 the name doesn't resolve on Kody's devices** (Tailscale/Ziggo DNS, see `architecture/known-issues.md`), so use `http://192.168.178.69:30045` until that's fixed.
+- **Public via Cloudflare (2026-10-11):** Kody added a **proxied** `comics` record, the same pattern as `request`/`n8n`. Cloudflare's edge reaches NPM through the modem's WAN `:443` port-forward (verified 200 through the edge). Because the record is public, the name now resolves on every device, including ones not using AdGuard and Safari with iCloud Private Relay. At home, devices that do use AdGuard still go straight to NPM. Exposure: Komga's own login is the only gate, with no lockout after repeated wrong passwords. See `architecture/known-issues.md` for the wider port-forward exposure and the Cloudflare Tunnel recommendation.
 
 ### Reading on the iPad
 
@@ -63,12 +64,25 @@ None yet, and not in workflow 03. The comics are on the NAS. The only unique dat
 - **`network_mode: bridge` because Docker ran out of subnets.** `docker compose up` failed with `all predefined address pools have been fully subnetted`. The stack has 30 networks, one per compose project, and Docker's default pools allow about 31. None were unused. Komga talks to no other container, so it joined the built-in `bridge` instead. **The next new compose project will hit the same wall**, see `architecture/known-issues.md`.
 - **File formats verified at deploy:** all 36 files read fine. 26 are `.cbr`, all **RAR4 and non-solid** (main-header flag `0x0008` checked on every file), and 10 are `.cbz`. Komga reads CBZ/CBR, PDF and EPUB, and RAR5 on Docker arm64 through a native library, but **not solid RAR archives**. If a future `.cbr` won't open, check it isn't solid (`unrar lt` shows it) and repack it as `.cbz`.
 - **Library layout → series:** Komga makes a series from each folder that contains books. `Secret Wars Collection (2015)/` holds one folder per title (e.g. `1872 (001-004) (2015)`), so each title becomes its own series. Add the library at root folder `/data/comics`.
-- **Google sign-in (planned, see `architecture/sso.md`):** Spring OAuth2 client config goes in `config/application.yml` under `spring.security.oauth2.client.registration.google`. The redirect URI is `https://comics.kodyparton.com/login/oauth2/code/google`. Komga matches Google logins to existing users **by email**; keep `komga.oauth2-account-creation: false` so only pre-created users get in. **Check it builds the redirect URI with `https`** (it's behind NPM, which sends `X-Forwarded-Proto`). If it builds `http`, it isn't trusting forwarded headers and Spring's `server.forward-headers-strategy` needs setting.
+- **Google sign-in: ENABLED 2026-10-11** (see `architecture/sso.md`):
+  - **Wiring:** `compose.yml` loads an **optional** `env_file: .env` holding `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENTID` / `_CLIENTSECRET` (template in `.env.example`). It's optional because an empty client ID stops Spring at startup; with no `.env`, Komga runs with password login only. `KOMGA_OAUTH2ACCOUNTCREATION=false` is set explicitly, so a Google login only links to a Komga user that **already exists with the same email** (Komga's default, stated so it can't silently change). `KOMGA_OIDCEMAILVERIFICATION` keeps its default `true`, and Gmail addresses are always verified.
+  - **Enable**, once the client is in Infisical:
+    `python3 scripts/env_from_infisical.py komga SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENTID=GOOGLE_OAUTH_CLIENT_ID SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENTSECRET=GOOGLE_OAUTH_CLIENT_SECRET`
+    then `docker compose up -d` in `komga/`. Run on 2026-10-11.
+  - **Verified after enabling:** `/api/v1/oauth2/providers` → Google. The authorization redirect carries the real client ID and the https redirect URI. **Google accepted the real request** (→ its sign-in page) and **rejected the same request with a bogus redirect URI** (`redirect_uri_mismatch`), which proves the registered URI is exact and that Google is really checking it. The container reaches `oauth2.googleapis.com` for the code exchange.
+  - **Proxy headers need no change:** Komga's bundled `application.yml` already sets `server.forward-headers-strategy: framework` (read from the jar), so it trusts NPM's `X-Forwarded-Proto`.
+  - **Dry run, 2026-10-11, with a fake client ID:** `/api/v1/oauth2/providers` → `[{"name":"Google","registrationId":"google"}]`. `/oauth2/authorization/google` redirected to `accounts.google.com` with `redirect_uri=https://comics.kodyparton.com/login/oauth2/code/google` and `scope=openid profile email`, both via NPM on the LAN **and** through Cloudflare's edge. The fake client was then removed (providers back to `[]`).
+  - **Use the hostname for Google sign-in, not `http://192.168.178.69:30045`:** the redirect URI is built from the request's host, and Google only accepts the registered https one.
+  - **Panels/OPDS doesn't use Google:** OPDS apps sign in with the Komga **password**. A family member who should use Panels needs a password set on their Komga user as well as the Google link.
 - **Heap capped at 1 GB** (`JAVA_TOOL_OPTIONS=-Xmx1g`). Uncapped, the JVM sizes its heap from the whole 12 GB OrbStack VM, which Ollama also uses. Measured 563 MiB just after first start.
 - The startup `WARN ... MMapDirectory ... update Apache Lucene` is harmless (Komga's bundled Lucene on Java 23).
+- **`ConvertBook ... execution failed: Read-only file system` (×26 in the log):** the `Comics` library was created with **Convert to CBZ** and **Repair extensions** on (`LIBRARY.CONVERT_TO_CBZ=1`, `REPAIR_EXTENSIONS=1`). Komga tries to rewrite each `.cbr` as a `.cbz` next to it (and remove the original), which the read-only mount blocks, so nothing on the NAS changed. It's harmless but repeats on every scan. **Kody's call:** turn both options off (Library → Edit → Options) and keep the library read-only (recommended: CBR reads fine in Komga and Panels, and all 26 are non-solid RAR4), *or* switch the mount to read-write so the conversion actually runs.
 - **10th container on a native CIFS volume:** same creation-time failure mode as the others if the NAS is down when it's (re)created. `scripts/cifs_volume_health_check.sh` covers it by container state, with no change needed.
 
 ## Change Log
 
 - `2026-10-11`: Deployed to replace YACReader for iPad reading. `komga/compose.yml` (port `30045`, `nas_comics_v3` mounted read-only, 1 GB heap, `network_mode: bridge` after Docker's subnet pools ran out). NPM proxy host 25 (`comics.kodyparton.com`) repointed here, with YACReader's advanced config removed. Homepage card swapped from YACReader to Komga (widget staged), and the Kuma entry renamed. Verified `https://comics.kodyparton.com/` → 200 over HTTP/2 with a valid cert, and http→https redirect. **Pending (Kody): claim the admin account and add the `/data/comics` library.**
 - `2026-10-11` (night): YACReader removed. Komga is now the only comics service and the sole user of `nas_comics_v3`.
+- `2026-10-11` (late): Kody claimed the admin account (his Gmail address) and added the `Comics` library (`/data/comics`). Kody added a proxied Cloudflare record for `comics`, which is now public (200 through Cloudflare's edge). Google sign-in staged: optional `env_file`, `KOMGA_OAUTH2ACCOUNTCREATION=false`, `.env.example`, and a new `scripts/env_from_infisical.py`. Dry-run verified with a fake client (correct https redirect URI through NPM and through Cloudflare), then reverted. Waiting on the real Google OAuth client.
+- `2026-10-11` (evening): **Google sign-in enabled.** Kody stored the Google OAuth client in Infisical; `komga/.env` written by `env_from_infisical.py`, Komga recreated. Google accepted the real authorization request and rejected a bogus redirect URI. Waiting on Kody's first real login. Found the library's Convert-to-CBZ option failing against the read-only mount (see Known Issues).
+- `2026-10-11` (night): **First real Google login confirmed.** Komga's `AUTHENTICATION_ACTIVITY` table shows `OAuth2:Google`, success, at 18:38 UTC, linked to Kody's admin account by email. That table is the place to check sign-ins (`SOURCE` is `Password` or `OAuth2:Google`).

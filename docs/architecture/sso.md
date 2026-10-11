@@ -59,19 +59,21 @@ Decision (Kody, 2026-10-11): **point each OIDC-capable app directly at Google**,
 | Vikunja | ✅ (no allowlist of its own) | `https://tasks.kodyparton.com/auth/openid/google` | `VIKUNJA_AUTH_OPENID_*` env vars, provider id `google`, `AUTHURL=https://accounts.google.com`, `EMAILFALLBACK` + `USERNAMEFALLBACK` true so Kody's existing account links. **Needs `VIKUNJA_SERVICE_PUBLICURL` changed to `https://tasks.kodyparton.com/`** |
 | Trilium | ✅ (single user) | `https://notes.kodyparton.com/callback` | `TRILIUM_OAUTH_BASE_URL=https://notes.kodyparton.com`, `TRILIUM_OAUTH_CLIENT_ID` / `_SECRET`. The issuer already defaults to Google. Then turn on OpenID under Options → Multi-Factor Authentication. Trilium has one user, so this is for Kody only |
 | Infisical | ✅ | `https://infisical.kodyparton.com/api/v1/sso/google` | `CLIENT_ID_GOOGLE_LOGIN` / `CLIENT_SECRET_GOOGLE_LOGIN`. **Needs `SITE_URL` changed to `https://infisical.kodyparton.com`** (the redirect must match). `scripts/infisical_client.py` talks to the IP directly, so it's unaffected. Highest-stakes app here: do it last, and keep a working email/password login |
-| Komga | ✅ | `https://comics.kodyparton.com/login/oauth2/code/google` | Spring OAuth2 config in `komga/config/application.yml` (`spring.security.oauth2.client.registration.google.client-id/-secret`), with Google's issuer built in. Matches users **by email**. Set `komga.oauth2-account-creation: false` and pre-create family users with their Gmail addresses. Check the redirect it sends is `https` (behind NPM). See `containers/komga.md` |
+| Komga | ✅ **ACTIVE 2026-10-11**: Kody's first real Google login succeeded (Komga's `AUTHENTICATION_ACTIVITY`: `OAuth2:Google`, success, 18:38 UTC); Google also rejected a bogus redirect URI | `https://comics.kodyparton.com/login/oauth2/code/google` | Spring OAuth2 client through env vars in the gitignored `komga/.env` (optional `env_file`), written by `scripts/env_from_infisical.py`. Google's issuer is built into Spring. Matches users **by email**, `KOMGA_OAUTH2ACCOUNTCREATION=false`: Kody's admin already uses his Gmail; family users need creating with theirs. Proxy headers already trusted (`forward-headers-strategy: framework` is in Komga's bundled config). See `containers/komga.md` |
 | Seerr | — (already) | — | Logs in with **Plex**, and Plex accounts can already use Google. Seerr's own OIDC isn't in a released build yet |
 | Plex | — (already) | — | plex.tv offers Google sign-in natively |
 | n8n | ❌ | — | OIDC/SAML is an Enterprise-licence feature |
-| Sonarr ×2, Radarr ×2, Prowlarr, qBittorrent, Tautulli, Huntarr, LazyLibrarian, AdGuard, NPM, Uptime Kuma, Homepage, YACReader | ❌ | — | No OIDC support. The only way to put Google in front of them is forward-auth (oauth2-proxy or Authentik) in NPM, which was not chosen |
+| Sonarr ×2, Radarr ×2, Prowlarr, Mylar3, qBittorrent, Tautulli, Huntarr, LazyLibrarian, AdGuard, NPM, Uptime Kuma, Homepage | ❌ | — | No OIDC support. The only way to put Google in front of them is forward-auth (oauth2-proxy or Authentik) in NPM, which was not chosen |
 
 ### What Kody has to do (can't be automated from here)
 
 1. Google Cloud Console → new project (e.g. `homelab-sso`) → **Google Auth Platform / OAuth consent screen**: External, **Testing**, app name `Homelab`, add yourself and each family member under **Test users**.
 2. **Clients → Create client → Web application**, name `homelab`, and paste every redirect URI from the table above under *Authorized redirect URIs*.
-3. Put the client ID and secret into Infisical (`Homelab Secrets` / `prod`) as `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET`.
+3. Put the client ID and secret into Infisical (`Homelab Secrets` / `prod`) as `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET`. **Copy the secret when the client is created:** Google shows it only once, and after that you can only add a new secret.
 
-Rollout order after that, one app at a time, checking each with a real login (and a deliberately bad redirect URI) before moving on: Audiobookshelf → Komga → Paperless → Vikunja → Trilium → Immich → Vaultwarden → Infisical.
+Each app's `.env` then gets the values with `scripts/env_from_infisical.py <service> ENV_VAR=INFISICAL_NAME …`. It never prints values, and writes nothing if a secret is missing.
+
+Rollout order after that, one app at a time, checking each with a real login (and a deliberately bad redirect URI) before moving on: **Komga (first, at Kody's request)** → Audiobookshelf → Paperless → Vikunja → Trilium → Immich → Vaultwarden → Infisical.
 
 ## Why Authelia needs a real hostname
 

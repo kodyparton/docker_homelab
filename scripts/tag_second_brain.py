@@ -45,6 +45,7 @@ DOC_RULES = [
     ("docs/containers/homepage.md", ("homelab", ["dashboard"])),
     ("docs/containers/huntarr.md", ("homelab", ["media"])),
     ("docs/containers/komga.md", ("homelab", ["media"])),
+    ("docs/containers/mylar3.md", ("homelab", ["media"])),
     ("docs/containers/lazylibrarian.md", ("homelab", ["media"])),
     ("docs/containers/n8n.md", ("homelab", ["automation", "second-brain-system"])),
     ("docs/containers/nginx-proxy-manager.md", ("homelab", ["networking"])),

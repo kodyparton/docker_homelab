@@ -9,6 +9,14 @@ services:
       # Without a cap the JVM sizes its heap from the whole OrbStack VM,
       # which this host shares with Ollama.
       - JAVA_TOOL_OPTIONS=-Xmx1g
+      # Google sign-in only links to Komga users that already exist with the
+      # same email. Komga's default too; stated so it can't silently change.
+      - KOMGA_OAUTH2ACCOUNTCREATION=false
+    # Google OAuth client id/secret (see .env.example). Optional so Komga still
+    # starts without it: an empty client id would stop Spring at startup.
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - /Users/kp-srv-01/Documents/docker/komga/config:/config
       # Same NAS volume as yacreader. Read-only: Komga never writes to the library.

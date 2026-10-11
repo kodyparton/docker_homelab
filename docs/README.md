@@ -1,6 +1,6 @@
 # Homelab Documentation
 
-Documentation for the `docker_homelab` stack — a Mac Mini running ~30 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
+Documentation for the `docker_homelab` stack — a Mac Mini running ~31 self-hosted services under Docker Compose (via OrbStack), automated by n8n.
 
 ## Start here
 
@@ -30,6 +30,7 @@ One file per running container in [`containers/`](containers/), each following t
 | Audiobookshelf | [containers/audiobookshelf.md](containers/audiobookshelf.md) |
 | LazyLibrarian | [containers/lazylibrarian.md](containers/lazylibrarian.md) |
 | Komga | [containers/komga.md](containers/komga.md) |
+| Mylar3 | [containers/mylar3.md](containers/mylar3.md) |
 | Unpackerr | [containers/unpackerr.md](containers/unpackerr.md) |
 | Watchtower | [containers/watchtower.md](containers/watchtower.md) |
 | n8n | [containers/n8n.md](containers/n8n.md) |

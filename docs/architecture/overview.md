@@ -14,6 +14,7 @@ flowchart LR
         SonarrHD["Sonarr 4K"]
         Radarr
         RadarrHD["Radarr 4K"]
+        Mylar3
     end
     subgraph Download
         qBittorrent
@@ -57,10 +58,13 @@ flowchart LR
     Prowlarr --> SonarrHD
     Prowlarr --> Radarr
     Prowlarr --> RadarrHD
+    Prowlarr --> Mylar3
     Sonarr --> qBittorrent
     SonarrHD --> qBittorrent
     Radarr --> qBittorrent
     RadarrHD --> qBittorrent
+    Mylar3 --> qBittorrent
+    Mylar3 --> Komga
     qBittorrent --> Unpackerr
     Unpackerr --> Sonarr
     Unpackerr --> Radarr
@@ -127,6 +131,7 @@ Solid arrows are functional dependencies (data/API calls the app needs to work).
 | AdGuard Home | 30043 (UI), 53 (DNS) | 80, 53 | LAN DNS resolver + ad blocking. Works around ISP DNS rebinding filter |
 | Immich | 30042 | 2283 | Photos. Library on NAS (`/Volumes/media/immich`), not boot disk |
 | Komga | 30045 | 25600 | Comics server + web reader + OPDS. `network_mode: bridge` (Docker subnet pools exhausted) |
+| Mylar3 | 30046 | 8090 | Comics automation (the Sonarr of comics). `network_mode: bridge`. No hostname until its login is set |
 
 `brain-bot` has no listening port — outbound only (Discord Gateway + calls to n8n).
 
@@ -160,7 +165,7 @@ All via Nginx Proxy Manager (`nginx-app-1`), certs via Let's Encrypt DNS-01 thro
 | `huntarr.kodyparton.com` | `192.168.178.69:30036` | working |
 | `dns.kodyparton.com` (AdGuard Home) | `192.168.178.69:30043` | working |
 | `photos.kodyparton.com` (Immich) | `192.168.178.69:30042` | working |
-| `comics.kodyparton.com` (Komga) | `192.168.178.69:30045` | working (proxy host 25; created for YACReader `:30044` and repointed to Komga the same day, 2026-10-11. YACReader has since been removed) |
+| `comics.kodyparton.com` (Komga) | `192.168.178.69:30045` | working, **public via a Cloudflare-proxied record** (2026-10-11, same pattern as `request`/`n8n`); proxy host 25, created for YACReader and repointed to Komga the same day |
 | `nas.kodyparton.com` (UniFi UNAS Pro admin) | **`https://192.168.178.38:443`** | added 2026-08-30 — upstream is **not** the Mac Mini, proxied over **https** |
 | `ziggo.kodyparton.com` (Ziggo modem admin) | **`https://192.168.178.1:443`** | added 2026-08-30 — the WAN edge; same appliance pattern as `nas` |
 

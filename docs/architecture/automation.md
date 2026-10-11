@@ -38,7 +38,7 @@ Workflow 18 doesn't use n8n credential objects at all — Ollama and Qdrant have
 | 11 | Storage Runway Forecast | daily 07:00 | host disk space | Alerts if projected to run out within 21 days |
 | 12 | Flaky Indexer Auto-Healer | every 6h | Prowlarr indexer stats | **Auto-disables** indexers with >50% failure rate |
 | 13 | Smart Overseerr Triage | webhook (Overseerr) | TMDB watch/providers, Overseerr | **Auto-approves/declines** requests based on streaming availability |
-| 14 | Weekly Media Server Digest | weekly Mon 08:00 | Tautulli, Sonarr×2, Radarr×2, qBittorrent | Posts a digest to Discord |
+| 14 | Weekly Media Server Digest | weekly Mon 08:00 | Tautulli, Sonarr×2, Radarr×2, qBittorrent | Posts a digest to Discord. **qBittorrent part failing since 2026-10-11**: its inline password is stale (and in the public repo); move it to an n8n credential |
 | 15 | Release Radar Digest | weekly Mon 08:00 | Sonarr×2, Radarr×2 calendars | Posts "this week's lineup" to Discord |
 | 16 | Earned It (Strava-Gated Media Unlock) | webhook (Strava) | Strava, Overseerr | **Auto-approves** oldest pending request on a new weekly activity |
 | 17 | Discord Ops Console | every 6h (throttled 2026-08-28, was 30s) | Discord REST, SSH `docker ps` | Replies to `!status` in Discord with live container health. **Has never actually worked** — bot token/channel ID are still placeholders; the 30s crash loop this caused (94% of n8n's entire execution history) is fixed and throttled but not finished. See known-issues.md. |

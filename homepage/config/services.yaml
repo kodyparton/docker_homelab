@@ -44,6 +44,18 @@
           url: http://192.168.178.69:30031
           key: "{{HOMEPAGE_VAR_RADARR_4K_API_KEY}}"
 
+    - Mylar3:
+        icon: mylar.png
+        # Hostname (mylar.kodyparton.com) waits until Mylar has a login set.
+        href: http://192.168.178.69:30046
+        description: Comics
+        server: my-docker
+        container: mylar3
+        widget:
+          type: mylar
+          url: http://192.168.178.69:30046
+          key: "{{HOMEPAGE_VAR_MYLAR_API_KEY}}"
+
     - Prowlarr:
         icon: prowlarr.png
         href: https://prowlarr.kodyparton.com

@@ -1,0 +1,19 @@
+services:
+########## YACREADER LIBRARY CONFIGURATION ##########
+  yacreader:
+    image: xthursdayx/yacreaderlibrary-server-docker:unarr
+    container_name: yacreader
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/yacreader/config:/config
+      - nas_comics_v3:/comics
+    ports:
+      - 30044:8080
+    restart: unless-stopped
+
+volumes:
+  nas_comics_v3:
+    external: true

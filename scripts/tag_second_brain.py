@@ -60,6 +60,7 @@ DOC_RULES = [
     ("docs/containers/trilium.md", ("homelab", ["productivity"])),
     ("docs/containers/unpackerr.md", ("homelab", ["media"])),
     ("docs/containers/vikunja.md", ("homelab", ["productivity"])),
+    ("docs/containers/yacreader.md", ("homelab", ["media"])),
     ("docs/containers/whisper.md", ("homelab", ["second-brain-system", "ai"])),
     ("docs/containers/infisical.md", ("homelab", ["ops", "credentials"])),
     ("docs/architecture/secrets-and-rotation.md", ("homelab", ["ops", "credentials"])),

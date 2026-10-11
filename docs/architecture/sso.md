@@ -1,6 +1,6 @@
 # Single Sign-On (Authelia)
 
-Deployed 2026-08-26. Authelia is the homelab's OIDC identity provider, currently serving Immich, Paperless-ngx, and Vaultwarden.
+Deployed 2026-08-26. Authelia is the homelab's OIDC identity provider, currently serving Immich, Paperless-ngx, and Vaultwarden. **Google sign-in is planned per app. See "Google sign-in" below.**
 
 ## Current status (updated 2026-08-30)
 
@@ -36,6 +36,41 @@ Settings chosen, and why:
 - `profileSigningAlgorithm: none` and `tokenEndpointAuthMethod: client_secret_post` mirror the Authelia client's `userinfo_signed_response_alg: 'none'` and `token_endpoint_auth_method: 'client_secret_post'`. PKCE (S256) is required by the client and Immich sends it.
 
 **Verified, not assumed:** `/api/server/features` reports `oauth: true`; Immich's `/api/oauth/authorize` produces a correct PKCE authorization URL; and Authelia answers that URL with a `302` into its own login flow (`flow_id` issued) rather than an error — which is what proves the client_id, redirect_uri and PKCE challenge were all accepted.
+
+## Google sign-in (planned 2026-10-11, waiting on the Google OAuth client)
+
+Decision (Kody, 2026-10-11): **point each OIDC-capable app directly at Google**, not through Authelia. Authelia 4.39 can't use an upstream identity provider, so it can't offer "Sign in with Google" itself. Replacing it with Authentik (which can) was considered and rejected: it means a new container plus Postgres/Redis next to Ollama, and rewiring every existing client. Allowed users: **Kody + family**.
+
+### Rules for every app
+
+- **Local login stays on everywhere**, for the same reason as Vaultwarden/Paperless above. Google sign-in now depends on the internet: if the WAN is down, these LAN-only apps still have to open.
+- **The allowlist has two layers.** (1) The Google OAuth consent screen stays in **Testing** mode with only the allowed people added as test users, so Google refuses to sign in anyone else, for every app at once. (2) Where an app supports it, **auto-registration is off**: a Google login only links to an account that already exists with the same email. Vikunja is the exception (it always auto-creates users), so layer 1 is its only gate. **Never publish the consent screen to Production** without revisiting this, or any Google account could sign in to Vikunja.
+- **One Google OAuth client** (Web application) serves all the apps below, with all their redirect URIs. Its credentials go in Infisical as `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET`, and each app's `.env` gets them from there (same pattern as `OIDC_CLIENT_SECRET_*`).
+- Google doesn't need to reach any of these hosts. The redirects happen in the browser, so LAN-only `*.kodyparton.com` names work fine as redirect URIs.
+
+### Coverage
+
+| App | Google sign-in | Redirect URI(s) to register | Notes |
+|---|---|---|---|
+| Immich | ✅ | `https://photos.kodyparton.com/auth/login`, `https://photos.kodyparton.com/user-settings`, `https://photos.kodyparton.com/api/oauth/mobile-redirect` | Immich supports only **one** OAuth provider, so Google **replaces** Authelia here. Set `autoRegister: false` (was `true`). Family accounts need creating first with their Gmail address. Mobile redirect override on, because Google web clients reject the `app.immich:///` scheme. Apply with a variant of `scripts/enable_immich_sso.py` |
+| Paperless-ngx | ✅ | `https://paperless.kodyparton.com/accounts/oidc/google/login/callback/` | Added as a **second** `openid_connect` app (`provider_id: google`, `server_url: https://accounts.google.com/.well-known/openid-configuration`) next to Authelia. Change `PAPERLESS_SOCIAL_AUTO_SIGNUP` to `false` |
+| Vaultwarden | ✅ | `https://vault.kodyparton.com/identity/connect/oidc-signin` | `SSO_AUTHORITY=https://accounts.google.com`, `SSO_AUTHORIZE_EXTRA_PARAMS=access_type=offline&prompt=consent` (without it, sessions die after 1h), scopes `openid email profile`. **Needs `DOMAIN` changed from `http://192.168.178.69:30040` to `https://vault.kodyparton.com`** first. Check for WebAuthn/passkey 2FA bound to the IP origin before changing it. The master password is still needed to decrypt the vault, because SSO only replaces the login step |
+| Audiobookshelf | ✅ | `https://audiobooks.kodyparton.com/auth/openid/callback`, `https://audiobooks.kodyparton.com/auth/openid/mobile-redirect` | Issuer `https://accounts.google.com`, match existing users by email, auto-register off. Set in Settings → Authentication (or `PATCH /api/auth-settings`). Add `audiobookshelf://oauth` to its Allowed Mobile Redirect URIs (server-side only, not in Google) |
+| Vikunja | ✅ (no allowlist of its own) | `https://tasks.kodyparton.com/auth/openid/google` | `VIKUNJA_AUTH_OPENID_*` env vars, provider id `google`, `AUTHURL=https://accounts.google.com`, `EMAILFALLBACK` + `USERNAMEFALLBACK` true so Kody's existing account links. **Needs `VIKUNJA_SERVICE_PUBLICURL` changed to `https://tasks.kodyparton.com/`** |
+| Trilium | ✅ (single user) | `https://notes.kodyparton.com/callback` | `TRILIUM_OAUTH_BASE_URL=https://notes.kodyparton.com`, `TRILIUM_OAUTH_CLIENT_ID` / `_SECRET`. The issuer already defaults to Google. Then turn on OpenID under Options → Multi-Factor Authentication. Trilium has one user, so this is for Kody only |
+| Infisical | ✅ | `https://infisical.kodyparton.com/api/v1/sso/google` | `CLIENT_ID_GOOGLE_LOGIN` / `CLIENT_SECRET_GOOGLE_LOGIN`. **Needs `SITE_URL` changed to `https://infisical.kodyparton.com`** (the redirect must match). `scripts/infisical_client.py` talks to the IP directly, so it's unaffected. Highest-stakes app here: do it last, and keep a working email/password login |
+| Seerr | — (already) | — | Logs in with **Plex**, and Plex accounts can already use Google. Seerr's own OIDC isn't in a released build yet |
+| Plex | — (already) | — | plex.tv offers Google sign-in natively |
+| n8n | ❌ | — | OIDC/SAML is an Enterprise-licence feature |
+| Sonarr ×2, Radarr ×2, Prowlarr, qBittorrent, Tautulli, Huntarr, LazyLibrarian, AdGuard, NPM, Uptime Kuma, Homepage, YACReader | ❌ | — | No OIDC support. The only way to put Google in front of them is forward-auth (oauth2-proxy or Authentik) in NPM, which was not chosen |
+
+### What Kody has to do (can't be automated from here)
+
+1. Google Cloud Console → new project (e.g. `homelab-sso`) → **Google Auth Platform / OAuth consent screen**: External, **Testing**, app name `Homelab`, add yourself and each family member under **Test users**.
+2. **Clients → Create client → Web application**, name `homelab`, and paste every redirect URI from the table above under *Authorized redirect URIs*.
+3. Put the client ID and secret into Infisical (`Homelab Secrets` / `prod`) as `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET`.
+
+Rollout order after that, one app at a time, checking each with a real login (and a deliberately bad redirect URI) before moving on: Audiobookshelf → Paperless → Vikunja → Trilium → Immich → Vaultwarden → Infisical.
 
 ## Why Authelia needs a real hostname
 

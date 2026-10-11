@@ -116,6 +116,13 @@
         #   url: http://192.168.178.69:30033
         #   key: "{{HOMEPAGE_VAR_AUDIOBOOKSHELF_API_KEY}}"
 
+    - YACReader:
+        icon: yacreader.png
+        href: https://comics.kodyparton.com
+        description: Comic book library
+        server: my-docker
+        container: yacreader
+
     - LazyLibrarian:
         icon: lazylibrarian.png
         href: https://books.kodyparton.com

@@ -40,6 +40,7 @@ flowchart LR
         Vikunja
         LazyLibrarian
         Audiobookshelf
+        YACReader
     end
     subgraph "Second Brain"
         BrainBot["Brain Bot"]
@@ -125,6 +126,7 @@ Solid arrows are functional dependencies (data/API calls the app needs to work).
 | Paperless-ngx | 30041 | 8000 | Documents/OCR. SQLite + internal redis |
 | AdGuard Home | 30043 (UI), 53 (DNS) | 80, 53 | LAN DNS resolver + ad blocking. Works around ISP DNS rebinding filter |
 | Immich | 30042 | 2283 | Photos. Library on NAS (`/Volumes/media/immich`), not boot disk |
+| YACReader | 30044 | 8080 | Comics server. **No auth**: LAN only, never expose publicly |
 
 `brain-bot` has no listening port — outbound only (Discord Gateway + calls to n8n).
 
@@ -158,6 +160,7 @@ All via Nginx Proxy Manager (`nginx-app-1`), certs via Let's Encrypt DNS-01 thro
 | `huntarr.kodyparton.com` | `192.168.178.69:30036` | working |
 | `dns.kodyparton.com` (AdGuard Home) | `192.168.178.69:30043` | working |
 | `photos.kodyparton.com` (Immich) | `192.168.178.69:30042` | working |
+| `comics.kodyparton.com` (YACReader) | `192.168.178.69:30044` | working (2026-10-11, proxy host 25). Its advanced config sends `Host` with the port, because YACReader crashes without it. See `containers/yacreader.md` |
 | `nas.kodyparton.com` (UniFi UNAS Pro admin) | **`https://192.168.178.38:443`** | added 2026-08-30 — upstream is **not** the Mac Mini, proxied over **https** |
 | `ziggo.kodyparton.com` (Ziggo modem admin) | **`https://192.168.178.1:443`** | added 2026-08-30 — the WAN edge; same appliance pattern as `nas` |
 

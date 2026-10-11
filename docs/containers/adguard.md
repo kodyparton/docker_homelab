@@ -62,5 +62,6 @@ None yet.
 
 ## Change Log
 
+- `2026-10-11` — Added rewrite `comics.kodyparton.com` → `192.168.178.69` (YACReader) through the API with no restart, using `do_dns_api()` from `scripts/add_device_proxy_hosts.py` (credential from Infisical). Verified with `dig @192.168.178.69`.
 - `2026-08-30` — Added rewrites for `nas.kodyparton.com` (UniFi UNAS Pro) and `ziggo.kodyparton.com` (Ziggo modem), both → `192.168.178.69`, via `scripts/add_device_proxy_hosts.py`, which reads `ADGUARD_ADMIN_PASSWORD` from Infisical. 24 rewrites total.
 - `2026-08-27` — Built to work around ISP/router DNS rebinding protection. Rewrites for the 5 `*.kodyparton.com` hosts, DoT upstreams, 2 blocklists.

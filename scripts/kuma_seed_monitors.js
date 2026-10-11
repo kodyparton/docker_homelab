@@ -34,7 +34,7 @@ const SERVICES = [
   ["huntarr.kodyparton.com",    "Huntarr"],
   ["audiobooks.kodyparton.com", "Audiobookshelf"],
   ["books.kodyparton.com",      "LazyLibrarian"],
-  ["comics.kodyparton.com",     "YACReader"],
+  ["comics.kodyparton.com",     "Komga"],
   ["photos.kodyparton.com",     "Immich"],
   ["paperless.kodyparton.com",  "Paperless-ngx"],
   ["notes.kodyparton.com",      "Trilium"],

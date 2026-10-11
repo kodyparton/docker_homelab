@@ -116,12 +116,19 @@
         #   url: http://192.168.178.69:30033
         #   key: "{{HOMEPAGE_VAR_AUDIOBOOKSHELF_API_KEY}}"
 
-    - YACReader:
-        icon: yacreader.png
+    - Komga:
+        icon: komga.png
         href: https://comics.kodyparton.com
         description: Comic book library
         server: my-docker
-        container: yacreader
+        container: komga
+        # Staged — uses a Komga login (a dedicated read-only user is fine),
+        # add to homepage/.env:
+        # widget:
+        #   type: komga
+        #   url: http://192.168.178.69:30045
+        #   username: "{{HOMEPAGE_VAR_KOMGA_USERNAME}}"
+        #   password: "{{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
 
     - LazyLibrarian:
         icon: lazylibrarian.png

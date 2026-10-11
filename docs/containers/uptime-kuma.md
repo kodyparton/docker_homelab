@@ -42,7 +42,7 @@ Not yet wired into workflow 03. Low priority relative to Infisical's backup (thi
 
 ## Automation
 
-`scripts/kuma_seed_monitors.sh` seeds one HTTP monitor per public DNS name (24 of them, the full NPM proxy-host list — 22 containers plus the UNAS Pro and Ziggo modem appliances) and publishes them to a status page.
+`scripts/kuma_seed_monitors.sh` seeds one HTTP monitor per public DNS name (25 of them, the full NPM proxy-host list — 23 containers plus the UNAS Pro and Ziggo modem appliances; `comics.kodyparton.com` → Komga added 2026-10-11 and **not seeded yet**) and publishes them to a status page.
 
 Uptime Kuma v1 has **no REST API for monitor CRUD** — it is Socket.IO only — so the script runs `node` *inside the container*, which already ships `socket.io-client`. Nothing is installed on the host to make this work.
 
@@ -59,6 +59,7 @@ Uptime Kuma v1 has **no REST API for monitor CRUD** — it is Socket.IO only —
 
 ## Change Log
 
+- `2026-10-11` — Added `comics.kodyparton.com` (labelled **Komga**; briefly YACReader the same day) to `kuma_seed_monitors.js`. Not seeded: the script needs `KUMA_ADMIN_PASSWORD`, which isn't in Infisical, so run `bash scripts/kuma_seed_monitors.sh` interactively.
 - `2026-08-30` (later) — Added `UNAS Pro` and `Ziggo Modem` monitors to the seed list (24 total) and an Infisical lookup for the admin password.
 - `2026-08-30` — Added `scripts/kuma_seed_monitors.sh` + `.js` to seed 22 HTTP monitors (one per NPM proxy host) by DNS name, plus a published status page at `/status/default` so Homepage's widget has something to read. Corrected the doc's stale `America/Chicago` timezone and the "no public URL" claim. Documented the `200-399` accepted-status requirement and the misleading empty-200 status-page endpoint.
 - `2026-08-26` — Built, during a stack-wide redundancy/optimization review. Admin account creation left to the user.

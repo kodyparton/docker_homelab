@@ -1,6 +1,8 @@
 # YACReader
 
-Headless YACReaderLibrary Server: serves the comics library on the NAS to the YACReader iOS/Android apps and to a basic browser UI. The comics counterpart of Audiobookshelf and LazyLibrarian.
+Headless YACReaderLibrary Server: serves the comics library on the NAS to the YACReader iOS/Android apps and to a basic browser UI.
+
+> **Removed 2026-10-11, replaced by [Komga](komga.md).** Its browser UI was too bare to read in, which left the paid YACReader iOS app as the only real way in. Container, its network, the old `nas_comics` volume and `yacreader/compose.yml` are gone (the compose file is in git history; the leftover settings folder went to the Trash as `yacreader-removed-20261011`). `nas_comics_v3` stays, because Komga uses it. **Still on the NAS for Kody to delete:** the hidden index folders `.yacreaderlibrary/` and `.yacreaderlibrary.broken-20261011/` in the comics share root. Komga ignores them. This doc is kept for the lessons below, which apply to any app on this stack.
 
 ## Quick Facts
 
@@ -12,7 +14,7 @@ Headless YACReaderLibrary Server: serves the comics library on the NAS to the YA
 | **Host** | Mac Mini (`192.168.178.69`) |
 | **Port(s)** | `30044:8080`: host `30044` → container `8080` |
 | **Local URL** | `http://192.168.178.69:30044` (browser UI at `/webui`) |
-| **Public URL** | `https://comics.kodyparton.com` (LAN-only DNS, via NPM proxy host 25) |
+| **Public URL** | none since 2026-10-11 (`comics.kodyparton.com` moved to Komga) |
 | **PUID/PGID** | `1000/1000` |
 | **Timezone** | `Europe/Amsterdam` |
 | **Restart policy** | `unless-stopped` |
@@ -29,16 +31,16 @@ YACReader keeps each library's database in a hidden `.yacreaderlibrary/` folder 
 ## Dependencies
 
 - **Depends on:** the UNAS Pro (`nas_comics` volume).
-- **Depended on by:** Homepage (container-status card under the media group, `homepage/config/services.yaml`).
+- **Depended on by:** nothing. Its Homepage card was replaced by Komga's on 2026-10-11.
 
 ## Credentials & Secrets
 
-None. YACReaderLibraryServer has **no authentication**: anyone who can reach port `30044` (or `comics.kodyparton.com`) can browse and download the whole library. That is acceptable on the LAN. It is why this must never get a public DNS record or a port forward without an NPM access list or Authelia in front.
+None. YACReaderLibraryServer has **no authentication**: anyone who can reach port `30044` can browse and download the whole library. That is acceptable on the LAN. It is why this must never get a public DNS record or a port forward without an NPM access list or Authelia in front.
 
 ## External Access
 
 - **AdGuard Home rewrite** `comics.kodyparton.com` → `192.168.178.69`: added 2026-10-11 through the AdGuard API (`do_dns_api()` from `scripts/add_device_proxy_hosts.py`, credential from Infisical). Verified with `dig +short comics.kodyparton.com @192.168.178.69` → `192.168.178.69`.
-- **NPM proxy host 25**: `comics.kodyparton.com` → `http://192.168.178.69:30044`, wildcard cert id 1, SSL forced, websockets on. Created by Kody in the UI on 2026-10-11. Its advanced config replaces NPM's default `location /` so it can send `Host: $host:$server_port`; see Known Issues for why. **Don't clear that advanced config**, or the server will start crashing again.
+- **NPM proxy host 25** (`comics.kodyparton.com`) pointed here from creation until later on 2026-10-11, when it was **repointed to Komga** (`:30045`). Its YACReader-only advanced config (a custom `location /` sending `Host: $host:$server_port`, see Known Issues) was removed then. **If a hostname is ever pointed back at YACReader, that workaround must go back with it**, or the server crash-loops.
 - Not in public (Cloudflare) DNS.
 
 ## Backups
@@ -49,7 +51,7 @@ None, and not in workflow 03. Low stakes: the comics are on the NAS, and the lib
 
 - **02 - Docker Drift Detection**: picked up automatically, because `scripts/drift_check.sh` walks every `*/compose.yml`.
 - **Watchtower**: watches all containers, so this one too. In practice, see the image note below.
-- **Uptime Kuma**: `comics.kodyparton.com` is listed in `scripts/kuma_seed_monitors.js` but **not seeded yet**. `KUMA_ADMIN_PASSWORD` isn't in Infisical, so the script has to be run interactively (`bash scripts/kuma_seed_monitors.sh`).
+- **Uptime Kuma**: none. The `comics.kodyparton.com` entry in `scripts/kuma_seed_monitors.js` now belongs to Komga.
 - **Library rescan**: manual. YACReader doesn't watch the folder, so after adding comics run `docker exec yacreader YACReaderLibraryServer update-library /comics`.
 
 ## Known Issues / Gotchas
@@ -66,3 +68,5 @@ None, and not in workflow 03. Low stakes: the comics are on the NAS, and the lib
 ## Change Log
 
 - `2026-10-11`: Container deployed (`yacreader/compose.yml`, port `30044`, `nas_comics` CIFS volume). Homepage card added, AdGuard rewrite for `comics.kodyparton.com` added, doc created. Same day: library created; NPM proxy host 25 (made by Kody) fixed for the Host-header crash; library volume moved to `nas_comics_v3` (`vers=3.0,nobrl`) after the index DB came out empty. Verified `https://comics.kodyparton.com/webui` → 200 (valid cert) three times in a row with no server restarts, and `/v2/libraries` lists `Comics`. Later that day Safari got 421 (HTTP/2 off on host 25, see Known Issues); fixed by turning on HTTP/2 and HSTS.
+- `2026-10-11` (evening): **Superseded by Komga.** `comics.kodyparton.com` (NPM host 25) repointed to Komga `:30045`, and this host's advanced config removed. Homepage card and Kuma entry moved to Komga. Container left running at `:30044` with no hostname, pending Kody's decision to remove it.
+- `2026-10-11` (night): **Removed** at Kody's request. `docker compose down` (container + `yacreader_default` network), `docker volume rm nas_comics` (old CIFS definition only, no NAS data), `git rm yacreader/compose.yml`, and the settings folder moved to the Trash. Komga's `nas_comics_v3` volume and container verified untouched.

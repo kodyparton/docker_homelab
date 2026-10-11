@@ -1,0 +1,25 @@
+services:
+########## KOMGA CONFIGURATION ##########
+  komga:
+    image: gotson/komga:latest
+    container_name: komga
+    user: "1000:1000"
+    environment:
+      - TZ=Europe/Amsterdam
+      # Without a cap the JVM sizes its heap from the whole OrbStack VM,
+      # which this host shares with Ollama.
+      - JAVA_TOOL_OPTIONS=-Xmx1g
+    volumes:
+      - /Users/kp-srv-01/Documents/docker/komga/config:/config
+      # Same NAS volume as yacreader. Read-only: Komga never writes to the library.
+      - nas_comics_v3:/data/comics:ro
+    ports:
+      - 30045:25600
+    # Docker's default address pools are used up (one network per compose
+    # project), so join the built-in bridge instead of creating komga_default.
+    network_mode: bridge
+    restart: unless-stopped
+
+volumes:
+  nas_comics_v3:
+    external: true

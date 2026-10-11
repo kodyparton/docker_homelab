@@ -29,7 +29,7 @@ One file per running container in [`containers/`](containers/), each following t
 | Huntarr | [containers/huntarr.md](containers/huntarr.md) |
 | Audiobookshelf | [containers/audiobookshelf.md](containers/audiobookshelf.md) |
 | LazyLibrarian | [containers/lazylibrarian.md](containers/lazylibrarian.md) |
-| YACReader | [containers/yacreader.md](containers/yacreader.md) |
+| Komga | [containers/komga.md](containers/komga.md) |
 | Unpackerr | [containers/unpackerr.md](containers/unpackerr.md) |
 | Watchtower | [containers/watchtower.md](containers/watchtower.md) |
 | n8n | [containers/n8n.md](containers/n8n.md) |
@@ -48,6 +48,8 @@ One file per running container in [`containers/`](containers/), each following t
 | Paperless-ngx | [containers/paperless.md](containers/paperless.md) |
 | Immich | [containers/immich.md](containers/immich.md) |
 | AdGuard Home | [containers/adguard.md](containers/adguard.md) |
+
+**Removed services** (docs kept for their lessons): [YACReader](containers/yacreader.md), replaced by Komga on 2026-10-11.
 
 ## Keeping this updated
 

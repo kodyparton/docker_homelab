@@ -10,7 +10,7 @@ services:
     volumes:
       - /Users/kp-srv-01/Documents/docker/radarr-4k/config:/config
       - nas_movies_4k:/mnt/movies-4k #optional
-      - nas_downloads:/mnt/downloads
+      - nas_downloads:/mnt/downloads/movies-4k
     ports:
       - 30031:7878
     restart: always

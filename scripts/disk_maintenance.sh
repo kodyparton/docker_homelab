@@ -17,7 +17,16 @@ set -uo pipefail
 APPLY=0
 [ "${1:-}" = "--apply" ] && APPLY=1
 
-PLEX_CACHE="$HOME/Library/Application Support/Plex Media Server/Cache/PhotoTranscoder"
+# NOTE (2026-09-10): this used to point at
+#   "$HOME/Library/Application Support/Plex Media Server/Cache/PhotoTranscoder"
+# which resolves THROUGH the symlink to /Volumes/FastSSD/PlexData -- i.e. the
+# external drive, where it is genuinely ~0B. The cache that actually matters
+# lives in ~/Library/Caches (a DIFFERENT directory, on the internal boot disk)
+# and is never symlinked. The script therefore reported "under threshold,
+# leaving alone" for two weeks while 10GB accumulated on the boot volume,
+# which -- together with a 12GB staged macOS update -- filled the disk and
+# stopped OrbStack, taking all 36 containers down.
+PLEX_CACHE="$HOME/Library/Caches/PlexMediaServer/PhotoTranscoder"
 # Only trim the Plex cache once it exceeds this, so it stays useful day to day.
 PLEX_TRIM_THRESHOLD_GB=10
 

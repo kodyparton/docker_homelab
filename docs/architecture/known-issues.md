@@ -4,6 +4,12 @@ Running log of infra problems found, their root cause, and whether they're fixed
 
 ## Open
 
+### Tailscale bypasses AdGuard, so `*.kodyparton.com` names don't resolve on any Tailscale device (except `home`) — OPEN, found 2026-10-11
+- **Symptom:** `comics.kodyparton.com` "doesn't load" on Kody's iPhone, and no request ever reaches NPM. The same applies to every other internal name (`sonarr`, `audiobooks`, `photos`, …) on any device with Tailscale on. `home.kodyparton.com` still works, which makes the problem look app-specific when it isn't.
+- **Cause:** Tailscale DNS is on (`CorpDNS: true`) with MagicDNS but **no nameservers configured in the tailnet**, so it falls back to the OS's DNS. That's Ziggo (`213.46.228.196`, `62.179.104.196`, plus two IPv6 resolvers), because this Mac's manual DNS setting (`192.168.178.69, 1.1.1.1`, set 2026-08-29, see `containers/adguard.md`) is gone. Ziggo has no record for these names. **Only `home` has a public Cloudflare record** (`192.168.178.69`); every other name exists only as an AdGuard rewrite. On this Mac, `scutil --dns` shows `100.100.100.100` (Tailscale) as resolver 0 and `networksetup -getdnsservers Ethernet` returns nothing.
+- **Fix (Kody, in the Tailscale admin console — it's account config):** DNS → Nameservers → Add nameserver → Custom `192.168.178.69` → **Restrict to domain** `kodyparton.com` (split DNS). Only `kodyparton.com` lookups go to AdGuard and everything else is unchanged, so AdGuard being down can't break general browsing. This works on the home network. For it to work **away from home** too, the Mac Mini has to advertise the LAN as a subnet route (`tailscale set --advertise-routes=192.168.178.0/24`, then approve it in the console), or the phone can't reach `192.168.178.69` at all.
+- **Rejected:** publishing a Cloudflare record per service, which would expose every internal hostname in public DNS. Turning Tailscale DNS off doesn't help either: the fallback is still Ziggo, because the router's DHCP doesn't hand out AdGuard.
+
 ### ~~The NAS delivers ~0.25–3 MB/s~~ — **FULLY RESOLVED 2026-09-01. Two stacked physical faults: a bad switch port AND a bad cable.**
 
 The single most useful lesson in this file: **this was diagnosed entirely from wire measurements, and every software-side theory along the way was wrong.** The NAS's own admin UI reported "healthy" throughout, a reboot made it measurably *worse*, and time was spent on Plex's storage tier, its Butler tasks, and a non-existent hardware-transcoding fault before the network was measured properly. Measure the wire first.
